@@ -3,8 +3,8 @@ package model
 import (
 	"context"
 	"github.com/agui-coder/simple-admin-pay-rpc/consts"
-	"github.com/agui-coder/simple-admin-pay-rpc/money"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/money"
 	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
