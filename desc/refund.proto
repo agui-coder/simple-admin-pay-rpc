@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+// refund message
+message RefundInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string no = 5;
+  optional uint64 app_id = 6;
+  optional uint64 channel_id = 7;
+  optional string channel_code = 8;
+  optional uint64 order_id = 9;
+  optional string order_no = 10;
+  optional string merchant_order_id = 11;
+  optional string merchant_refund_id = 12;
+  optional string notify_url = 13;
+  optional int64 pay_price = 14;
+  optional int64 refund_price = 15;
+  optional string reason = 16;
+  optional string user_ip = 17;
+  optional string channel_order_no = 18;
+  optional string channel_refund_no = 19;
+  optional int64  success_time = 20;
+  optional string channel_error_code = 21;
+  optional string channel_error_msg = 22;
+  optional string channel_notify_data = 23;
+}
+
+message RefundCreateReq {
+  uint64 app_id = 1;
+  string user_ip = 2;
+  string merchant_order_id = 3;
+  string merchant_refund_id = 4;
+  string reason = 5;
+  int32 price = 6;
+}
+
+message RefundPageResp {
+  uint64 total = 1;
+  repeated RefundInfo data = 2;
+}
+
+message RefundPageReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional uint64 appId = 3;
+  optional string channelCode = 4;
+  optional string merchantOrderId = 5;
+  optional string merchantRefundId = 6;
+  optional string channelOrderNo = 7;
+  optional string channelRefundNo = 8;
+  optional string status = 9;
+  repeated int64 createTime = 10
+
+}
+
+message RefundCountResp {
+  uint64 count = 1;
+}
+// Refund message
+
+message RefundInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string no = 5;
+  optional uint64 app_id = 6;
+  optional uint64 channel_id = 7;
+  optional string channel_code = 8;
+  optional uint64 order_id = 9;
+  optional string order_no = 10;
+  optional string merchant_order_id = 11;
+  optional string merchant_refund_id = 12;
+  optional string notify_url = 13;
+  optional int32 pay_price = 14;
+  optional int32 refund_price = 15;
+  optional string reason = 16;
+  optional string user_ip = 17;
+  optional string channel_order_no = 18;
+  optional string channel_refund_no = 19;
+  optional int64  success_time = 20;
+  optional string channel_error_code = 21;
+  optional string channel_error_msg = 22;
+  optional string channel_notify_data = 23;
+}
+
+message RefundListResp {
+  uint64 total = 1;
+  repeated RefundInfo data = 2;
+}
+
+message RefundListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string no = 3;
+  optional string channel_code = 4;
+  optional string order_no = 5;
+}
+
+
+service Pay {
+
+  // refund management
+  // group: refund
+  rpc createRefund (RefundCreateReq) returns (BaseIDResp);
+  // group: refund
+  rpc getRefundPage (RefundPageReq) returns (RefundPageResp);
+  // group: refund
+  rpc getRefundById (IDReq) returns (RefundInfo);
+}

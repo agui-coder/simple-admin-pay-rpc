@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+message DemoOrderInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string userId = 4;
+  optional uint64 spuId = 5;
+  optional string spuName = 6;
+  optional int32 price = 7;
+  optional bool pay_status = 8;
+  optional uint64 pay_orderId = 9;
+  optional int64 pay_time = 10;
+  optional string pay_channel_code = 11;
+  optional uint64 pay_refund_id = 12;
+  optional int32 refund_price = 13;
+  optional int64 refund_time = 14;
+}
+
+message DemoOrderPageReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+}
+
+message DemoOrderListResp{
+  uint64 total = 1;
+  repeated DemoOrderInfo demoOrderList =2;
+}
+
+message PayDemoOrderCreateReq{
+  string userId = 1;
+  uint64 spuId = 2;
+  string userIp = 3;
+}
+
+message updateDemoOrderPaidReq{
+  uint64 id = 1;
+  uint64 payOrderId = 2;
+}
+
+service Pay {
+  // Demo management
+  // group: demo
+  rpc createDemoOrder (PayDemoOrderCreateReq) returns (BaseIDResp);
+  // group: demo
+  rpc getDemoOrder (IDReq) returns (DemoOrderInfo);
+  // group: demo
+  rpc getListDemoOrder (DemoOrderPageReq) returns (DemoOrderListResp);
+  // group: demo
+  rpc updateDemoOrderPaid(updateDemoOrderPaidReq) returns (BaseResp);
+}
