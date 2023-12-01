@@ -20,23 +20,15 @@ RedisConf:
 
 Log:
   ServiceName: payRpcLogger
+  Mode: file
+  Path: /home/data/logs/product/rpc
+  Encoding: json
   Level: info
-  Encoding: plain
-#  Mode: file
-#  Path: /home/data/logs/product/rpc
-#  Encoding: json
-#  Level: info
-#  Compress: false
-#  KeepDays: 7
-#  StackCoolDownMillis: 100
+  Compress: false
+  KeepDays: 7
+  StackCoolDownMillis: 100
 
 Prometheus:
   Host: 0.0.0.0
   Port: 4003
   Path: /metrics
-
-PayProperties:
-  OrderNotifyUrl: "https://127.0.0.1/pay/notify/order"
-  RefundNotifyUrl: "https://127.0.0.1/pay/notify/refund"
-  OrderNoPrefix: "P"
-  RefundNoPrefix: "R"
