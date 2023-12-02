@@ -31,11 +31,11 @@ type spu struct {
 
 func NewCreateDemoOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateDemoOrderLogic {
 	spuNames := make(map[uint64]spu)
-	spuNames[1] = spu{name: "金蓉颗粒", price: 1}
-	spuNames[2] = spu{name: "小米手机", price: 2}
-	spuNames[3] = spu{name: "苹果手机", price: 3}
-	spuNames[4] = spu{name: "oppo手机", price: 4}
-	spuNames[5] = spu{name: "vivo手机", price: 5}
+	spuNames[1] = spu{name: "华为手机", price: 1}
+	spuNames[2] = spu{name: "小米电视", price: 10}
+	spuNames[3] = spu{name: "苹果手机", price: 100}
+	spuNames[4] = spu{name: "华硕笔记本", price: 1000}
+	spuNames[5] = spu{name: "蔚来汽车", price: 200000}
 	return &CreateDemoOrderLogic{
 		ctx:      ctx,
 		svcCtx:   svcCtx,
