@@ -20,7 +20,7 @@ func NewNotifyLogModel(client *ent.Client) *NotifyLogModel {
 }
 
 // CreateNotifyLog 创建通知日志
-func (l *NotifyLogModel) CreateNotifyLog(ctx context.Context, task *ent.NotifyTask, newStatus uint8, err error, resp *payload.PayOrderNotifyResp) error {
+func (l *NotifyLogModel) CreateNotifyLog(ctx context.Context, task *ent.NotifyTask, newStatus uint8, err error, resp payload.PayOrderNotifyResp) error {
 	create := l.Create().SetTaskID(task.ID).SetStatus(newStatus).
 		SetNotifyTimes(task.NotifyTimes + 1)
 	if err != nil {

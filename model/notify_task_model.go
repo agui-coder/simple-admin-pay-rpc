@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/agui-coder/simple-admin-pay-rpc/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
@@ -30,25 +31,25 @@ func (m *NotifyTaskModel) QueryListByNotify(ctx context.Context) ([]*ent.NotifyT
 	return notifyTasks, nil
 }
 
-func (m *NotifyTaskModel) ProcessNotifyResult(ctx context.Context, task *ent.NotifyTask, resp *payload.PayOrderNotifyResp) (uint8, error) {
+func (m *NotifyTaskModel) ProcessNotifyResult(ctx context.Context, task *ent.NotifyTask, resp payload.PayOrderNotifyResp, err error) (uint8, error) {
 	// 处理并更新通知结果
 	updateTask := m.UpdateOne(task).SetLastExecuteTime(time.Now()).SetNotifyTimes(task.NotifyTimes + 1)
 	switch {
-	case resp != nil && resp.Code == payload.SUCCESS:
+	case resp.Code == payload.SUCCESS:
 		updateTask.SetStatus(consts.SUCCESS)
 	case task.NotifyTimes >= int8(len(payload.NotifyFrequency)-1):
 		updateTask.SetStatus(consts.FAILURE)
 	default:
 		updateTask.SetNextNotifyTime(time.Now().Add(time.Duration(payload.NotifyFrequency[task.NotifyTimes]) * time.Second))
-		if resp != nil {
+		if err != nil {
 			updateTask.SetStatus(consts.RequestFailure)
 		} else {
 			updateTask.SetStatus(consts.RequestSuccess)
 		}
 	}
-	task, err := updateTask.Save(ctx)
-	if err != nil {
-		return 0, errorhandler.DefaultEntError(logx.WithContext(ctx), err, task)
+	task, newErr := updateTask.Save(ctx)
+	if newErr != nil {
+		return 0, errors.Wrap(err, errorhandler.DefaultEntError(logx.WithContext(ctx), err, task).Error())
 	}
 	return task.Status, nil
 }

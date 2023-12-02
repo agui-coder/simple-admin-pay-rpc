@@ -74,21 +74,18 @@ func (l *ExecuteNotifyLogic) ExecuteNotify(task *ent.NotifyTask) error {
 // executeNotifyOrder 执行订单通知
 func (l *ExecuteNotifyLogic) executeNotifyOrder(task *ent.NotifyTask) error {
 	err := entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
-		var resp *payload.PayOrderNotifyResp
+		var resp payload.PayOrderNotifyResp
 		response, err := httpc.Do(l.ctx, http.MethodPost, task.NotifyURL, payload.PayOrderNotifyReq{
 			MerchantOrderId: task.MerchantOrderID,
 			PayOrderId:      task.DataID,
 		})
 		if err == nil {
-			newErr := httpc.ParseJsonBody(response, resp)
+			newErr := httpc.Parse(response, &resp)
 			if newErr != nil {
 				err = errors.Wrap(err, newErr.Error())
 			}
 		}
-		status, newErr := l.svcCtx.Model.NotifyTask.ProcessNotifyResult(l.ctx, task, resp)
-		if newErr != nil {
-			err = errors.Wrap(err, newErr.Error())
-		}
+		status, err := l.svcCtx.Model.NotifyTask.ProcessNotifyResult(l.ctx, task, resp, err)
 		err = l.svcCtx.Model.NotifyLog.CreateNotifyLog(l.ctx, task, status, err, resp)
 		if err != nil {
 			return err
