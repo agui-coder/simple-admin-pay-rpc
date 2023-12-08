@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/agui-coder/simple-admin-pay-common/payment/model"
 	"github.com/suyuan32/simple-admin-common/config"
 	"github.com/suyuan32/simple-admin-common/plugins/mq/asynq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -9,7 +10,8 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	DatabaseConf config.DatabaseConf
-	RedisConf    redis.RedisConf
-	AsynqConf    asynq.AsynqConf
+	DatabaseConf  config.DatabaseConf
+	RedisConf     redis.RedisConf
+	AsynqConf     asynq.AsynqConf
+	PayProperties model.Properties
 }

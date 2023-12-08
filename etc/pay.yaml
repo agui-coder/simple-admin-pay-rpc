@@ -32,3 +32,10 @@ Prometheus:
   Host: 0.0.0.0
   Port: 4003
   Path: /metrics
+
+## TODO 请修改为自己的支付回调地址
+PayProperties:
+  OrderNotifyUrl: "https://127.0.0.1/pay/notify/order"
+  RefundNotifyUrl: "https://127.0.0.1/pay/notify/refund"
+  OrderNoPrefix: "P"
+  RefundNoPrefix: "R"

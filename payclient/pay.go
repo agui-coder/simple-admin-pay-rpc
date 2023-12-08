@@ -37,6 +37,7 @@ type (
 	IDsReq                  = pay.IDsReq
 	NoReq                   = pay.NoReq
 	NotifyOrderReq          = pay.NotifyOrderReq
+	NotifyRefundReq         = pay.NotifyRefundReq
 	OrderCreateExtensionReq = pay.OrderCreateExtensionReq
 	OrderCreateReq          = pay.OrderCreateReq
 	OrderExtensionInfo      = pay.OrderExtensionInfo
@@ -94,6 +95,7 @@ type (
 		CreateRefund(ctx context.Context, in *RefundCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
 		GetRefundPage(ctx context.Context, in *RefundPageReq, opts ...grpc.CallOption) (*RefundPageResp, error)
 		GetRefundById(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*RefundInfo, error)
+		NotifyRefund(ctx context.Context, in *NotifyRefundReq, opts ...grpc.CallOption) (*BaseResp, error)
 	}
 
 	defaultPay struct {
@@ -260,4 +262,9 @@ func (m *defaultPay) GetRefundPage(ctx context.Context, in *RefundPageReq, opts 
 func (m *defaultPay) GetRefundById(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*RefundInfo, error) {
 	client := pay.NewPayClient(m.cli.Conn())
 	return client.GetRefundById(ctx, in, opts...)
+}
+
+func (m *defaultPay) NotifyRefund(ctx context.Context, in *NotifyRefundReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := pay.NewPayClient(m.cli.Conn())
+	return client.NotifyRefund(ctx, in, opts...)
 }

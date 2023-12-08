@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/pkg/errors"
 	"time"
@@ -18,8 +18,8 @@ type NotifyTaskModel struct {
 	*ent.NotifyTaskClient
 }
 
-func NewNotifyTaskModel(client *ent.Client) *NotifyTaskModel {
-	return &NotifyTaskModel{client.NotifyTask}
+func NewNotifyTaskModel(client *ent.NotifyTaskClient) *NotifyTaskModel {
+	return &NotifyTaskModel{client}
 }
 
 func (m *NotifyTaskModel) QueryListByNotify(ctx context.Context) ([]*ent.NotifyTask, error) {

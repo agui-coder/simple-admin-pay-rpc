@@ -2,8 +2,9 @@ package order
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	consts2 "github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/notify"
@@ -36,21 +37,19 @@ func (l *NotifyOrderLogic) NotifyOrder(in *pay.NotifyOrderReq) (*pay.BaseResp, e
 		logx.Error(err)
 		return nil, err
 	}
-	if channel.Status == consts.Disable {
+	if channel.Status == consts2.Disable {
 		logx.Error("channel is disable")
 	}
-	err = entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
 
-		if *pointy.GetStatusPointer(&in.Status) == consts.SUCCESS {
-			err := notifyOrderSuccess(l.ctx, l.svcCtx, channel, in)
-			return err
-		}
-		if *pointy.GetStatusPointer(&in.Status) == consts.CLOSED {
-			// TODO 失败处理
-			return nil
-		}
-		return nil
-	})
+	if *pointy.GetStatusPointer(&in.Status) == consts2.SUCCESS {
+		err := l.notifyOrderSuccess(channel, in)
+		return &pay.BaseResp{Msg: i18n.Failed}, err
+	}
+	if *pointy.GetStatusPointer(&in.Status) == consts2.CLOSED {
+		// TODO 失败处理
+		return &pay.BaseResp{Msg: i18n.Failed}, err
+	}
+
 	if err != nil {
 		logx.Error(err)
 	}
@@ -58,24 +57,30 @@ func (l *NotifyOrderLogic) NotifyOrder(in *pay.NotifyOrderReq) (*pay.BaseResp, e
 }
 
 // notifyOrderSuccess 支付成功
-func notifyOrderSuccess(ctx context.Context, svcCtx *svc.ServiceContext, channel *ent.Channel, notifyResp *pay.NotifyOrderReq) error {
-	orderExtension, err := svcCtx.Model.OrderExtension.UpdateOrderSuccess(ctx, notifyResp)
-	if err != nil {
-		return err
-	}
-	err = svcCtx.Model.Order.UpdateOrderSuccess(ctx, channel, orderExtension, notifyResp)
-	if err != nil {
-		return err
-	}
-	task, err := svcCtx.Model.CreatePayNotifyTask(ctx, consts.OrderType, orderExtension.OrderID)
-	if err != nil {
-		return err
-	}
-	go func(task *ent.NotifyTask) {
-		err := notify.NewExecuteNotifyLogic(context.Background(), svcCtx).ExecuteNotify(task)
+func (l *NotifyOrderLogic) notifyOrderSuccess(channel *ent.Channel, notifyResp *pay.NotifyOrderReq) error {
+	var task *ent.NotifyTask
+	err := entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
+		newModel := model.NewModel(tx.Client())
+		orderExtension, err := newModel.OrderExtension.UpdateOrderSuccess(l.ctx, notifyResp)
 		if err != nil {
-			logx.Error(err)
+			return err
 		}
-	}(task)
+		err = newModel.Order.UpdateOrderSuccess(l.ctx, channel, orderExtension, notifyResp)
+		if err != nil {
+			return err
+		}
+		task, err = newModel.CreatePayNotifyTask(l.ctx, consts2.OrderType, orderExtension.OrderID)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	err = notify.NewExecuteNotifyLogic(context.Background(), l.svcCtx).ExecuteNotify(task)
+	if err != nil {
+		return err
+	}
 	return nil
 }

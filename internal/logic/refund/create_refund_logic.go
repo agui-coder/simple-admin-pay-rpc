@@ -2,11 +2,12 @@ package refund
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
+	"github.com/agui-coder/simple-admin-pay-common/payment/model"
+	"github.com/agui-coder/simple-admin-pay-common/payno"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
+	"strconv"
 
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -33,39 +34,37 @@ func NewCreateRefundLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 }
 
 func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDResp, error) {
-	app, err := l.validPayApp(in.AppId)
+	app, err := l.svcCtx.Model.App.ValidPayApp(l.ctx, in.AppId)
 	if err != nil {
 		return nil, err
 	}
-	order, err := l.validatePayOrderCanRefund(in)
+	order, err := l.svcCtx.Model.ValidatePayOrderCanRefund(l.ctx, in)
 	if err != nil {
 		return nil, err
 	}
-	channel, err := l.svcCtx.DB.Channel.Get(l.ctx, order.ChannelID)
+	channel, err := l.svcCtx.Model.Channel.ValidPayChannelById(l.ctx, order.ChannelID)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, errorx.NewInvalidArgumentError("channel not found")
-		}
-		return nil, errorhandler.DefaultEntError(l.Logger, err, order.ChannelID)
+		return nil, err
 	}
-	if consts.Disable == channel.Status {
-		return nil, errorx.NewInvalidArgumentError("channel is disable")
-	}
-	//_, err = l.svcCtx.GetPayClient(l.ctx, channel.ID)
-	//if err != nil {
-	//	logx.Errorf("[validatePayChannelCanSubmit][渠道编号(%d) 找不到对应的支付客户端]", channel.ID)
-	//	return nil, err
-	//}
-	exit, err := l.svcCtx.DB.Refund.Query().Where(refund.AppIDEQ(app.ID), refund.MerchantOrderIDEQ(in.MerchantRefundId)).Exist(l.ctx)
+	client, err := l.svcCtx.GetPayClient(l.ctx, channel.ID)
 	if err != nil {
-		// TODO no 生成
+		logx.Errorf("get pay client id:%d  error: %v", channel.ID, err)
+		return nil, err
+	}
+	exit, err := l.svcCtx.DB.Refund.Query().Where(refund.AppIDEQ(app.ID),
+		refund.MerchantOrderIDEQ(in.MerchantRefundId)).Exist(l.ctx)
+	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, order.ChannelID)
 	}
 	if exit {
 		return nil, errorx.NewInvalidArgumentError("refund exists")
 	}
-	refund, err := l.svcCtx.DB.Refund.Create().
-		SetNo(in.MerchantRefundId).
+	refundNo, err := payno.Generate(l.svcCtx.Redis, payno.RefundNoPrefix)
+	if err != nil {
+		return nil, err
+	}
+	refundInfo, err := l.svcCtx.DB.Refund.Create().
+		SetNo(refundNo).
 		SetAppID(in.AppId).
 		SetChannelID(channel.ID).
 		SetChannelCode(channel.Code).
@@ -82,55 +81,23 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}
-	//unifiedReq, err := client.UnifiedRefund(l.ctx, payClient.RefundUnifiedReq{
-	//	OutTradeNo:  order.No,
-	//	OutRefundNo: refund.No,
-	//	Reason:      in.Reason,
-	//	PayPrice:    order.Price,
-	//	RefundPrice: refund.RefundPrice,
-	//	NotifyUrl:   l.svcCtx.Config.PayProperties.RefundNotifyUrl + "/" + strconv.FormatUint(channel.ID, 10),
-	//})
-	//if err != nil {
-	//	return nil, err
-	//}
-	//err = l.notifyRefund(channel, unifiedReq)
+
+	refundUnifiedResp, err := client.UnifiedRefund(l.ctx, model.RefundUnifiedReq{
+		OutTradeNo:  refundInfo.OrderNo,
+		OutRefundNo: refundInfo.No,
+		Reason:      refundInfo.Reason,
+		PayPrice:    refundInfo.PayPrice,
+		RefundPrice: refundInfo.RefundPrice,
+		NotifyUrl:   l.svcCtx.Config.PayProperties.RefundNotifyUrl + "/" + strconv.FormatUint(refundInfo.ChannelID, 10),
+	})
+	if err != nil {
+		logx.Errorf("[RefundApproved][退款 id:%d err:%s", refundInfo.ID, err.Error())
+		return nil, errorx.NewInvalidArgumentError(err.Error())
+	}
+
+	err = NewNotifyRefundLogic(l.ctx, l.svcCtx).ProcessRefundStatus(channel, refundUnifiedResp)
 	if err != nil {
 		return nil, err
 	}
-	return &pay.BaseIDResp{Id: refund.ID, Msg: errormsg.CreateSuccess}, nil
-}
-
-func (l *CreateRefundLogic) validPayApp(id uint64) (*ent.App, error) {
-	app, err := l.svcCtx.DB.App.Get(l.ctx, id)
-	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, id)
-	}
-	if app == nil {
-		return nil, errorx.NewInvalidArgumentError("app.notFound")
-	}
-	if consts.Disable == app.Status {
-		return nil, errorx.NewInvalidArgumentError("app.isDisable")
-	}
-	return app, nil
-}
-
-func (l *CreateRefundLogic) validatePayOrderCanRefund(in *pay.RefundCreateReq) (*ent.Order, error) {
-	order, err := l.svcCtx.DB.Order.Query().Where(order.AppIDEQ(in.AppId), order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(l.ctx)
-	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
-	}
-	if order.Status != consts.SUCCESS && order.Status != consts.REFUND {
-		return nil, errorx.NewInvalidArgumentError("pay order refund fail status error")
-	}
-	if in.Price+order.RefundPrice > order.Price {
-		return nil, errorx.NewInvalidArgumentError("refund price exceed")
-	}
-	count, err := l.svcCtx.DB.Refund.Query().Where(refund.AppIDEQ(in.AppId), refund.OrderIDEQ(order.ID), refund.StatusEQ(consts.WAITING)).Count(l.ctx)
-	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
-	}
-	if count > 0 {
-		return nil, errorx.NewInvalidArgumentError("refund has refunding")
-	}
-	return order, nil
+	return &pay.BaseIDResp{Id: refundInfo.ID, Msg: errormsg.CreateSuccess}, nil
 }

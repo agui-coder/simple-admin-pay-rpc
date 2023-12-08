@@ -2,8 +2,12 @@ package model
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
+	"github.com/agui-coder/simple-admin-pay-rpc/pay"
+	"github.com/zeromicro/go-zero/core/errorx"
 	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/mqs/amq/types/payload"
@@ -19,16 +23,18 @@ type Model struct {
 	NotifyTask     *NotifyTaskModel
 	OrderExtension *OrderExtensionModel
 	Order          *OrderModel
+	Refund         *RefundModel
 }
 
 func NewModel(client *ent.Client) *Model {
 	return &Model{
-		App:            NewAppModel(client),
-		Channel:        NewChannelModel(client),
-		NotifyLog:      NewNotifyLogModel(client),
-		NotifyTask:     NewNotifyTaskModel(client),
-		OrderExtension: NewOrderExtensionModel(client),
-		Order:          NewOrderModel(client),
+		App:            NewAppModel(client.App),
+		Channel:        NewChannelModel(client.Channel),
+		NotifyLog:      NewNotifyLogModel(client.NotifyLog),
+		NotifyTask:     NewNotifyTaskModel(client.NotifyTask),
+		OrderExtension: NewOrderExtensionModel(client.OrderExtension),
+		Order:          NewOrderModel(client.Order),
+		Refund:         NewRefundModel(client.Refund),
 	}
 }
 
@@ -51,10 +57,39 @@ func (m *Model) CreatePayNotifyTask(ctx context.Context, types int, dataId uint6
 		taskCreate.SetAppID(order.AppID).
 			SetMerchantOrderID(order.MerchantOrderID).
 			SetNotifyURL(order.NotifyURL)
+	} else if types == consts.RefundType {
+		refundInfo, err := m.Refund.Get(ctx, dataId)
+		if err != nil {
+			return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, dataId)
+		}
+		taskCreate.SetAppID(refundInfo.AppID).
+			SetMerchantOrderID(refundInfo.MerchantOrderID).
+			SetNotifyURL(refundInfo.NotifyURL)
 	}
 	task, err := taskCreate.Save(ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, dataId)
 	}
 	return task, nil
+}
+
+func (m *Model) ValidatePayOrderCanRefund(ctx context.Context, in *pay.RefundCreateReq) (*ent.Order, error) {
+	order, err := m.Order.Query().Where(order.AppIDEQ(in.AppId), order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(ctx)
+	if err != nil {
+		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, in)
+	}
+	if order.Status != consts.SUCCESS && order.Status != consts.REFUND {
+		return nil, errorx.NewInvalidArgumentError("pay order refund fail status error")
+	}
+	if in.Price+order.RefundPrice > order.Price {
+		return nil, errorx.NewInvalidArgumentError("refund price exceed")
+	}
+	count, err := m.Refund.Query().Where(refund.AppIDEQ(in.AppId), refund.OrderIDEQ(order.ID), refund.StatusEQ(consts.WAITING)).Count(ctx)
+	if err != nil {
+		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, in)
+	}
+	if count > 0 {
+		return nil, errorx.NewInvalidArgumentError("refund has refunding")
+	}
+	return order, nil
 }

@@ -181,3 +181,8 @@ func (s *PayServer) GetRefundById(ctx context.Context, in *pay.IDReq) (*pay.Refu
 	l := refund.NewGetRefundByIdLogic(ctx, s.svcCtx)
 	return l.GetRefundById(in)
 }
+
+func (s *PayServer) NotifyRefund(ctx context.Context, in *pay.NotifyRefundReq) (*pay.BaseResp, error) {
+	l := refund.NewNotifyRefundLogic(ctx, s.svcCtx)
+	return l.NotifyRefund(in)
+}

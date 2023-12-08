@@ -1,7 +1,9 @@
 // Package payload defines all the payload structures used in tasks
 package payload
 
-import "github.com/agui-coder/simple-admin-pay-rpc/consts"
+import (
+	"github.com/agui-coder/simple-admin-pay-common/consts"
+)
 
 type PayOrderNotifyReq struct {
 	MerchantOrderId string `json:"merchantOrderId"`

@@ -15,8 +15,8 @@ message RefundInfo {
   optional string merchant_order_id = 11;
   optional string merchant_refund_id = 12;
   optional string notify_url = 13;
-  optional int64 pay_price = 14;
-  optional int64 refund_price = 15;
+  optional int32 pay_price = 14;
+  optional int32 refund_price = 15;
   optional string reason = 16;
   optional string user_ip = 17;
   optional string channel_order_no = 18;
@@ -51,39 +51,12 @@ message RefundPageReq {
   optional string channelOrderNo = 7;
   optional string channelRefundNo = 8;
   optional string status = 9;
-  repeated int64 createTime = 10
+  repeated int64 createTime = 10;
 
 }
 
 message RefundCountResp {
   uint64 count = 1;
-}
-// Refund message
-
-message RefundInfo {
-  optional uint64 id = 1;
-  optional int64 created_at = 2;
-  optional int64 updated_at = 3;
-  optional uint32 status = 4;
-  optional string no = 5;
-  optional uint64 app_id = 6;
-  optional uint64 channel_id = 7;
-  optional string channel_code = 8;
-  optional uint64 order_id = 9;
-  optional string order_no = 10;
-  optional string merchant_order_id = 11;
-  optional string merchant_refund_id = 12;
-  optional string notify_url = 13;
-  optional int32 pay_price = 14;
-  optional int32 refund_price = 15;
-  optional string reason = 16;
-  optional string user_ip = 17;
-  optional string channel_order_no = 18;
-  optional string channel_refund_no = 19;
-  optional int64  success_time = 20;
-  optional string channel_error_code = 21;
-  optional string channel_error_msg = 22;
-  optional string channel_notify_data = 23;
 }
 
 message RefundListResp {
@@ -99,6 +72,16 @@ message RefundListReq {
   optional string order_no = 5;
 }
 
+message NotifyRefundReq {
+  uint32 Status = 1;
+  string OutRefundNo = 2;
+  string ChannelRefundNo =3;
+  int64 SuccessTime =4;
+  string ChannelNotifyData = 5;
+  string   ChannelErrorCode = 6;
+  string  ChannelErrorMsg  =7;
+  uint64 channel_id = 8;
+}
 
 service Pay {
 
@@ -109,4 +92,6 @@ service Pay {
   rpc getRefundPage (RefundPageReq) returns (RefundPageResp);
   // group: refund
   rpc getRefundById (IDReq) returns (RefundInfo);
+  // group: refund
+  rpc notifyRefund (NotifyRefundReq) returns (BaseResp);
 }

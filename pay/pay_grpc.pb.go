@@ -49,6 +49,7 @@ const (
 	Pay_CreateRefund_FullMethodName                 = "/pay.Pay/createRefund"
 	Pay_GetRefundPage_FullMethodName                = "/pay.Pay/getRefundPage"
 	Pay_GetRefundById_FullMethodName                = "/pay.Pay/getRefundById"
+	Pay_NotifyRefund_FullMethodName                 = "/pay.Pay/notifyRefund"
 )
 
 // PayClient is the client API for Pay service.
@@ -120,6 +121,8 @@ type PayClient interface {
 	GetRefundPage(ctx context.Context, in *RefundPageReq, opts ...grpc.CallOption) (*RefundPageResp, error)
 	// group: refund
 	GetRefundById(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*RefundInfo, error)
+	// group: refund
+	NotifyRefund(ctx context.Context, in *NotifyRefundReq, opts ...grpc.CallOption) (*BaseResp, error)
 }
 
 type payClient struct {
@@ -400,6 +403,15 @@ func (c *payClient) GetRefundById(ctx context.Context, in *IDReq, opts ...grpc.C
 	return out, nil
 }
 
+func (c *payClient) NotifyRefund(ctx context.Context, in *NotifyRefundReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, Pay_NotifyRefund_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PayServer is the server API for Pay service.
 // All implementations must embed UnimplementedPayServer
 // for forward compatibility
@@ -469,6 +481,8 @@ type PayServer interface {
 	GetRefundPage(context.Context, *RefundPageReq) (*RefundPageResp, error)
 	// group: refund
 	GetRefundById(context.Context, *IDReq) (*RefundInfo, error)
+	// group: refund
+	NotifyRefund(context.Context, *NotifyRefundReq) (*BaseResp, error)
 	mustEmbedUnimplementedPayServer()
 }
 
@@ -565,6 +579,9 @@ func (UnimplementedPayServer) GetRefundPage(context.Context, *RefundPageReq) (*R
 }
 func (UnimplementedPayServer) GetRefundById(context.Context, *IDReq) (*RefundInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRefundById not implemented")
+}
+func (UnimplementedPayServer) NotifyRefund(context.Context, *NotifyRefundReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NotifyRefund not implemented")
 }
 func (UnimplementedPayServer) mustEmbedUnimplementedPayServer() {}
 
@@ -1119,6 +1136,24 @@ func _Pay_GetRefundById_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Pay_NotifyRefund_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NotifyRefundReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PayServer).NotifyRefund(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Pay_NotifyRefund_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PayServer).NotifyRefund(ctx, req.(*NotifyRefundReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Pay_ServiceDesc is the grpc.ServiceDesc for Pay service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1245,6 +1280,10 @@ var Pay_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getRefundById",
 			Handler:    _Pay_GetRefundById_Handler,
+		},
+		{
+			MethodName: "notifyRefund",
+			Handler:    _Pay_NotifyRefund_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

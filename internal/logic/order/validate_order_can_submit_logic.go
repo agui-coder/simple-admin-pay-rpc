@@ -2,7 +2,7 @@ package order
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"time"
 

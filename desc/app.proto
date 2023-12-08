@@ -62,4 +62,6 @@ service Pay {
   rpc getAppList (Empty) returns (AppListResp);
   // group: app
   rpc getAppPage (AppPageReq) returns (AppListResp);
+  // group: app
+
 }

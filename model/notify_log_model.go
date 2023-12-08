@@ -15,8 +15,8 @@ type NotifyLogModel struct {
 	*ent.NotifyLogClient
 }
 
-func NewNotifyLogModel(client *ent.Client) *NotifyLogModel {
-	return &NotifyLogModel{client.NotifyLog}
+func NewNotifyLogModel(client *ent.NotifyLogClient) *NotifyLogModel {
+	return &NotifyLogModel{client}
 }
 
 // CreateNotifyLog 创建通知日志

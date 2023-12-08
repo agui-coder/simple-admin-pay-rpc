@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -15,8 +15,8 @@ type AppModel struct {
 	*ent.AppClient
 }
 
-func NewAppModel(client *ent.Client) *AppModel {
-	return &AppModel{AppClient: client.App}
+func NewAppModel(client *ent.AppClient) *AppModel {
+	return &AppModel{client}
 }
 
 func (m *AppModel) ValidPayApp(ctx context.Context, Id uint64) (*ent.App, error) {

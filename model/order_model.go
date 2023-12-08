@@ -2,7 +2,7 @@ package model
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/money"
 	"time"
@@ -20,8 +20,8 @@ type OrderModel struct {
 	*ent.OrderClient
 }
 
-func NewOrderModel(client *ent.Client) *OrderModel {
-	return &OrderModel{OrderClient: client.Order}
+func NewOrderModel(client *ent.OrderClient) *OrderModel {
+	return &OrderModel{client}
 }
 
 func (m *OrderModel) QueryByAppIdAndMerchantOrderId(ctx context.Context, appId uint64, merchantOrderId string) (*ent.Order, error) {

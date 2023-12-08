@@ -3,7 +3,7 @@ package notify
 import (
 	"context"
 	"encoding/json"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"net/http"
 	"strconv"
@@ -35,7 +35,7 @@ func NewExecuteNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Exe
 
 // ExecuteNotify 通知锁核心逻辑 redis 实现
 func (l *ExecuteNotifyLogic) ExecuteNotify(task *ent.NotifyTask) error {
-	lock := redis.NewRedisLock(l.svcCtx.Redis, strconv.FormatUint(task.ID, 10))
+	lock := redis.NewRedisLock(l.svcCtx.Redis, "pay_task_lock:"+strconv.FormatUint(task.ID, 10))
 	lock.SetExpire(payload.NotifyTimeoutMillis)
 	// 尝试获取锁
 	acquire, err := lock.Acquire()

@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 	"encoding/json"
-	"github.com/agui-coder/simple-admin-pay-rpc/consts"
+	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
@@ -18,8 +18,8 @@ type OrderExtensionModel struct {
 	*ent.OrderExtensionClient
 }
 
-func NewOrderExtensionModel(client *ent.Client) *OrderExtensionModel {
-	return &OrderExtensionModel{OrderExtensionClient: client.OrderExtension}
+func NewOrderExtensionModel(client *ent.OrderExtensionClient) *OrderExtensionModel {
+	return &OrderExtensionModel{client}
 }
 
 func (m *OrderExtensionModel) QueryByNo(ctx context.Context, no string) (*ent.OrderExtension, error) {
