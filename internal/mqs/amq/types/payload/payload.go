@@ -10,6 +10,11 @@ type PayOrderNotifyReq struct {
 	PayOrderId      uint64 `json:"payOrderId"`
 }
 
+type PayRefundNotifyReq struct {
+	MerchantOrderId string `json:"merchantOrderId"`
+	PayRefundId     uint64 `json:"payRefundId"`
+}
+
 const (
 	SUCCESS             = int(consts.SUCCESS)
 	NotifyTimeoutMillis = 120

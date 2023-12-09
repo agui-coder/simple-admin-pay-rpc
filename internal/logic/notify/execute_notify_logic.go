@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/model"
 	"net/http"
 	"strconv"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 
-	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest/httpc"
@@ -61,36 +61,44 @@ func (l *ExecuteNotifyLogic) ExecuteNotify(task *ent.NotifyTask) error {
 			logx.Errorf("[executeNotifySync][task%s 任务被忽略，原因是它的通知不是第 %d 次，可能是因为并发执行了]", string(taskJson), dbTask.NotifyTimes)
 			return nil
 		}
-		if task.Type == consts.OrderType {
-			err = l.executeNotifyOrder(dbTask)
-			return err
-		} else if task.Type == consts.RefundType {
-			return nil
-		}
+		err = l.executeNotify0(task)
+		return err
 	}
 	return err
 }
 
 // executeNotifyOrder 执行订单通知
-func (l *ExecuteNotifyLogic) executeNotifyOrder(task *ent.NotifyTask) error {
-	err := entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
-		var resp payload.PayOrderNotifyResp
-		response, err := httpc.Do(l.ctx, http.MethodPost, task.NotifyURL, payload.PayOrderNotifyReq{
-			MerchantOrderId: task.MerchantOrderID,
-			PayOrderId:      task.DataID,
-		})
-		if err == nil {
-			newErr := httpc.Parse(response, &resp)
-			if newErr != nil {
-				err = errors.Wrap(err, newErr.Error())
-			}
-		}
-		status, err := l.svcCtx.Model.NotifyTask.ProcessNotifyResult(l.ctx, task, resp, err)
-		err = l.svcCtx.Model.NotifyLog.CreateNotifyLog(l.ctx, task, status, err, resp)
+func (l *ExecuteNotifyLogic) executeNotify0(task *ent.NotifyTask) error {
+	resp, err := l.executeNotifyInvoke(task)
+	err = entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
+		txModel := model.NewModel(tx.Client())
+		status, err := txModel.NotifyTask.ProcessNotifyResult(l.ctx, task, resp, err)
+		err = txModel.NotifyLog.CreateNotifyLog(l.ctx, task, status, err, resp)
 		if err != nil {
 			return err
 		}
 		return nil
 	})
 	return err
+}
+
+func (l *ExecuteNotifyLogic) executeNotifyInvoke(task *ent.NotifyTask) (resp payload.PayOrderNotifyResp, err error) {
+	var request any
+	if consts.OrderType == task.Status {
+		request = payload.PayOrderNotifyReq{
+			MerchantOrderId: task.MerchantOrderID,
+			PayOrderId:      task.DataID,
+		}
+	} else if consts.RefundType == task.Status {
+		request = payload.PayRefundNotifyReq{
+			MerchantOrderId: task.MerchantOrderID,
+			PayRefundId:     task.DataID,
+		}
+	}
+	response, err := httpc.Do(l.ctx, http.MethodPost, task.NotifyURL, request)
+	if err == nil {
+		return payload.PayOrderNotifyResp{}, err
+	}
+	err = httpc.Parse(response, &resp)
+	return resp, err
 }

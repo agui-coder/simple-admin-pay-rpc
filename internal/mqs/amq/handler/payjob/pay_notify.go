@@ -37,22 +37,31 @@ func (l *PayNotifyHandler) ProcessTask(ctx context.Context, t *asynq.Task) error
 	}
 	// 任务数量
 	var size = len(notifyTasks)
+	// 定义工作线程的数量
+	const numWorkers = 10
+	tasks := make(chan *ent.NotifyTask, len(notifyTasks))
 	// 记录剩余任务数量
 	remainingTasks := int32(size)
 	logx.Infof("执行支付通知 %d 个", size)
 	var wg sync.WaitGroup
-	for _, task := range notifyTasks {
+	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go func(ctx context.Context, task *ent.NotifyTask) {
+		go func() {
 			defer wg.Done()
-			err := notify.NewExecuteNotifyLogic(ctx, l.svcCtx).ExecuteNotify(task)
-			if err != nil {
-				logx.Errorf("[executeNotify][task%s 任务处理失败，原因是%s]", task, err)
-				return
+			for task := range tasks {
+				err := notify.NewExecuteNotifyLogic(ctx, l.svcCtx).ExecuteNotify(task)
+				if err != nil {
+					logx.Errorf("[executeNotify][task%s 任务处理失败，原因是%s]", task, err)
+					return
+				}
+				// 减少剩余任务数量
+				atomic.AddInt32(&remainingTasks, -1)
 			}
-			// 减少剩余任务数量
-			atomic.AddInt32(&remainingTasks, -1)
-		}(ctx, task)
+		}()
+	}
+	// 将任务分配给工作线程，并在完成后关闭通道
+	for _, task := range notifyTasks {
+		tasks <- task
 	}
 	// 启动一个 goroutine 每秒钟打印剩余任务数量
 	done := make(chan struct{})
@@ -75,6 +84,7 @@ func (l *PayNotifyHandler) ProcessTask(ctx context.Context, t *asynq.Task) error
 		}
 	}()
 	wg.Wait()
+	close(tasks)
 	close(done)
 	return nil
 }

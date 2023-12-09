@@ -36,19 +36,19 @@ func (l *GetListDemoOrderLogic) GetListDemoOrder(in *pay.DemoOrderPageReq) (*pay
 	for i, demoOrder := range page.List {
 		infos[i] = &pay.DemoOrderInfo{
 			Id:             &demoOrder.ID,
-			CreatedAt:      pointy.GetPointer(demoOrder.CreatedAt.Unix()),
-			UpdatedAt:      pointy.GetPointer(demoOrder.UpdatedAt.Unix()),
+			CreatedAt:      pointy.GetPointer(demoOrder.CreatedAt.UnixMilli()),
+			UpdatedAt:      pointy.GetPointer(demoOrder.UpdatedAt.UnixMilli()),
 			UserId:         &demoOrder.UserID,
 			SpuId:          &demoOrder.SpuID,
 			SpuName:        &demoOrder.SpuName,
 			Price:          &demoOrder.Price,
 			PayStatus:      &demoOrder.PayStatus,
 			PayOrderId:     &demoOrder.PayOrderId,
-			PayTime:        pointy.GetPointer(demoOrder.PayTime.Unix()),
+			PayTime:        pointy.GetPointer(demoOrder.PayTime.UnixMilli()),
 			PayChannelCode: &demoOrder.PayChannelCode,
 			PayRefundId:    &demoOrder.PayRefundID,
 			RefundPrice:    &demoOrder.RefundPrice,
-			RefundTime:     pointy.GetPointer(demoOrder.RefundTime.Unix()),
+			RefundTime:     pointy.GetPointer(demoOrder.RefundTime.UnixMilli()),
 		}
 	}
 	return &pay.DemoOrderListResp{
