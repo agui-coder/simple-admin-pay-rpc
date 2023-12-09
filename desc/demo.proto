@@ -38,6 +38,11 @@ message updateDemoOrderPaidReq{
   uint64 payOrderId = 2;
 }
 
+message RefundDemoOrderReq{
+  uint64 Id = 2;
+  string userIp = 3;
+}
+
 service Pay {
   // Demo management
   // group: demo
@@ -48,4 +53,6 @@ service Pay {
   rpc getListDemoOrder (DemoOrderPageReq) returns (DemoOrderListResp);
   // group: demo
   rpc updateDemoOrderPaid(updateDemoOrderPaidReq) returns (BaseResp);
+  // group: demo
+  rpc refundDemoOrder(RefundDemoOrderReq) returns (BaseResp);
 }

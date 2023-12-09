@@ -130,6 +130,11 @@ func (s *PayServer) UpdateDemoOrderPaid(ctx context.Context, in *pay.UpdateDemoO
 	return l.UpdateDemoOrderPaid(in)
 }
 
+func (s *PayServer) RefundDemoOrder(ctx context.Context, in *pay.RefundDemoOrderReq) (*pay.BaseResp, error) {
+	l := demo.NewRefundDemoOrderLogic(ctx, s.svcCtx)
+	return l.RefundDemoOrder(in)
+}
+
 // Order management
 func (s *PayServer) CreateOrder(ctx context.Context, in *pay.OrderCreateReq) (*pay.BaseIDResp, error) {
 	l := order.NewCreateOrderLogic(ctx, s.svcCtx)

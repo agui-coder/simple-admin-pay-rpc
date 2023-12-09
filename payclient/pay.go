@@ -48,6 +48,7 @@ type (
 	PayDemoOrderCreateReq   = pay.PayDemoOrderCreateReq
 	RefundCountResp         = pay.RefundCountResp
 	RefundCreateReq         = pay.RefundCreateReq
+	RefundDemoOrderReq      = pay.RefundDemoOrderReq
 	RefundInfo              = pay.RefundInfo
 	RefundListReq           = pay.RefundListReq
 	RefundListResp          = pay.RefundListResp
@@ -83,6 +84,7 @@ type (
 		GetDemoOrder(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*DemoOrderInfo, error)
 		GetListDemoOrder(ctx context.Context, in *DemoOrderPageReq, opts ...grpc.CallOption) (*DemoOrderListResp, error)
 		UpdateDemoOrderPaid(ctx context.Context, in *UpdateDemoOrderPaidReq, opts ...grpc.CallOption) (*BaseResp, error)
+		RefundDemoOrder(ctx context.Context, in *RefundDemoOrderReq, opts ...grpc.CallOption) (*BaseResp, error)
 		// Order management
 		CreateOrder(ctx context.Context, in *OrderCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
 		GetOrder(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*OrderInfo, error)
@@ -210,6 +212,11 @@ func (m *defaultPay) GetListDemoOrder(ctx context.Context, in *DemoOrderPageReq,
 func (m *defaultPay) UpdateDemoOrderPaid(ctx context.Context, in *UpdateDemoOrderPaidReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := pay.NewPayClient(m.cli.Conn())
 	return client.UpdateDemoOrderPaid(ctx, in, opts...)
+}
+
+func (m *defaultPay) RefundDemoOrder(ctx context.Context, in *RefundDemoOrderReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := pay.NewPayClient(m.cli.Conn())
+	return client.RefundDemoOrder(ctx, in, opts...)
 }
 
 // Order management
