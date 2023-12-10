@@ -4,13 +4,13 @@ package enttest
 
 import (
 	"context"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	// required by schema hooks.
 	_ "github.com/agui-coder/simple-admin-pay-rpc/ent/runtime"
 
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/migrate"
-
 	"entgo.io/ent/dialect/sql/schema"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/migrate"
 )
 
 type (

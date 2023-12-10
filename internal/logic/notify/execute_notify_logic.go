@@ -6,6 +6,7 @@ import (
 	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/model"
+	"github.com/zeromicro/go-zero/core/errorx"
 	"net/http"
 	"strconv"
 
@@ -84,19 +85,21 @@ func (l *ExecuteNotifyLogic) executeNotify0(task *ent.NotifyTask) error {
 
 func (l *ExecuteNotifyLogic) executeNotifyInvoke(task *ent.NotifyTask) (resp payload.PayOrderNotifyResp, err error) {
 	var request any
-	if consts.OrderType == task.Status {
+	if consts.OrderType == task.Type {
 		request = payload.PayOrderNotifyReq{
 			MerchantOrderId: task.MerchantOrderID,
 			PayOrderId:      task.DataID,
 		}
-	} else if consts.RefundType == task.Status {
+	} else if consts.RefundType == task.Type {
 		request = payload.PayRefundNotifyReq{
 			MerchantOrderId: task.MerchantOrderID,
 			PayRefundId:     task.DataID,
 		}
+	} else {
+		return payload.PayOrderNotifyResp{}, errorx.NewInvalidArgumentError("NOTIFY_TASK_TYPE_ERROR")
 	}
 	response, err := httpc.Do(l.ctx, http.MethodPost, task.NotifyURL, request)
-	if err == nil {
+	if err != nil {
 		return payload.PayOrderNotifyResp{}, err
 	}
 	err = httpc.Parse(response, &resp)

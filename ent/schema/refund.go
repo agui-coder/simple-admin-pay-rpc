@@ -70,7 +70,7 @@ func (Refund) Fields() []ent.Field {
 		field.String("channel_error_msg").Optional().
 			Annotations(entsql.WithComments(true)).
 			Comment("渠道调用报错时，错误信息"),
-		field.String("channel_notify_data").Optional().
+		field.Text("channel_notify_data").Optional().
 			Annotations(entsql.WithComments(true)).
 			Comment("支付渠道异步通知的内容")}
 }

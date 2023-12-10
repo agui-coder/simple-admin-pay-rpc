@@ -11,6 +11,9 @@ import (
 
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/migrate"
 
+	"entgo.io/ent"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
@@ -19,10 +22,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
-
-	"entgo.io/ent"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/sql"
 
 	stdsql "database/sql"
 )
@@ -52,9 +51,7 @@ type Client struct {
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
-	cfg.options(opts...)
-	client := &Client{config: cfg}
+	client := &Client{config: newConfig(opts...)}
 	client.init()
 	return client
 }
@@ -88,6 +85,13 @@ type (
 	// Option function to configure the client.
 	Option func(*config)
 )
+
+// newConfig creates a new config for the client.
+func newConfig(opts ...Option) config {
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
+	cfg.options(opts...)
+	return cfg
+}
 
 // options applies the options on the config object.
 func (c *config) options(opts ...Option) {

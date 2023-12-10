@@ -6,11 +6,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
 )
 
 // NotifyLogCreate is the builder for creating a NotifyLog entity.

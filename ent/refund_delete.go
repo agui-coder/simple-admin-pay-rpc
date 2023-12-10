@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 )
 
 // RefundDelete is the builder for deleting a Refund entity.

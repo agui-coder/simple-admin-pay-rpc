@@ -40,6 +40,7 @@ const (
 	Pay_GetListDemoOrder_FullMethodName             = "/pay.Pay/getListDemoOrder"
 	Pay_UpdateDemoOrderPaid_FullMethodName          = "/pay.Pay/updateDemoOrderPaid"
 	Pay_RefundDemoOrder_FullMethodName              = "/pay.Pay/refundDemoOrder"
+	Pay_UpdateDemoRefundPaid_FullMethodName         = "/pay.Pay/updateDemoRefundPaid"
 	Pay_CreateOrder_FullMethodName                  = "/pay.Pay/createOrder"
 	Pay_GetOrder_FullMethodName                     = "/pay.Pay/getOrder"
 	Pay_GetOrderPage_FullMethodName                 = "/pay.Pay/getOrderPage"
@@ -102,6 +103,8 @@ type PayClient interface {
 	UpdateDemoOrderPaid(ctx context.Context, in *UpdateDemoOrderPaidReq, opts ...grpc.CallOption) (*BaseResp, error)
 	// group: demo
 	RefundDemoOrder(ctx context.Context, in *RefundDemoOrderReq, opts ...grpc.CallOption) (*BaseResp, error)
+	// group: demo
+	UpdateDemoRefundPaid(ctx context.Context, in *UpdateDemoRefundPaidReq, opts ...grpc.CallOption) (*BaseResp, error)
 	// Order management
 	// group: order
 	CreateOrder(ctx context.Context, in *OrderCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
@@ -325,6 +328,15 @@ func (c *payClient) RefundDemoOrder(ctx context.Context, in *RefundDemoOrderReq,
 	return out, nil
 }
 
+func (c *payClient) UpdateDemoRefundPaid(ctx context.Context, in *UpdateDemoRefundPaidReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	out := new(BaseResp)
+	err := c.cc.Invoke(ctx, Pay_UpdateDemoRefundPaid_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *payClient) CreateOrder(ctx context.Context, in *OrderCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error) {
 	out := new(BaseIDResp)
 	err := c.cc.Invoke(ctx, Pay_CreateOrder_FullMethodName, in, out, opts...)
@@ -473,6 +485,8 @@ type PayServer interface {
 	UpdateDemoOrderPaid(context.Context, *UpdateDemoOrderPaidReq) (*BaseResp, error)
 	// group: demo
 	RefundDemoOrder(context.Context, *RefundDemoOrderReq) (*BaseResp, error)
+	// group: demo
+	UpdateDemoRefundPaid(context.Context, *UpdateDemoRefundPaidReq) (*BaseResp, error)
 	// Order management
 	// group: order
 	CreateOrder(context.Context, *OrderCreateReq) (*BaseIDResp, error)
@@ -566,6 +580,9 @@ func (UnimplementedPayServer) UpdateDemoOrderPaid(context.Context, *UpdateDemoOr
 }
 func (UnimplementedPayServer) RefundDemoOrder(context.Context, *RefundDemoOrderReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefundDemoOrder not implemented")
+}
+func (UnimplementedPayServer) UpdateDemoRefundPaid(context.Context, *UpdateDemoRefundPaidReq) (*BaseResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDemoRefundPaid not implemented")
 }
 func (UnimplementedPayServer) CreateOrder(context.Context, *OrderCreateReq) (*BaseIDResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
@@ -991,6 +1008,24 @@ func _Pay_RefundDemoOrder_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Pay_UpdateDemoRefundPaid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDemoRefundPaidReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PayServer).UpdateDemoRefundPaid(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Pay_UpdateDemoRefundPaid_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PayServer).UpdateDemoRefundPaid(ctx, req.(*UpdateDemoRefundPaidReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Pay_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderCreateReq)
 	if err := dec(in); err != nil {
@@ -1279,6 +1314,10 @@ var Pay_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "refundDemoOrder",
 			Handler:    _Pay_RefundDemoOrder_Handler,
+		},
+		{
+			MethodName: "updateDemoRefundPaid",
+			Handler:    _Pay_UpdateDemoRefundPaid_Handler,
 		},
 		{
 			MethodName: "createOrder",

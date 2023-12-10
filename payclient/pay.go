@@ -58,6 +58,7 @@ type (
 	UUIDReq                 = pay.UUIDReq
 	UUIDsReq                = pay.UUIDsReq
 	UpdateDemoOrderPaidReq  = pay.UpdateDemoOrderPaidReq
+	UpdateDemoRefundPaidReq = pay.UpdateDemoRefundPaidReq
 	ValidateChannelReq      = pay.ValidateChannelReq
 
 	Pay interface {
@@ -85,6 +86,7 @@ type (
 		GetListDemoOrder(ctx context.Context, in *DemoOrderPageReq, opts ...grpc.CallOption) (*DemoOrderListResp, error)
 		UpdateDemoOrderPaid(ctx context.Context, in *UpdateDemoOrderPaidReq, opts ...grpc.CallOption) (*BaseResp, error)
 		RefundDemoOrder(ctx context.Context, in *RefundDemoOrderReq, opts ...grpc.CallOption) (*BaseResp, error)
+		UpdateDemoRefundPaid(ctx context.Context, in *UpdateDemoRefundPaidReq, opts ...grpc.CallOption) (*BaseResp, error)
 		// Order management
 		CreateOrder(ctx context.Context, in *OrderCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
 		GetOrder(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*OrderInfo, error)
@@ -217,6 +219,11 @@ func (m *defaultPay) UpdateDemoOrderPaid(ctx context.Context, in *UpdateDemoOrde
 func (m *defaultPay) RefundDemoOrder(ctx context.Context, in *RefundDemoOrderReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := pay.NewPayClient(m.cli.Conn())
 	return client.RefundDemoOrder(ctx, in, opts...)
+}
+
+func (m *defaultPay) UpdateDemoRefundPaid(ctx context.Context, in *UpdateDemoRefundPaidReq, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := pay.NewPayClient(m.cli.Conn())
+	return client.UpdateDemoRefundPaid(ctx, in, opts...)
 }
 
 // Order management

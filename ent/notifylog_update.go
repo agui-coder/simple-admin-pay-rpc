@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // NotifyLogUpdate is the builder for updating NotifyLog entities.
@@ -88,6 +88,14 @@ func (nlu *NotifyLogUpdate) SetTaskID(u uint64) *NotifyLogUpdate {
 	return nlu
 }
 
+// SetNillableTaskID sets the "task_id" field if the given value is not nil.
+func (nlu *NotifyLogUpdate) SetNillableTaskID(u *uint64) *NotifyLogUpdate {
+	if u != nil {
+		nlu.SetTaskID(*u)
+	}
+	return nlu
+}
+
 // AddTaskID adds u to the "task_id" field.
 func (nlu *NotifyLogUpdate) AddTaskID(u int64) *NotifyLogUpdate {
 	nlu.mutation.AddTaskID(u)
@@ -101,6 +109,14 @@ func (nlu *NotifyLogUpdate) SetNotifyTimes(i int8) *NotifyLogUpdate {
 	return nlu
 }
 
+// SetNillableNotifyTimes sets the "notify_times" field if the given value is not nil.
+func (nlu *NotifyLogUpdate) SetNillableNotifyTimes(i *int8) *NotifyLogUpdate {
+	if i != nil {
+		nlu.SetNotifyTimes(*i)
+	}
+	return nlu
+}
+
 // AddNotifyTimes adds i to the "notify_times" field.
 func (nlu *NotifyLogUpdate) AddNotifyTimes(i int8) *NotifyLogUpdate {
 	nlu.mutation.AddNotifyTimes(i)
@@ -110,6 +126,14 @@ func (nlu *NotifyLogUpdate) AddNotifyTimes(i int8) *NotifyLogUpdate {
 // SetResponse sets the "response" field.
 func (nlu *NotifyLogUpdate) SetResponse(s string) *NotifyLogUpdate {
 	nlu.mutation.SetResponse(s)
+	return nlu
+}
+
+// SetNillableResponse sets the "response" field if the given value is not nil.
+func (nlu *NotifyLogUpdate) SetNillableResponse(s *string) *NotifyLogUpdate {
+	if s != nil {
+		nlu.SetResponse(*s)
+	}
 	return nlu
 }
 
@@ -282,6 +306,14 @@ func (nluo *NotifyLogUpdateOne) SetTaskID(u uint64) *NotifyLogUpdateOne {
 	return nluo
 }
 
+// SetNillableTaskID sets the "task_id" field if the given value is not nil.
+func (nluo *NotifyLogUpdateOne) SetNillableTaskID(u *uint64) *NotifyLogUpdateOne {
+	if u != nil {
+		nluo.SetTaskID(*u)
+	}
+	return nluo
+}
+
 // AddTaskID adds u to the "task_id" field.
 func (nluo *NotifyLogUpdateOne) AddTaskID(u int64) *NotifyLogUpdateOne {
 	nluo.mutation.AddTaskID(u)
@@ -295,6 +327,14 @@ func (nluo *NotifyLogUpdateOne) SetNotifyTimes(i int8) *NotifyLogUpdateOne {
 	return nluo
 }
 
+// SetNillableNotifyTimes sets the "notify_times" field if the given value is not nil.
+func (nluo *NotifyLogUpdateOne) SetNillableNotifyTimes(i *int8) *NotifyLogUpdateOne {
+	if i != nil {
+		nluo.SetNotifyTimes(*i)
+	}
+	return nluo
+}
+
 // AddNotifyTimes adds i to the "notify_times" field.
 func (nluo *NotifyLogUpdateOne) AddNotifyTimes(i int8) *NotifyLogUpdateOne {
 	nluo.mutation.AddNotifyTimes(i)
@@ -304,6 +344,14 @@ func (nluo *NotifyLogUpdateOne) AddNotifyTimes(i int8) *NotifyLogUpdateOne {
 // SetResponse sets the "response" field.
 func (nluo *NotifyLogUpdateOne) SetResponse(s string) *NotifyLogUpdateOne {
 	nluo.mutation.SetResponse(s)
+	return nluo
+}
+
+// SetNillableResponse sets the "response" field if the given value is not nil.
+func (nluo *NotifyLogUpdateOne) SetNillableResponse(s *string) *NotifyLogUpdateOne {
+	if s != nil {
+		nluo.SetResponse(*s)
+	}
 	return nluo
 }
 

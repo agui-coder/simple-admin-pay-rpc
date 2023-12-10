@@ -191,7 +191,7 @@ var (
 		{Name: "success_time", Type: field.TypeTime, Nullable: true, Comment: "退款成功时间"},
 		{Name: "channel_error_code", Type: field.TypeString, Nullable: true, Comment: "渠道调用报错时，错误码"},
 		{Name: "channel_error_msg", Type: field.TypeString, Nullable: true, Comment: "渠道调用报错时，错误信息"},
-		{Name: "channel_notify_data", Type: field.TypeString, Nullable: true, Comment: "支付渠道异步通知的内容"},
+		{Name: "channel_notify_data", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "支付渠道异步通知的内容"},
 	}
 	// PayRefundTable holds the schema information for the "pay_refund" table.
 	PayRefundTable = &schema.Table{

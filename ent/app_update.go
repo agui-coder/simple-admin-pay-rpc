@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // AppUpdate is the builder for updating App entities.
@@ -87,6 +87,14 @@ func (au *AppUpdate) SetName(s string) *AppUpdate {
 	return au
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (au *AppUpdate) SetNillableName(s *string) *AppUpdate {
+	if s != nil {
+		au.SetName(*s)
+	}
+	return au
+}
+
 // SetRemark sets the "remark" field.
 func (au *AppUpdate) SetRemark(s string) *AppUpdate {
 	au.mutation.SetRemark(s)
@@ -113,9 +121,25 @@ func (au *AppUpdate) SetOrderNotifyURL(s string) *AppUpdate {
 	return au
 }
 
+// SetNillableOrderNotifyURL sets the "order_notify_url" field if the given value is not nil.
+func (au *AppUpdate) SetNillableOrderNotifyURL(s *string) *AppUpdate {
+	if s != nil {
+		au.SetOrderNotifyURL(*s)
+	}
+	return au
+}
+
 // SetRefundNotifyURL sets the "refund_notify_url" field.
 func (au *AppUpdate) SetRefundNotifyURL(s string) *AppUpdate {
 	au.mutation.SetRefundNotifyURL(s)
+	return au
+}
+
+// SetNillableRefundNotifyURL sets the "refund_notify_url" field if the given value is not nil.
+func (au *AppUpdate) SetNillableRefundNotifyURL(s *string) *AppUpdate {
+	if s != nil {
+		au.SetRefundNotifyURL(*s)
+	}
 	return au
 }
 
@@ -287,6 +311,14 @@ func (auo *AppUpdateOne) SetName(s string) *AppUpdateOne {
 	return auo
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (auo *AppUpdateOne) SetNillableName(s *string) *AppUpdateOne {
+	if s != nil {
+		auo.SetName(*s)
+	}
+	return auo
+}
+
 // SetRemark sets the "remark" field.
 func (auo *AppUpdateOne) SetRemark(s string) *AppUpdateOne {
 	auo.mutation.SetRemark(s)
@@ -313,9 +345,25 @@ func (auo *AppUpdateOne) SetOrderNotifyURL(s string) *AppUpdateOne {
 	return auo
 }
 
+// SetNillableOrderNotifyURL sets the "order_notify_url" field if the given value is not nil.
+func (auo *AppUpdateOne) SetNillableOrderNotifyURL(s *string) *AppUpdateOne {
+	if s != nil {
+		auo.SetOrderNotifyURL(*s)
+	}
+	return auo
+}
+
 // SetRefundNotifyURL sets the "refund_notify_url" field.
 func (auo *AppUpdateOne) SetRefundNotifyURL(s string) *AppUpdateOne {
 	auo.mutation.SetRefundNotifyURL(s)
+	return auo
+}
+
+// SetNillableRefundNotifyURL sets the "refund_notify_url" field if the given value is not nil.
+func (auo *AppUpdateOne) SetNillableRefundNotifyURL(s *string) *AppUpdateOne {
+	if s != nil {
+		auo.SetRefundNotifyURL(*s)
+	}
 	return auo
 }
 

@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
 )
 
 // DemoOrder is the model entity for the DemoOrder schema.

@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // OrderExtensionUpdate is the builder for updating OrderExtension entities.
@@ -87,10 +87,26 @@ func (oeu *OrderExtensionUpdate) SetNo(s string) *OrderExtensionUpdate {
 	return oeu
 }
 
+// SetNillableNo sets the "no" field if the given value is not nil.
+func (oeu *OrderExtensionUpdate) SetNillableNo(s *string) *OrderExtensionUpdate {
+	if s != nil {
+		oeu.SetNo(*s)
+	}
+	return oeu
+}
+
 // SetOrderID sets the "order_id" field.
 func (oeu *OrderExtensionUpdate) SetOrderID(u uint64) *OrderExtensionUpdate {
 	oeu.mutation.ResetOrderID()
 	oeu.mutation.SetOrderID(u)
+	return oeu
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oeu *OrderExtensionUpdate) SetNillableOrderID(u *uint64) *OrderExtensionUpdate {
+	if u != nil {
+		oeu.SetOrderID(*u)
+	}
 	return oeu
 }
 
@@ -107,6 +123,14 @@ func (oeu *OrderExtensionUpdate) SetChannelID(u uint64) *OrderExtensionUpdate {
 	return oeu
 }
 
+// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
+func (oeu *OrderExtensionUpdate) SetNillableChannelID(u *uint64) *OrderExtensionUpdate {
+	if u != nil {
+		oeu.SetChannelID(*u)
+	}
+	return oeu
+}
+
 // AddChannelID adds u to the "channel_id" field.
 func (oeu *OrderExtensionUpdate) AddChannelID(u int64) *OrderExtensionUpdate {
 	oeu.mutation.AddChannelID(u)
@@ -119,9 +143,25 @@ func (oeu *OrderExtensionUpdate) SetChannelCode(s string) *OrderExtensionUpdate 
 	return oeu
 }
 
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (oeu *OrderExtensionUpdate) SetNillableChannelCode(s *string) *OrderExtensionUpdate {
+	if s != nil {
+		oeu.SetChannelCode(*s)
+	}
+	return oeu
+}
+
 // SetUserIP sets the "user_ip" field.
 func (oeu *OrderExtensionUpdate) SetUserIP(s string) *OrderExtensionUpdate {
 	oeu.mutation.SetUserIP(s)
+	return oeu
+}
+
+// SetNillableUserIP sets the "user_ip" field if the given value is not nil.
+func (oeu *OrderExtensionUpdate) SetNillableUserIP(s *string) *OrderExtensionUpdate {
+	if s != nil {
+		oeu.SetUserIP(*s)
+	}
 	return oeu
 }
 
@@ -395,10 +435,26 @@ func (oeuo *OrderExtensionUpdateOne) SetNo(s string) *OrderExtensionUpdateOne {
 	return oeuo
 }
 
+// SetNillableNo sets the "no" field if the given value is not nil.
+func (oeuo *OrderExtensionUpdateOne) SetNillableNo(s *string) *OrderExtensionUpdateOne {
+	if s != nil {
+		oeuo.SetNo(*s)
+	}
+	return oeuo
+}
+
 // SetOrderID sets the "order_id" field.
 func (oeuo *OrderExtensionUpdateOne) SetOrderID(u uint64) *OrderExtensionUpdateOne {
 	oeuo.mutation.ResetOrderID()
 	oeuo.mutation.SetOrderID(u)
+	return oeuo
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (oeuo *OrderExtensionUpdateOne) SetNillableOrderID(u *uint64) *OrderExtensionUpdateOne {
+	if u != nil {
+		oeuo.SetOrderID(*u)
+	}
 	return oeuo
 }
 
@@ -415,6 +471,14 @@ func (oeuo *OrderExtensionUpdateOne) SetChannelID(u uint64) *OrderExtensionUpdat
 	return oeuo
 }
 
+// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
+func (oeuo *OrderExtensionUpdateOne) SetNillableChannelID(u *uint64) *OrderExtensionUpdateOne {
+	if u != nil {
+		oeuo.SetChannelID(*u)
+	}
+	return oeuo
+}
+
 // AddChannelID adds u to the "channel_id" field.
 func (oeuo *OrderExtensionUpdateOne) AddChannelID(u int64) *OrderExtensionUpdateOne {
 	oeuo.mutation.AddChannelID(u)
@@ -427,9 +491,25 @@ func (oeuo *OrderExtensionUpdateOne) SetChannelCode(s string) *OrderExtensionUpd
 	return oeuo
 }
 
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (oeuo *OrderExtensionUpdateOne) SetNillableChannelCode(s *string) *OrderExtensionUpdateOne {
+	if s != nil {
+		oeuo.SetChannelCode(*s)
+	}
+	return oeuo
+}
+
 // SetUserIP sets the "user_ip" field.
 func (oeuo *OrderExtensionUpdateOne) SetUserIP(s string) *OrderExtensionUpdateOne {
 	oeuo.mutation.SetUserIP(s)
+	return oeuo
+}
+
+// SetNillableUserIP sets the "user_ip" field if the given value is not nil.
+func (oeuo *OrderExtensionUpdateOne) SetNillableUserIP(s *string) *OrderExtensionUpdateOne {
+	if s != nil {
+		oeuo.SetUserIP(*s)
+	}
 	return oeuo
 }
 

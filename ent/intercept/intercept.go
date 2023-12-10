@@ -5,6 +5,8 @@ package intercept
 import (
 	"context"
 	"fmt"
+
+	"entgo.io/ent/dialect/sql"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
@@ -15,8 +17,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
-
-	"entgo.io/ent/dialect/sql"
 )
 
 // The Query interface represents an operation that queries a graph.

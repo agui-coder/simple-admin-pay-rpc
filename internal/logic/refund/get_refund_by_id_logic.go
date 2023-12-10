@@ -33,8 +33,8 @@ func (l *GetRefundByIdLogic) GetRefundById(in *pay.IDReq) (*pay.RefundInfo, erro
 
 	return &pay.RefundInfo{
 		Id:                &result.ID,
-		CreatedAt:         pointy.GetPointer(result.CreatedAt.Unix()),
-		UpdatedAt:         pointy.GetPointer(result.UpdatedAt.Unix()),
+		CreatedAt:         pointy.GetPointer(result.CreatedAt.UnixMilli()),
+		UpdatedAt:         pointy.GetPointer(result.UpdatedAt.UnixMilli()),
 		Status:            pointy.GetPointer(uint32(result.Status)),
 		No:                &result.No,
 		AppId:             &result.AppID,

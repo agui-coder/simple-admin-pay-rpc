@@ -81,23 +81,23 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}
-
-	refundUnifiedResp, err := client.UnifiedRefund(l.ctx, model.RefundUnifiedReq{
-		OutTradeNo:  refundInfo.OrderNo,
-		OutRefundNo: refundInfo.No,
-		Reason:      refundInfo.Reason,
-		PayPrice:    refundInfo.PayPrice,
-		RefundPrice: refundInfo.RefundPrice,
-		NotifyUrl:   l.svcCtx.Config.PayProperties.RefundNotifyUrl + "/" + strconv.FormatUint(refundInfo.ChannelID, 10),
-	})
-	if err != nil {
-		logx.Errorf("[RefundApproved][退款 id:%d err:%s", refundInfo.ID, err.Error())
-		return nil, errorx.NewInvalidArgumentError(err.Error())
-	}
-
-	err = NewNotifyRefundLogic(l.ctx, l.svcCtx).ProcessRefundStatus(channel, refundUnifiedResp)
-	if err != nil {
-		return nil, err
-	}
+	go func() {
+		newCtx := context.Background()
+		refundUnifiedResp, err := client.UnifiedRefund(newCtx, model.RefundUnifiedReq{
+			OutTradeNo:  refundInfo.OrderNo,
+			OutRefundNo: refundInfo.No,
+			Reason:      refundInfo.Reason,
+			PayPrice:    refundInfo.PayPrice,
+			RefundPrice: refundInfo.RefundPrice,
+			NotifyUrl:   l.svcCtx.Config.PayProperties.RefundNotifyUrl + "/" + strconv.FormatUint(refundInfo.ChannelID, 10),
+		})
+		if err != nil {
+			logx.Errorf("[RefundApproved][退款 id:%d err:%s", refundInfo.ID, err.Error())
+		}
+		err = NewNotifyRefundLogic(newCtx, l.svcCtx).ProcessRefundStatus(channel, refundUnifiedResp)
+		if err != nil {
+			logx.Errorf(err.Error())
+		}
+	}()
 	return &pay.BaseIDResp{Id: refundInfo.ID, Msg: errormsg.CreateSuccess}, nil
 }

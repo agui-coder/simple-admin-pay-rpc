@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // ChannelUpdate is the builder for updating Channel entities.
@@ -87,6 +87,14 @@ func (cu *ChannelUpdate) SetCode(s string) *ChannelUpdate {
 	return cu
 }
 
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (cu *ChannelUpdate) SetNillableCode(s *string) *ChannelUpdate {
+	if s != nil {
+		cu.SetCode(*s)
+	}
+	return cu
+}
+
 // SetRemark sets the "remark" field.
 func (cu *ChannelUpdate) SetRemark(s string) *ChannelUpdate {
 	cu.mutation.SetRemark(s)
@@ -114,6 +122,14 @@ func (cu *ChannelUpdate) SetFeeRate(f float64) *ChannelUpdate {
 	return cu
 }
 
+// SetNillableFeeRate sets the "fee_rate" field if the given value is not nil.
+func (cu *ChannelUpdate) SetNillableFeeRate(f *float64) *ChannelUpdate {
+	if f != nil {
+		cu.SetFeeRate(*f)
+	}
+	return cu
+}
+
 // AddFeeRate adds f to the "fee_rate" field.
 func (cu *ChannelUpdate) AddFeeRate(f float64) *ChannelUpdate {
 	cu.mutation.AddFeeRate(f)
@@ -127,6 +143,14 @@ func (cu *ChannelUpdate) SetAppID(u uint64) *ChannelUpdate {
 	return cu
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (cu *ChannelUpdate) SetNillableAppID(u *uint64) *ChannelUpdate {
+	if u != nil {
+		cu.SetAppID(*u)
+	}
+	return cu
+}
+
 // AddAppID adds u to the "app_id" field.
 func (cu *ChannelUpdate) AddAppID(u int64) *ChannelUpdate {
 	cu.mutation.AddAppID(u)
@@ -136,6 +160,14 @@ func (cu *ChannelUpdate) AddAppID(u int64) *ChannelUpdate {
 // SetConfig sets the "config" field.
 func (cu *ChannelUpdate) SetConfig(s string) *ChannelUpdate {
 	cu.mutation.SetConfig(s)
+	return cu
+}
+
+// SetNillableConfig sets the "config" field if the given value is not nil.
+func (cu *ChannelUpdate) SetNillableConfig(s *string) *ChannelUpdate {
+	if s != nil {
+		cu.SetConfig(*s)
+	}
 	return cu
 }
 
@@ -316,6 +348,14 @@ func (cuo *ChannelUpdateOne) SetCode(s string) *ChannelUpdateOne {
 	return cuo
 }
 
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (cuo *ChannelUpdateOne) SetNillableCode(s *string) *ChannelUpdateOne {
+	if s != nil {
+		cuo.SetCode(*s)
+	}
+	return cuo
+}
+
 // SetRemark sets the "remark" field.
 func (cuo *ChannelUpdateOne) SetRemark(s string) *ChannelUpdateOne {
 	cuo.mutation.SetRemark(s)
@@ -343,6 +383,14 @@ func (cuo *ChannelUpdateOne) SetFeeRate(f float64) *ChannelUpdateOne {
 	return cuo
 }
 
+// SetNillableFeeRate sets the "fee_rate" field if the given value is not nil.
+func (cuo *ChannelUpdateOne) SetNillableFeeRate(f *float64) *ChannelUpdateOne {
+	if f != nil {
+		cuo.SetFeeRate(*f)
+	}
+	return cuo
+}
+
 // AddFeeRate adds f to the "fee_rate" field.
 func (cuo *ChannelUpdateOne) AddFeeRate(f float64) *ChannelUpdateOne {
 	cuo.mutation.AddFeeRate(f)
@@ -356,6 +404,14 @@ func (cuo *ChannelUpdateOne) SetAppID(u uint64) *ChannelUpdateOne {
 	return cuo
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (cuo *ChannelUpdateOne) SetNillableAppID(u *uint64) *ChannelUpdateOne {
+	if u != nil {
+		cuo.SetAppID(*u)
+	}
+	return cuo
+}
+
 // AddAppID adds u to the "app_id" field.
 func (cuo *ChannelUpdateOne) AddAppID(u int64) *ChannelUpdateOne {
 	cuo.mutation.AddAppID(u)
@@ -365,6 +421,14 @@ func (cuo *ChannelUpdateOne) AddAppID(u int64) *ChannelUpdateOne {
 // SetConfig sets the "config" field.
 func (cuo *ChannelUpdateOne) SetConfig(s string) *ChannelUpdateOne {
 	cuo.mutation.SetConfig(s)
+	return cuo
+}
+
+// SetNillableConfig sets the "config" field if the given value is not nil.
+func (cuo *ChannelUpdateOne) SetNillableConfig(s *string) *ChannelUpdateOne {
+	if s != nil {
+		cuo.SetConfig(*s)
+	}
 	return cuo
 }
 

@@ -5,12 +5,12 @@ package ent
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 )
 
 // OrderExtension is the model entity for the OrderExtension schema.

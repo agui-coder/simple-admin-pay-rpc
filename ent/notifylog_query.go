@@ -5,13 +5,13 @@ package ent
 import (
 	"context"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // NotifyLogQuery is the builder for querying NotifyLog entities.

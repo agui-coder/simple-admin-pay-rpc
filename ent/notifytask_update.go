@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // NotifyTaskUpdate is the builder for updating NotifyTask entities.
@@ -88,6 +88,14 @@ func (ntu *NotifyTaskUpdate) SetAppID(u uint64) *NotifyTaskUpdate {
 	return ntu
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableAppID(u *uint64) *NotifyTaskUpdate {
+	if u != nil {
+		ntu.SetAppID(*u)
+	}
+	return ntu
+}
+
 // AddAppID adds u to the "app_id" field.
 func (ntu *NotifyTaskUpdate) AddAppID(u int64) *NotifyTaskUpdate {
 	ntu.mutation.AddAppID(u)
@@ -98,6 +106,14 @@ func (ntu *NotifyTaskUpdate) AddAppID(u int64) *NotifyTaskUpdate {
 func (ntu *NotifyTaskUpdate) SetType(i int) *NotifyTaskUpdate {
 	ntu.mutation.ResetType()
 	ntu.mutation.SetType(i)
+	return ntu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableType(i *int) *NotifyTaskUpdate {
+	if i != nil {
+		ntu.SetType(*i)
+	}
 	return ntu
 }
 
@@ -114,6 +130,14 @@ func (ntu *NotifyTaskUpdate) SetDataID(u uint64) *NotifyTaskUpdate {
 	return ntu
 }
 
+// SetNillableDataID sets the "data_id" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableDataID(u *uint64) *NotifyTaskUpdate {
+	if u != nil {
+		ntu.SetDataID(*u)
+	}
+	return ntu
+}
+
 // AddDataID adds u to the "data_id" field.
 func (ntu *NotifyTaskUpdate) AddDataID(u int64) *NotifyTaskUpdate {
 	ntu.mutation.AddDataID(u)
@@ -126,9 +150,25 @@ func (ntu *NotifyTaskUpdate) SetMerchantOrderID(s string) *NotifyTaskUpdate {
 	return ntu
 }
 
+// SetNillableMerchantOrderID sets the "merchant_order_id" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableMerchantOrderID(s *string) *NotifyTaskUpdate {
+	if s != nil {
+		ntu.SetMerchantOrderID(*s)
+	}
+	return ntu
+}
+
 // SetNextNotifyTime sets the "next_notify_time" field.
 func (ntu *NotifyTaskUpdate) SetNextNotifyTime(t time.Time) *NotifyTaskUpdate {
 	ntu.mutation.SetNextNotifyTime(t)
+	return ntu
+}
+
+// SetNillableNextNotifyTime sets the "next_notify_time" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableNextNotifyTime(t *time.Time) *NotifyTaskUpdate {
+	if t != nil {
+		ntu.SetNextNotifyTime(*t)
+	}
 	return ntu
 }
 
@@ -138,10 +178,26 @@ func (ntu *NotifyTaskUpdate) SetLastExecuteTime(t time.Time) *NotifyTaskUpdate {
 	return ntu
 }
 
+// SetNillableLastExecuteTime sets the "last_execute_time" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableLastExecuteTime(t *time.Time) *NotifyTaskUpdate {
+	if t != nil {
+		ntu.SetLastExecuteTime(*t)
+	}
+	return ntu
+}
+
 // SetNotifyTimes sets the "notify_times" field.
 func (ntu *NotifyTaskUpdate) SetNotifyTimes(i int8) *NotifyTaskUpdate {
 	ntu.mutation.ResetNotifyTimes()
 	ntu.mutation.SetNotifyTimes(i)
+	return ntu
+}
+
+// SetNillableNotifyTimes sets the "notify_times" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableNotifyTimes(i *int8) *NotifyTaskUpdate {
+	if i != nil {
+		ntu.SetNotifyTimes(*i)
+	}
 	return ntu
 }
 
@@ -158,6 +214,14 @@ func (ntu *NotifyTaskUpdate) SetMaxNotifyTimes(i int8) *NotifyTaskUpdate {
 	return ntu
 }
 
+// SetNillableMaxNotifyTimes sets the "max_notify_times" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableMaxNotifyTimes(i *int8) *NotifyTaskUpdate {
+	if i != nil {
+		ntu.SetMaxNotifyTimes(*i)
+	}
+	return ntu
+}
+
 // AddMaxNotifyTimes adds i to the "max_notify_times" field.
 func (ntu *NotifyTaskUpdate) AddMaxNotifyTimes(i int8) *NotifyTaskUpdate {
 	ntu.mutation.AddMaxNotifyTimes(i)
@@ -167,6 +231,14 @@ func (ntu *NotifyTaskUpdate) AddMaxNotifyTimes(i int8) *NotifyTaskUpdate {
 // SetNotifyURL sets the "notify_url" field.
 func (ntu *NotifyTaskUpdate) SetNotifyURL(s string) *NotifyTaskUpdate {
 	ntu.mutation.SetNotifyURL(s)
+	return ntu
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (ntu *NotifyTaskUpdate) SetNillableNotifyURL(s *string) *NotifyTaskUpdate {
+	if s != nil {
+		ntu.SetNotifyURL(*s)
+	}
 	return ntu
 }
 
@@ -366,6 +438,14 @@ func (ntuo *NotifyTaskUpdateOne) SetAppID(u uint64) *NotifyTaskUpdateOne {
 	return ntuo
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableAppID(u *uint64) *NotifyTaskUpdateOne {
+	if u != nil {
+		ntuo.SetAppID(*u)
+	}
+	return ntuo
+}
+
 // AddAppID adds u to the "app_id" field.
 func (ntuo *NotifyTaskUpdateOne) AddAppID(u int64) *NotifyTaskUpdateOne {
 	ntuo.mutation.AddAppID(u)
@@ -376,6 +456,14 @@ func (ntuo *NotifyTaskUpdateOne) AddAppID(u int64) *NotifyTaskUpdateOne {
 func (ntuo *NotifyTaskUpdateOne) SetType(i int) *NotifyTaskUpdateOne {
 	ntuo.mutation.ResetType()
 	ntuo.mutation.SetType(i)
+	return ntuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableType(i *int) *NotifyTaskUpdateOne {
+	if i != nil {
+		ntuo.SetType(*i)
+	}
 	return ntuo
 }
 
@@ -392,6 +480,14 @@ func (ntuo *NotifyTaskUpdateOne) SetDataID(u uint64) *NotifyTaskUpdateOne {
 	return ntuo
 }
 
+// SetNillableDataID sets the "data_id" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableDataID(u *uint64) *NotifyTaskUpdateOne {
+	if u != nil {
+		ntuo.SetDataID(*u)
+	}
+	return ntuo
+}
+
 // AddDataID adds u to the "data_id" field.
 func (ntuo *NotifyTaskUpdateOne) AddDataID(u int64) *NotifyTaskUpdateOne {
 	ntuo.mutation.AddDataID(u)
@@ -404,9 +500,25 @@ func (ntuo *NotifyTaskUpdateOne) SetMerchantOrderID(s string) *NotifyTaskUpdateO
 	return ntuo
 }
 
+// SetNillableMerchantOrderID sets the "merchant_order_id" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableMerchantOrderID(s *string) *NotifyTaskUpdateOne {
+	if s != nil {
+		ntuo.SetMerchantOrderID(*s)
+	}
+	return ntuo
+}
+
 // SetNextNotifyTime sets the "next_notify_time" field.
 func (ntuo *NotifyTaskUpdateOne) SetNextNotifyTime(t time.Time) *NotifyTaskUpdateOne {
 	ntuo.mutation.SetNextNotifyTime(t)
+	return ntuo
+}
+
+// SetNillableNextNotifyTime sets the "next_notify_time" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableNextNotifyTime(t *time.Time) *NotifyTaskUpdateOne {
+	if t != nil {
+		ntuo.SetNextNotifyTime(*t)
+	}
 	return ntuo
 }
 
@@ -416,10 +528,26 @@ func (ntuo *NotifyTaskUpdateOne) SetLastExecuteTime(t time.Time) *NotifyTaskUpda
 	return ntuo
 }
 
+// SetNillableLastExecuteTime sets the "last_execute_time" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableLastExecuteTime(t *time.Time) *NotifyTaskUpdateOne {
+	if t != nil {
+		ntuo.SetLastExecuteTime(*t)
+	}
+	return ntuo
+}
+
 // SetNotifyTimes sets the "notify_times" field.
 func (ntuo *NotifyTaskUpdateOne) SetNotifyTimes(i int8) *NotifyTaskUpdateOne {
 	ntuo.mutation.ResetNotifyTimes()
 	ntuo.mutation.SetNotifyTimes(i)
+	return ntuo
+}
+
+// SetNillableNotifyTimes sets the "notify_times" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableNotifyTimes(i *int8) *NotifyTaskUpdateOne {
+	if i != nil {
+		ntuo.SetNotifyTimes(*i)
+	}
 	return ntuo
 }
 
@@ -436,6 +564,14 @@ func (ntuo *NotifyTaskUpdateOne) SetMaxNotifyTimes(i int8) *NotifyTaskUpdateOne 
 	return ntuo
 }
 
+// SetNillableMaxNotifyTimes sets the "max_notify_times" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableMaxNotifyTimes(i *int8) *NotifyTaskUpdateOne {
+	if i != nil {
+		ntuo.SetMaxNotifyTimes(*i)
+	}
+	return ntuo
+}
+
 // AddMaxNotifyTimes adds i to the "max_notify_times" field.
 func (ntuo *NotifyTaskUpdateOne) AddMaxNotifyTimes(i int8) *NotifyTaskUpdateOne {
 	ntuo.mutation.AddMaxNotifyTimes(i)
@@ -445,6 +581,14 @@ func (ntuo *NotifyTaskUpdateOne) AddMaxNotifyTimes(i int8) *NotifyTaskUpdateOne 
 // SetNotifyURL sets the "notify_url" field.
 func (ntuo *NotifyTaskUpdateOne) SetNotifyURL(s string) *NotifyTaskUpdateOne {
 	ntuo.mutation.SetNotifyURL(s)
+	return ntuo
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (ntuo *NotifyTaskUpdateOne) SetNillableNotifyURL(s *string) *NotifyTaskUpdateOne {
+	if s != nil {
+		ntuo.SetNotifyURL(*s)
+	}
 	return ntuo
 }
 

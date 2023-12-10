@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"

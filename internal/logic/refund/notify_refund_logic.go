@@ -6,7 +6,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-common/consts"
 	payModel "github.com/agui-coder/simple-admin-pay-common/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/notify"
 	"github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
@@ -67,6 +66,9 @@ func (l *NotifyRefundLogic) ProcessRefundStatus(channel *ent.Channel, notify *pa
 
 func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payModel.RefundResp) error {
 	refundInfo, err := l.svcCtx.Model.Refund.SelectByAppIdAndNo(l.ctx, channel.AppID, resp.OutRefundNo)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, resp)
+	}
 	if refundInfo.Status == consts.SUCCESS {
 		logx.Infof("refund success, refundId: %d", refundInfo.ID)
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
@@ -80,8 +82,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 		if err != nil {
 			return err
 		}
-		err = tx.Refund.Update().Where(refund.IDEQ(refundInfo.ID),
-			refund.StatusEQ(resp.Status)).
+		err = tx.Refund.UpdateOneID(refundInfo.ID).
 			SetSuccessTime(resp.SuccessTime).
 			SetChannelRefundNo(resp.ChannelRefundNo).
 			SetStatus(consts.SUCCESS).
@@ -95,7 +96,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 		if err != nil {
 			return errorhandler.DefaultEntError(l.Logger, err, refundInfo.OrderID)
 		}
-		if orderInfo.Status == consts.SUCCESS || orderInfo.Status == consts.REFUND {
+		if !(orderInfo.Status == consts.SUCCESS || orderInfo.Status == consts.REFUND) {
 			return errorx.NewInvalidArgumentError("pay order refund is fail status error")
 		}
 		if orderInfo.RefundPrice+refundInfo.RefundPrice > orderInfo.Price {

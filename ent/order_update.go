@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // OrderUpdate is the builder for updating Order entities.
@@ -88,6 +88,14 @@ func (ou *OrderUpdate) SetAppID(u uint64) *OrderUpdate {
 	return ou
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableAppID(u *uint64) *OrderUpdate {
+	if u != nil {
+		ou.SetAppID(*u)
+	}
+	return ou
+}
+
 // AddAppID adds u to the "app_id" field.
 func (ou *OrderUpdate) AddAppID(u int64) *OrderUpdate {
 	ou.mutation.AddAppID(u)
@@ -147,9 +155,25 @@ func (ou *OrderUpdate) SetMerchantOrderID(s string) *OrderUpdate {
 	return ou
 }
 
+// SetNillableMerchantOrderID sets the "merchant_order_id" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableMerchantOrderID(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetMerchantOrderID(*s)
+	}
+	return ou
+}
+
 // SetSubject sets the "subject" field.
 func (ou *OrderUpdate) SetSubject(s string) *OrderUpdate {
 	ou.mutation.SetSubject(s)
+	return ou
+}
+
+// SetNillableSubject sets the "subject" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableSubject(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetSubject(*s)
+	}
 	return ou
 }
 
@@ -159,9 +183,25 @@ func (ou *OrderUpdate) SetBody(s string) *OrderUpdate {
 	return ou
 }
 
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableBody(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetBody(*s)
+	}
+	return ou
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (ou *OrderUpdate) SetNotifyURL(s string) *OrderUpdate {
 	ou.mutation.SetNotifyURL(s)
+	return ou
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableNotifyURL(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetNotifyURL(*s)
+	}
 	return ou
 }
 
@@ -169,6 +209,14 @@ func (ou *OrderUpdate) SetNotifyURL(s string) *OrderUpdate {
 func (ou *OrderUpdate) SetPrice(i int32) *OrderUpdate {
 	ou.mutation.ResetPrice()
 	ou.mutation.SetPrice(i)
+	return ou
+}
+
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillablePrice(i *int32) *OrderUpdate {
+	if i != nil {
+		ou.SetPrice(*i)
+	}
 	return ou
 }
 
@@ -238,9 +286,25 @@ func (ou *OrderUpdate) SetUserIP(s string) *OrderUpdate {
 	return ou
 }
 
+// SetNillableUserIP sets the "user_ip" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableUserIP(s *string) *OrderUpdate {
+	if s != nil {
+		ou.SetUserIP(*s)
+	}
+	return ou
+}
+
 // SetExpireTime sets the "expire_time" field.
 func (ou *OrderUpdate) SetExpireTime(t time.Time) *OrderUpdate {
 	ou.mutation.SetExpireTime(t)
+	return ou
+}
+
+// SetNillableExpireTime sets the "expire_time" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableExpireTime(t *time.Time) *OrderUpdate {
+	if t != nil {
+		ou.SetExpireTime(*t)
+	}
 	return ou
 }
 
@@ -335,6 +399,14 @@ func (ou *OrderUpdate) ClearNo() *OrderUpdate {
 func (ou *OrderUpdate) SetRefundPrice(i int32) *OrderUpdate {
 	ou.mutation.ResetRefundPrice()
 	ou.mutation.SetRefundPrice(i)
+	return ou
+}
+
+// SetNillableRefundPrice sets the "refund_price" field if the given value is not nil.
+func (ou *OrderUpdate) SetNillableRefundPrice(i *int32) *OrderUpdate {
+	if i != nil {
+		ou.SetRefundPrice(*i)
+	}
 	return ou
 }
 
@@ -646,6 +718,14 @@ func (ouo *OrderUpdateOne) SetAppID(u uint64) *OrderUpdateOne {
 	return ouo
 }
 
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableAppID(u *uint64) *OrderUpdateOne {
+	if u != nil {
+		ouo.SetAppID(*u)
+	}
+	return ouo
+}
+
 // AddAppID adds u to the "app_id" field.
 func (ouo *OrderUpdateOne) AddAppID(u int64) *OrderUpdateOne {
 	ouo.mutation.AddAppID(u)
@@ -705,9 +785,25 @@ func (ouo *OrderUpdateOne) SetMerchantOrderID(s string) *OrderUpdateOne {
 	return ouo
 }
 
+// SetNillableMerchantOrderID sets the "merchant_order_id" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableMerchantOrderID(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetMerchantOrderID(*s)
+	}
+	return ouo
+}
+
 // SetSubject sets the "subject" field.
 func (ouo *OrderUpdateOne) SetSubject(s string) *OrderUpdateOne {
 	ouo.mutation.SetSubject(s)
+	return ouo
+}
+
+// SetNillableSubject sets the "subject" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableSubject(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetSubject(*s)
+	}
 	return ouo
 }
 
@@ -717,9 +813,25 @@ func (ouo *OrderUpdateOne) SetBody(s string) *OrderUpdateOne {
 	return ouo
 }
 
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableBody(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetBody(*s)
+	}
+	return ouo
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (ouo *OrderUpdateOne) SetNotifyURL(s string) *OrderUpdateOne {
 	ouo.mutation.SetNotifyURL(s)
+	return ouo
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableNotifyURL(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetNotifyURL(*s)
+	}
 	return ouo
 }
 
@@ -727,6 +839,14 @@ func (ouo *OrderUpdateOne) SetNotifyURL(s string) *OrderUpdateOne {
 func (ouo *OrderUpdateOne) SetPrice(i int32) *OrderUpdateOne {
 	ouo.mutation.ResetPrice()
 	ouo.mutation.SetPrice(i)
+	return ouo
+}
+
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillablePrice(i *int32) *OrderUpdateOne {
+	if i != nil {
+		ouo.SetPrice(*i)
+	}
 	return ouo
 }
 
@@ -796,9 +916,25 @@ func (ouo *OrderUpdateOne) SetUserIP(s string) *OrderUpdateOne {
 	return ouo
 }
 
+// SetNillableUserIP sets the "user_ip" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableUserIP(s *string) *OrderUpdateOne {
+	if s != nil {
+		ouo.SetUserIP(*s)
+	}
+	return ouo
+}
+
 // SetExpireTime sets the "expire_time" field.
 func (ouo *OrderUpdateOne) SetExpireTime(t time.Time) *OrderUpdateOne {
 	ouo.mutation.SetExpireTime(t)
+	return ouo
+}
+
+// SetNillableExpireTime sets the "expire_time" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableExpireTime(t *time.Time) *OrderUpdateOne {
+	if t != nil {
+		ouo.SetExpireTime(*t)
+	}
 	return ouo
 }
 
@@ -893,6 +1029,14 @@ func (ouo *OrderUpdateOne) ClearNo() *OrderUpdateOne {
 func (ouo *OrderUpdateOne) SetRefundPrice(i int32) *OrderUpdateOne {
 	ouo.mutation.ResetRefundPrice()
 	ouo.mutation.SetRefundPrice(i)
+	return ouo
+}
+
+// SetNillableRefundPrice sets the "refund_price" field if the given value is not nil.
+func (ouo *OrderUpdateOne) SetNillableRefundPrice(i *int32) *OrderUpdateOne {
+	if i != nil {
+		ouo.SetRefundPrice(*i)
+	}
 	return ouo
 }
 

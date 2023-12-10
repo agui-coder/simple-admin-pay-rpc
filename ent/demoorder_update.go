@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // DemoOrderUpdate is the builder for updating DemoOrder entities.
@@ -60,10 +60,26 @@ func (dou *DemoOrderUpdate) SetUserID(s string) *DemoOrderUpdate {
 	return dou
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (dou *DemoOrderUpdate) SetNillableUserID(s *string) *DemoOrderUpdate {
+	if s != nil {
+		dou.SetUserID(*s)
+	}
+	return dou
+}
+
 // SetSpuID sets the "spu_id" field.
 func (dou *DemoOrderUpdate) SetSpuID(u uint64) *DemoOrderUpdate {
 	dou.mutation.ResetSpuID()
 	dou.mutation.SetSpuID(u)
+	return dou
+}
+
+// SetNillableSpuID sets the "spu_id" field if the given value is not nil.
+func (dou *DemoOrderUpdate) SetNillableSpuID(u *uint64) *DemoOrderUpdate {
+	if u != nil {
+		dou.SetSpuID(*u)
+	}
 	return dou
 }
 
@@ -79,10 +95,26 @@ func (dou *DemoOrderUpdate) SetSpuName(s string) *DemoOrderUpdate {
 	return dou
 }
 
+// SetNillableSpuName sets the "spu_name" field if the given value is not nil.
+func (dou *DemoOrderUpdate) SetNillableSpuName(s *string) *DemoOrderUpdate {
+	if s != nil {
+		dou.SetSpuName(*s)
+	}
+	return dou
+}
+
 // SetPrice sets the "price" field.
 func (dou *DemoOrderUpdate) SetPrice(i int32) *DemoOrderUpdate {
 	dou.mutation.ResetPrice()
 	dou.mutation.SetPrice(i)
+	return dou
+}
+
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (dou *DemoOrderUpdate) SetNillablePrice(i *int32) *DemoOrderUpdate {
+	if i != nil {
+		dou.SetPrice(*i)
+	}
 	return dou
 }
 
@@ -95,6 +127,14 @@ func (dou *DemoOrderUpdate) AddPrice(i int32) *DemoOrderUpdate {
 // SetPayStatus sets the "pay_status" field.
 func (dou *DemoOrderUpdate) SetPayStatus(b bool) *DemoOrderUpdate {
 	dou.mutation.SetPayStatus(b)
+	return dou
+}
+
+// SetNillablePayStatus sets the "pay_status" field if the given value is not nil.
+func (dou *DemoOrderUpdate) SetNillablePayStatus(b *bool) *DemoOrderUpdate {
+	if b != nil {
+		dou.SetPayStatus(*b)
+	}
 	return dou
 }
 
@@ -422,10 +462,26 @@ func (douo *DemoOrderUpdateOne) SetUserID(s string) *DemoOrderUpdateOne {
 	return douo
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (douo *DemoOrderUpdateOne) SetNillableUserID(s *string) *DemoOrderUpdateOne {
+	if s != nil {
+		douo.SetUserID(*s)
+	}
+	return douo
+}
+
 // SetSpuID sets the "spu_id" field.
 func (douo *DemoOrderUpdateOne) SetSpuID(u uint64) *DemoOrderUpdateOne {
 	douo.mutation.ResetSpuID()
 	douo.mutation.SetSpuID(u)
+	return douo
+}
+
+// SetNillableSpuID sets the "spu_id" field if the given value is not nil.
+func (douo *DemoOrderUpdateOne) SetNillableSpuID(u *uint64) *DemoOrderUpdateOne {
+	if u != nil {
+		douo.SetSpuID(*u)
+	}
 	return douo
 }
 
@@ -441,10 +497,26 @@ func (douo *DemoOrderUpdateOne) SetSpuName(s string) *DemoOrderUpdateOne {
 	return douo
 }
 
+// SetNillableSpuName sets the "spu_name" field if the given value is not nil.
+func (douo *DemoOrderUpdateOne) SetNillableSpuName(s *string) *DemoOrderUpdateOne {
+	if s != nil {
+		douo.SetSpuName(*s)
+	}
+	return douo
+}
+
 // SetPrice sets the "price" field.
 func (douo *DemoOrderUpdateOne) SetPrice(i int32) *DemoOrderUpdateOne {
 	douo.mutation.ResetPrice()
 	douo.mutation.SetPrice(i)
+	return douo
+}
+
+// SetNillablePrice sets the "price" field if the given value is not nil.
+func (douo *DemoOrderUpdateOne) SetNillablePrice(i *int32) *DemoOrderUpdateOne {
+	if i != nil {
+		douo.SetPrice(*i)
+	}
 	return douo
 }
 
@@ -457,6 +529,14 @@ func (douo *DemoOrderUpdateOne) AddPrice(i int32) *DemoOrderUpdateOne {
 // SetPayStatus sets the "pay_status" field.
 func (douo *DemoOrderUpdateOne) SetPayStatus(b bool) *DemoOrderUpdateOne {
 	douo.mutation.SetPayStatus(b)
+	return douo
+}
+
+// SetNillablePayStatus sets the "pay_status" field if the given value is not nil.
+func (douo *DemoOrderUpdateOne) SetNillablePayStatus(b *bool) *DemoOrderUpdateOne {
+	if b != nil {
+		douo.SetPayStatus(*b)
+	}
 	return douo
 }
 

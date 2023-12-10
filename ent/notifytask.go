@@ -4,12 +4,12 @@ package ent
 
 import (
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
 )
 
 // NotifyTask is the model entity for the NotifyTask schema.

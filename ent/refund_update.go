@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 )
 
 // RefundUpdate is the builder for updating Refund entities.
@@ -87,10 +87,26 @@ func (ru *RefundUpdate) SetNo(s string) *RefundUpdate {
 	return ru
 }
 
+// SetNillableNo sets the "no" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableNo(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetNo(*s)
+	}
+	return ru
+}
+
 // SetAppID sets the "app_id" field.
 func (ru *RefundUpdate) SetAppID(u uint64) *RefundUpdate {
 	ru.mutation.ResetAppID()
 	ru.mutation.SetAppID(u)
+	return ru
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableAppID(u *uint64) *RefundUpdate {
+	if u != nil {
+		ru.SetAppID(*u)
+	}
 	return ru
 }
 
@@ -107,6 +123,14 @@ func (ru *RefundUpdate) SetChannelID(u uint64) *RefundUpdate {
 	return ru
 }
 
+// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableChannelID(u *uint64) *RefundUpdate {
+	if u != nil {
+		ru.SetChannelID(*u)
+	}
+	return ru
+}
+
 // AddChannelID adds u to the "channel_id" field.
 func (ru *RefundUpdate) AddChannelID(u int64) *RefundUpdate {
 	ru.mutation.AddChannelID(u)
@@ -119,10 +143,26 @@ func (ru *RefundUpdate) SetChannelCode(s string) *RefundUpdate {
 	return ru
 }
 
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableChannelCode(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetChannelCode(*s)
+	}
+	return ru
+}
+
 // SetOrderID sets the "order_id" field.
 func (ru *RefundUpdate) SetOrderID(u uint64) *RefundUpdate {
 	ru.mutation.ResetOrderID()
 	ru.mutation.SetOrderID(u)
+	return ru
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableOrderID(u *uint64) *RefundUpdate {
+	if u != nil {
+		ru.SetOrderID(*u)
+	}
 	return ru
 }
 
@@ -138,9 +178,25 @@ func (ru *RefundUpdate) SetOrderNo(s string) *RefundUpdate {
 	return ru
 }
 
+// SetNillableOrderNo sets the "order_no" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableOrderNo(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetOrderNo(*s)
+	}
+	return ru
+}
+
 // SetMerchantOrderID sets the "merchant_order_id" field.
 func (ru *RefundUpdate) SetMerchantOrderID(s string) *RefundUpdate {
 	ru.mutation.SetMerchantOrderID(s)
+	return ru
+}
+
+// SetNillableMerchantOrderID sets the "merchant_order_id" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableMerchantOrderID(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetMerchantOrderID(*s)
+	}
 	return ru
 }
 
@@ -150,9 +206,25 @@ func (ru *RefundUpdate) SetMerchantRefundID(s string) *RefundUpdate {
 	return ru
 }
 
+// SetNillableMerchantRefundID sets the "merchant_refund_id" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableMerchantRefundID(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetMerchantRefundID(*s)
+	}
+	return ru
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (ru *RefundUpdate) SetNotifyURL(s string) *RefundUpdate {
 	ru.mutation.SetNotifyURL(s)
+	return ru
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableNotifyURL(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetNotifyURL(*s)
+	}
 	return ru
 }
 
@@ -160,6 +232,14 @@ func (ru *RefundUpdate) SetNotifyURL(s string) *RefundUpdate {
 func (ru *RefundUpdate) SetPayPrice(i int32) *RefundUpdate {
 	ru.mutation.ResetPayPrice()
 	ru.mutation.SetPayPrice(i)
+	return ru
+}
+
+// SetNillablePayPrice sets the "pay_price" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillablePayPrice(i *int32) *RefundUpdate {
+	if i != nil {
+		ru.SetPayPrice(*i)
+	}
 	return ru
 }
 
@@ -176,6 +256,14 @@ func (ru *RefundUpdate) SetRefundPrice(i int32) *RefundUpdate {
 	return ru
 }
 
+// SetNillableRefundPrice sets the "refund_price" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableRefundPrice(i *int32) *RefundUpdate {
+	if i != nil {
+		ru.SetRefundPrice(*i)
+	}
+	return ru
+}
+
 // AddRefundPrice adds i to the "refund_price" field.
 func (ru *RefundUpdate) AddRefundPrice(i int32) *RefundUpdate {
 	ru.mutation.AddRefundPrice(i)
@@ -185,6 +273,14 @@ func (ru *RefundUpdate) AddRefundPrice(i int32) *RefundUpdate {
 // SetReason sets the "reason" field.
 func (ru *RefundUpdate) SetReason(s string) *RefundUpdate {
 	ru.mutation.SetReason(s)
+	return ru
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableReason(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetReason(*s)
+	}
 	return ru
 }
 
@@ -211,6 +307,14 @@ func (ru *RefundUpdate) ClearUserIP() *RefundUpdate {
 // SetChannelOrderNo sets the "channel_order_no" field.
 func (ru *RefundUpdate) SetChannelOrderNo(s string) *RefundUpdate {
 	ru.mutation.SetChannelOrderNo(s)
+	return ru
+}
+
+// SetNillableChannelOrderNo sets the "channel_order_no" field if the given value is not nil.
+func (ru *RefundUpdate) SetNillableChannelOrderNo(s *string) *RefundUpdate {
+	if s != nil {
+		ru.SetChannelOrderNo(*s)
+	}
 	return ru
 }
 
@@ -557,10 +661,26 @@ func (ruo *RefundUpdateOne) SetNo(s string) *RefundUpdateOne {
 	return ruo
 }
 
+// SetNillableNo sets the "no" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableNo(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetNo(*s)
+	}
+	return ruo
+}
+
 // SetAppID sets the "app_id" field.
 func (ruo *RefundUpdateOne) SetAppID(u uint64) *RefundUpdateOne {
 	ruo.mutation.ResetAppID()
 	ruo.mutation.SetAppID(u)
+	return ruo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableAppID(u *uint64) *RefundUpdateOne {
+	if u != nil {
+		ruo.SetAppID(*u)
+	}
 	return ruo
 }
 
@@ -577,6 +697,14 @@ func (ruo *RefundUpdateOne) SetChannelID(u uint64) *RefundUpdateOne {
 	return ruo
 }
 
+// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableChannelID(u *uint64) *RefundUpdateOne {
+	if u != nil {
+		ruo.SetChannelID(*u)
+	}
+	return ruo
+}
+
 // AddChannelID adds u to the "channel_id" field.
 func (ruo *RefundUpdateOne) AddChannelID(u int64) *RefundUpdateOne {
 	ruo.mutation.AddChannelID(u)
@@ -589,10 +717,26 @@ func (ruo *RefundUpdateOne) SetChannelCode(s string) *RefundUpdateOne {
 	return ruo
 }
 
+// SetNillableChannelCode sets the "channel_code" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableChannelCode(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetChannelCode(*s)
+	}
+	return ruo
+}
+
 // SetOrderID sets the "order_id" field.
 func (ruo *RefundUpdateOne) SetOrderID(u uint64) *RefundUpdateOne {
 	ruo.mutation.ResetOrderID()
 	ruo.mutation.SetOrderID(u)
+	return ruo
+}
+
+// SetNillableOrderID sets the "order_id" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableOrderID(u *uint64) *RefundUpdateOne {
+	if u != nil {
+		ruo.SetOrderID(*u)
+	}
 	return ruo
 }
 
@@ -608,9 +752,25 @@ func (ruo *RefundUpdateOne) SetOrderNo(s string) *RefundUpdateOne {
 	return ruo
 }
 
+// SetNillableOrderNo sets the "order_no" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableOrderNo(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetOrderNo(*s)
+	}
+	return ruo
+}
+
 // SetMerchantOrderID sets the "merchant_order_id" field.
 func (ruo *RefundUpdateOne) SetMerchantOrderID(s string) *RefundUpdateOne {
 	ruo.mutation.SetMerchantOrderID(s)
+	return ruo
+}
+
+// SetNillableMerchantOrderID sets the "merchant_order_id" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableMerchantOrderID(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetMerchantOrderID(*s)
+	}
 	return ruo
 }
 
@@ -620,9 +780,25 @@ func (ruo *RefundUpdateOne) SetMerchantRefundID(s string) *RefundUpdateOne {
 	return ruo
 }
 
+// SetNillableMerchantRefundID sets the "merchant_refund_id" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableMerchantRefundID(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetMerchantRefundID(*s)
+	}
+	return ruo
+}
+
 // SetNotifyURL sets the "notify_url" field.
 func (ruo *RefundUpdateOne) SetNotifyURL(s string) *RefundUpdateOne {
 	ruo.mutation.SetNotifyURL(s)
+	return ruo
+}
+
+// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableNotifyURL(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetNotifyURL(*s)
+	}
 	return ruo
 }
 
@@ -630,6 +806,14 @@ func (ruo *RefundUpdateOne) SetNotifyURL(s string) *RefundUpdateOne {
 func (ruo *RefundUpdateOne) SetPayPrice(i int32) *RefundUpdateOne {
 	ruo.mutation.ResetPayPrice()
 	ruo.mutation.SetPayPrice(i)
+	return ruo
+}
+
+// SetNillablePayPrice sets the "pay_price" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillablePayPrice(i *int32) *RefundUpdateOne {
+	if i != nil {
+		ruo.SetPayPrice(*i)
+	}
 	return ruo
 }
 
@@ -646,6 +830,14 @@ func (ruo *RefundUpdateOne) SetRefundPrice(i int32) *RefundUpdateOne {
 	return ruo
 }
 
+// SetNillableRefundPrice sets the "refund_price" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableRefundPrice(i *int32) *RefundUpdateOne {
+	if i != nil {
+		ruo.SetRefundPrice(*i)
+	}
+	return ruo
+}
+
 // AddRefundPrice adds i to the "refund_price" field.
 func (ruo *RefundUpdateOne) AddRefundPrice(i int32) *RefundUpdateOne {
 	ruo.mutation.AddRefundPrice(i)
@@ -655,6 +847,14 @@ func (ruo *RefundUpdateOne) AddRefundPrice(i int32) *RefundUpdateOne {
 // SetReason sets the "reason" field.
 func (ruo *RefundUpdateOne) SetReason(s string) *RefundUpdateOne {
 	ruo.mutation.SetReason(s)
+	return ruo
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableReason(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetReason(*s)
+	}
 	return ruo
 }
 
@@ -681,6 +881,14 @@ func (ruo *RefundUpdateOne) ClearUserIP() *RefundUpdateOne {
 // SetChannelOrderNo sets the "channel_order_no" field.
 func (ruo *RefundUpdateOne) SetChannelOrderNo(s string) *RefundUpdateOne {
 	ruo.mutation.SetChannelOrderNo(s)
+	return ruo
+}
+
+// SetNillableChannelOrderNo sets the "channel_order_no" field if the given value is not nil.
+func (ruo *RefundUpdateOne) SetNillableChannelOrderNo(s *string) *RefundUpdateOne {
+	if s != nil {
+		ruo.SetChannelOrderNo(*s)
+	}
 	return ruo
 }
 

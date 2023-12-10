@@ -52,7 +52,6 @@ func (l *PayNotifyHandler) ProcessTask(ctx context.Context, t *asynq.Task) error
 				err := notify.NewExecuteNotifyLogic(ctx, l.svcCtx).ExecuteNotify(task)
 				if err != nil {
 					logx.Errorf("[executeNotify][task%s 任务处理失败，原因是%s]", task, err)
-					return
 				}
 				// 减少剩余任务数量
 				atomic.AddInt32(&remainingTasks, -1)
@@ -63,10 +62,11 @@ func (l *PayNotifyHandler) ProcessTask(ctx context.Context, t *asynq.Task) error
 	for _, task := range notifyTasks {
 		tasks <- task
 	}
+	close(tasks)
 	// 启动一个 goroutine 每秒钟打印剩余任务数量
 	done := make(chan struct{})
 	go func() {
-		ticker := time.NewTicker(time.Second)
+		ticker := time.NewTicker(10 * time.Second)
 		defer ticker.Stop()
 		for {
 			select {
@@ -75,8 +75,9 @@ func (l *PayNotifyHandler) ProcessTask(ctx context.Context, t *asynq.Task) error
 			case <-ctx.Done():
 				logx.Errorf("[executeNotify][任务处理失败，原因是%s]", ctx.Err())
 				return
-			case <-time.After(time.Duration(payload.NotifyTimeoutMillis) * time.Millisecond):
+			case <-time.After(time.Duration(payload.NotifyTimeoutMillis) * time.Second):
 				logx.Infof("[executeNotify][任务未处理完， 总任务数%d 剩余任务数%d]", size, atomic.LoadInt32(&remainingTasks))
+				return
 			case <-done:
 				logx.Infof("[executeNotify][任务完成， 总任务数%d 剩余任务数%d]", size, atomic.LoadInt32(&remainingTasks))
 				return
@@ -84,7 +85,6 @@ func (l *PayNotifyHandler) ProcessTask(ctx context.Context, t *asynq.Task) error
 		}
 	}()
 	wg.Wait()
-	close(tasks)
 	close(done)
 	return nil
 }

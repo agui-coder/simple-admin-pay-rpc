@@ -37,6 +37,10 @@ message updateDemoOrderPaidReq{
   uint64 id = 1;
   uint64 payOrderId = 2;
 }
+message  updateDemoRefundPaidReq{
+  uint64 id = 1;
+  uint64 payRefundId = 2;
+}
 
 message RefundDemoOrderReq{
   uint64 Id = 2;
@@ -55,4 +59,6 @@ service Pay {
   rpc updateDemoOrderPaid(updateDemoOrderPaidReq) returns (BaseResp);
   // group: demo
   rpc refundDemoOrder(RefundDemoOrderReq) returns (BaseResp);
+  // group: demo
+  rpc updateDemoRefundPaid(updateDemoRefundPaidReq) returns (BaseResp);
 }

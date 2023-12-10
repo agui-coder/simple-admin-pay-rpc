@@ -3,6 +3,8 @@
 package runtime
 
 import (
+	"time"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
@@ -12,7 +14,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/schema"
-	"time"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -216,6 +217,6 @@ func init() {
 }
 
 const (
-	Version = "v0.12.4"                                         // Version of ent codegen.
-	Sum     = "h1:LddPnAyxls/O7DTXZvUGDj0NZIdGSu317+aoNLJWbD8=" // Sum of ent codegen.
+	Version = "v0.12.5"                                         // Version of ent codegen.
+	Sum     = "h1:KREM5E4CSoej4zeGa88Ou/gfturAnpUv0mzAjch1sj4=" // Sum of ent codegen.
 )

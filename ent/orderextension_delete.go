@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
 )
 
 // OrderExtensionDelete is the builder for deleting a OrderExtension entity.
