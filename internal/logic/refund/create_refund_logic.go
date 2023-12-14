@@ -2,7 +2,6 @@ package refund
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-common/payment/model"
 	"github.com/agui-coder/simple-admin-pay-common/payno"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
@@ -76,7 +75,8 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 		SetReason(in.Reason).
 		SetUserIP(in.UserIp).
 		SetChannelOrderNo(order.ChannelOrderNo).
-		SetNotNilStatus(pointy.GetPointer(consts.WAITING)).SetPayPrice(order.Price).SetRefundPrice(in.Price).Save(l.ctx)
+		SetNotNilStatus(pointy.GetPointer(uint8(pay.PayStatus_PAY_WAITING))).
+		SetPayPrice(order.Price).SetRefundPrice(in.Price).Save(l.ctx)
 
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)

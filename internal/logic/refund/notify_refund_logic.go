@@ -3,7 +3,7 @@ package refund
 import (
 	"context"
 	"encoding/json"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
+
 	payModel "github.com/agui-coder/simple-admin-pay-common/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/notify"
@@ -52,13 +52,13 @@ func (l *NotifyRefundLogic) NotifyRefund(in *pay.NotifyRefundReq) (*pay.BaseResp
 }
 
 func (l *NotifyRefundLogic) ProcessRefundStatus(channel *ent.Channel, notify *payModel.RefundResp) error {
-	if notify.Status == consts.SUCCESS {
+	if notify.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
 		err := l.notifyRefundSuccess(channel, notify)
 		if err != nil {
 			return err
 		}
 	}
-	if notify.Status == consts.FAILURE {
+	if notify.Status == uint8(pay.PayStatus_PAY_FAILURE) {
 		return nil
 	}
 	return nil
@@ -69,11 +69,11 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 	if err != nil {
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
 	}
-	if refundInfo.Status == consts.SUCCESS {
+	if refundInfo.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
 		logx.Infof("refund success, refundId: %d", refundInfo.ID)
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
 	}
-	if refundInfo.Status != consts.WAITING {
+	if refundInfo.Status != uint8(pay.PayStatus_PAY_WAITING) {
 		return errorx.NewInvalidArgumentError("refund status is not waiting")
 	}
 	var task *ent.NotifyTask
@@ -85,7 +85,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 		err = tx.Refund.UpdateOneID(refundInfo.ID).
 			SetSuccessTime(resp.SuccessTime).
 			SetChannelRefundNo(resp.ChannelRefundNo).
-			SetStatus(consts.SUCCESS).
+			SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).
 			SetChannelNotifyData(string(channelNotifyData)).
 			Exec(l.ctx)
 		if err != nil {
@@ -96,7 +96,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 		if err != nil {
 			return errorhandler.DefaultEntError(l.Logger, err, refundInfo.OrderID)
 		}
-		if !(orderInfo.Status == consts.SUCCESS || orderInfo.Status == consts.REFUND) {
+		if !(orderInfo.Status == uint8(pay.PayStatus_PAY_SUCCESS) || orderInfo.Status == uint8(pay.PayStatus_PAY_REFUND)) {
 			return errorx.NewInvalidArgumentError("pay order refund is fail status error")
 		}
 		if orderInfo.RefundPrice+refundInfo.RefundPrice > orderInfo.Price {
@@ -104,11 +104,11 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 		}
 		err = tx.Order.UpdateOneID(refundInfo.OrderID).
 			SetRefundPrice(orderInfo.RefundPrice + refundInfo.RefundPrice).
-			SetStatus(consts.REFUND).Exec(l.ctx)
+			SetStatus(uint8(pay.PayStatus_PAY_REFUND)).Exec(l.ctx)
 		if err != nil {
 			return errorhandler.DefaultEntError(l.Logger, err, orderInfo)
 		}
-		task, err = model.NewModel(tx.Client()).CreatePayNotifyTask(l.ctx, consts.RefundType, refundInfo.ID)
+		task, err = model.NewModel(tx.Client()).CreatePayNotifyTask(l.ctx, int(pay.PayStatus_PAY_REFUND), refundInfo.ID)
 		if err != nil {
 			return err
 		}

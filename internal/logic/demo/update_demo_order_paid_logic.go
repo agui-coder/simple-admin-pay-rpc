@@ -2,10 +2,10 @@ package demo
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
-	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"strconv"
 	"time"
+
+	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -50,7 +50,7 @@ func (l *UpdateDemoOrderPaidLogic) UpdateDemoOrderPaid(in *pay.UpdateDemoOrderPa
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}
-	if consts.SUCCESS != *pointy.GetStatusPointer(payOrder.Status) {
+	if uint8(pay.PayStatus_PAY_SUCCESS) != *pointy.GetStatusPointer(payOrder.Status) {
 		logx.Errorf("[validateDemoOrderCanPaid][order(%d) 支付订单未支付，请进行处理！order 数据是：%s]", demoOrder.ID, demoOrder)
 		return nil, errorx.NewInvalidArgumentError("DEMO_ORDER_UPDATE_PAID_PAY_ORDER_PAID")
 	}

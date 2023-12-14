@@ -2,15 +2,15 @@ package demo
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
+	"strconv"
+	"time"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/zeromicro/go-zero/core/errorx"
-	"strconv"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -43,7 +43,7 @@ func (l *UpdateDemoRefundPaidLogic) UpdateDemoRefundPaid(in *pay.UpdateDemoRefun
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}
-	if uint8(*refundInfo.Status) != consts.SUCCESS {
+	if uint8(*refundInfo.Status) != uint8(pay.PayStatus_PAY_SUCCESS) {
 		return nil, errorx.NewInvalidArgumentError("demo order refund fail refund not success")
 	}
 	if *refundInfo.RefundPrice != demoOrder.Price {

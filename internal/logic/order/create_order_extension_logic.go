@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -35,7 +34,7 @@ func (l *CreateOrderExtensionLogic) CreateOrderExtension(in *pay.OrderCreateExte
 		SetChannelExtras(in.ChannelExtras).
 		SetNo(in.No).
 		SetChannelID(in.ChannelID).
-		SetStatus(consts.WAITING).SetUserIP(in.UserIP).Save(l.ctx)
+		SetStatus(uint8(pay.PayStatus_PAY_WAITING)).SetUserIP(in.UserIP).Save(l.ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}

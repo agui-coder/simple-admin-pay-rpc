@@ -2,10 +2,10 @@ package model
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
+	"time"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/money"
-	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
@@ -76,10 +76,10 @@ func (m *OrderModel) ValidateOrderCanSubmit(ctx context.Context, id uint64) (*en
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, id)
 	}
-	if consts.SUCCESS == order.Status { // 校验状态，发现已支付
+	if uint8(pay.PayStatus_PAY_SUCCESS) == order.Status { // 校验状态，发现已支付
 		return nil, errorx.NewInvalidArgumentError("pay order status is success")
 	}
-	if consts.WAITING != order.Status { // 校验状态，必须是待支付
+	if uint8(pay.PayStatus_PAY_WAITING) != order.Status { // 校验状态，必须是待支付
 		return nil, errorx.NewInvalidArgumentError("pay order status is not waiting")
 	}
 	if time.Now().After(order.ExpireTime) {
@@ -93,19 +93,19 @@ func (m *OrderModel) UpdateOrderSuccess(ctx context.Context, channel *ent.Channe
 	if err != nil {
 		return errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)
 	}
-	if orderEnt.Status == consts.SUCCESS && orderEnt.ExtensionID == orderExtension.ID {
+	if orderEnt.Status == uint8(pay.PayStatus_PAY_SUCCESS) && orderEnt.ExtensionID == orderExtension.ID {
 		logx.Infof("[updateOrderExtensionSuccess][order:%d 已经是已支付，无需更新]", orderEnt.ID)
 		return nil
 	}
-	if orderEnt.Status != consts.WAITING {
+	if orderEnt.Status != uint8(pay.PayStatus_PAY_WAITING) {
 		return errorx.NewInvalidArgumentError("pay order status is not waiting")
 	}
 	channelFeePrice, err := money.CalculateRatePriceInternal(orderEnt.Price, channel.FeeRate)
 	if err != nil {
 		return err
 	}
-	updateCounts, err := m.Update().Where(order.IDEQ(orderEnt.ID), order.StatusEQ(consts.WAITING)).
-		SetStatus(consts.SUCCESS).SetChannelID(channel.ID).SetChannelCode(channel.Code).
+	updateCounts, err := m.Update().Where(order.IDEQ(orderEnt.ID), order.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).
+		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).SetChannelID(channel.ID).SetChannelCode(channel.Code).
 		SetNotNilSuccessTime(pointy.GetTimePointer(&notifyResp.SuccessTime, 0)).SetExtensionID(orderExtension.ID).SetNo(orderExtension.No).
 		SetChannelOrderNo(notifyResp.ChannelOrderNo).SetNotNilChannelUserID(notifyResp.ChannelUserId).
 		SetChannelFeeRate(channel.FeeRate).SetChannelFeePrice(channelFeePrice).Save(ctx)

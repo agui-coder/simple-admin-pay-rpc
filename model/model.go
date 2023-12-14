@@ -2,13 +2,13 @@ package model
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
+	"time"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/zeromicro/go-zero/core/errorx"
-	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/mqs/amq/types/payload"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -44,12 +44,12 @@ func (m *Model) CreatePayNotifyTask(ctx context.Context, types int, dataId uint6
 	taskCreate := m.NotifyTask.Create().
 		SetType(types).
 		SetDataID(dataId).
-		SetStatus(consts.WAITING).
+		SetStatus(uint8(pay.PayStatus_PAY_WAITING)).
 		SetNextNotifyTime(time.Now()).
 		SetNotifyTimes(0).
 		SetLastExecuteTime(time.Now()).
 		SetMaxNotifyTimes(int8(len(payload.NotifyFrequency)) + 1)
-	if types == consts.OrderType {
+	if types == int(pay.PayType_PAY_ORDER) {
 		order, err := m.Order.Get(ctx, dataId)
 		if err != nil {
 			return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, dataId)
@@ -57,7 +57,7 @@ func (m *Model) CreatePayNotifyTask(ctx context.Context, types int, dataId uint6
 		taskCreate.SetAppID(order.AppID).
 			SetMerchantOrderID(order.MerchantOrderID).
 			SetNotifyURL(order.NotifyURL)
-	} else if types == consts.RefundType {
+	} else if types == int(pay.PayType_PAY_RETURN) {
 		refundInfo, err := m.Refund.Get(ctx, dataId)
 		if err != nil {
 			return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, dataId)
@@ -78,13 +78,14 @@ func (m *Model) ValidatePayOrderCanRefund(ctx context.Context, in *pay.RefundCre
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, in)
 	}
-	if order.Status != consts.SUCCESS && order.Status != consts.REFUND {
+	if order.Status != uint8(pay.PayStatus_PAY_SUCCESS) && order.Status != uint8(pay.PayStatus_PAY_REFUND) {
 		return nil, errorx.NewInvalidArgumentError("pay order refund fail status error")
 	}
 	if in.Price+order.RefundPrice > order.Price {
 		return nil, errorx.NewInvalidArgumentError("refund price exceed")
 	}
-	count, err := m.Refund.Query().Where(refund.AppIDEQ(in.AppId), refund.OrderIDEQ(order.ID), refund.StatusEQ(consts.WAITING)).Count(ctx)
+	count, err := m.Refund.Query().Where(refund.AppIDEQ(in.AppId), refund.OrderIDEQ(order.ID),
+		refund.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).Count(ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, in)
 	}

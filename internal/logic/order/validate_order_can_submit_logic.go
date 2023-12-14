@@ -2,9 +2,9 @@ package order
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
-	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"time"
+
+	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 
@@ -35,10 +35,10 @@ func (l *ValidateOrderCanSubmitLogic) ValidateOrderCanSubmit(in *pay.IDReq) (*pa
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in.Id)
 	}
-	if consts.SUCCESS == order.Status { // 校验状态，发现已支付
+	if uint8(pay.PayStatus_PAY_SUCCESS) == order.Status { // 校验状态，发现已支付
 		return nil, errorx.NewInvalidArgumentError("pay order status is success")
 	}
-	if consts.WAITING != order.Status { // 校验状态，必须是待支付
+	if uint8(pay.PayStatus_PAY_WAITING) != order.Status { // 校验状态，必须是待支付
 		return nil, errorx.NewInvalidArgumentError("pay order status is not waiting")
 	}
 	if time.Now().After(order.ExpireTime) {

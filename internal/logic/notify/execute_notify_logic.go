@@ -3,9 +3,9 @@ package notify
 import (
 	"context"
 	"encoding/json"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/model"
+	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"net/http"
 	"strconv"
@@ -85,12 +85,12 @@ func (l *ExecuteNotifyLogic) executeNotify0(task *ent.NotifyTask) error {
 
 func (l *ExecuteNotifyLogic) executeNotifyInvoke(task *ent.NotifyTask) (resp payload.PayOrderNotifyResp, err error) {
 	var request any
-	if consts.OrderType == task.Type {
+	if int(pay.PayType_PAY_ORDER) == task.Type {
 		request = payload.PayOrderNotifyReq{
 			MerchantOrderId: task.MerchantOrderID,
 			PayOrderId:      task.DataID,
 		}
-	} else if consts.RefundType == task.Type {
+	} else if int(pay.PayType_PAY_RETURN) == task.Type {
 		request = payload.PayRefundNotifyReq{
 			MerchantOrderId: task.MerchantOrderID,
 			PayRefundId:     task.DataID,

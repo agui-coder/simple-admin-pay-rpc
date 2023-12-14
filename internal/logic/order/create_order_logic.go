@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -53,7 +52,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp,
 		SetNotNilExpireTime(pointy.GetTimePointer(&in.ExpireTime, 0)).
 		SetAppID(app.ID).
 		SetNotifyURL(app.OrderNotifyURL).
-		SetStatus(consts.WAITING).
+		SetStatus(uint8(pay.PayStatus_PAY_WAITING)).
 		SetRefundPrice(0).Save(l.ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)

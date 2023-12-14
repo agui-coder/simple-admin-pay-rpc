@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 	"encoding/json"
-	"github.com/agui-coder/simple-admin-pay-common/consts"
+
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
@@ -36,11 +36,11 @@ func (m *OrderExtensionModel) UpdateOrderSuccess(ctx context.Context, notifyResp
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)
 	}
 	// 更新支付单状态
-	if orderExtension.Status == consts.SUCCESS {
+	if orderExtension.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
 		logx.Infof("[updateOrderExtensionSuccess][orderExtension%d 已经是已支付，无需更新]", orderExtension.ID)
 		return orderExtension, nil
 	}
-	if orderExtension.Status != consts.WAITING {
+	if orderExtension.Status != uint8(pay.PayStatus_PAY_WAITING) {
 		return nil, errorx.NewInvalidArgumentError("pay order extension status is not waiting")
 	}
 	notifyData, err := json.Marshal(notifyResp)
@@ -50,7 +50,7 @@ func (m *OrderExtensionModel) UpdateOrderSuccess(ctx context.Context, notifyResp
 	updateCounts, err := m.Update().
 		Where(orderextension.IDEQ(orderExtension.ID),
 			orderextension.StatusEQ(orderExtension.Status)).
-		SetStatus(consts.SUCCESS).
+		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).
 		SetChannelNotifyData(string(notifyData)).Save(ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)
@@ -59,7 +59,7 @@ func (m *OrderExtensionModel) UpdateOrderSuccess(ctx context.Context, notifyResp
 		return nil, errorx.NewInvalidArgumentError("pay order extension status is not waiting")
 	}
 	logx.Infof("[updateOrderExtensionSuccess][orderExtension:%d 更新为已支付]", orderExtension.ID)
-	orderExtension.Status = consts.SUCCESS
+	orderExtension.Status = uint8(pay.PayStatus_PAY_SUCCESS)
 	orderExtension.ChannelNotifyData = string(notifyData)
 	return orderExtension, nil
 }

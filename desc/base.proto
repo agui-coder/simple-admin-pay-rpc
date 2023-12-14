@@ -5,6 +5,27 @@ package pay;
 option go_package = "./pay";
 
 // base message
+enum CommonStatus {
+  Enable = 0;
+  Disable = 1;
+}
+
+enum PayStatus {
+  PAY_WAITING = 0;
+  PAY_SUCCESS = 1;
+  PAY_REFUND = 2;
+  PAY_CLOSED = 3;
+  PAY_FAILURE = 4;
+  PAY_REQUEST_SUCCESS = 5;
+  PAY_REQUEST_FAILURE = 6;
+}
+
+enum PayType {
+    PAY_ORDER = 0;
+    PAY_RETURN = 1;
+}
+
+// base message
 message Empty {}
 
 message IDReq {
@@ -22,9 +43,15 @@ message UUIDsReq {
 message UUIDReq {
   string id = 1;
 }
+// TODO 给返回消息加上状态码？ 暂时没想好怎么用。
+enum RetCode {
+  SUCCESS = 0;
+  ERROR = 500;
+  TRADE_UUID_EMPTY = 7000003;
+}
 
 message BaseResp {
-  string msg = 1;
+  string msg = 2;
 }
 
 message PageInfoReq {

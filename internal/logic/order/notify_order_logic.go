@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-	consts2 "github.com/agui-coder/simple-admin-pay-common/consts"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
@@ -37,15 +36,15 @@ func (l *NotifyOrderLogic) NotifyOrder(in *pay.NotifyOrderReq) (*pay.BaseResp, e
 		logx.Error(err)
 		return nil, err
 	}
-	if channel.Status == consts2.Disable {
+	if channel.Status == uint8(pay.CommonStatus_Disable) {
 		logx.Error("channel is disable")
 	}
 
-	if *pointy.GetStatusPointer(&in.Status) == consts2.SUCCESS {
+	if *pointy.GetStatusPointer(&in.Status) == uint8(pay.PayStatus_PAY_SUCCESS) {
 		err := l.notifyOrderSuccess(channel, in)
 		return &pay.BaseResp{Msg: i18n.Failed}, err
 	}
-	if *pointy.GetStatusPointer(&in.Status) == consts2.CLOSED {
+	if *pointy.GetStatusPointer(&in.Status) == uint8(pay.PayStatus_PAY_CLOSED) {
 		// TODO 失败处理
 		return &pay.BaseResp{Msg: i18n.Failed}, err
 	}
@@ -69,7 +68,7 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channel *ent.Channel, notifyResp *
 		if err != nil {
 			return err
 		}
-		task, err = newModel.CreatePayNotifyTask(l.ctx, consts2.OrderType, orderExtension.OrderID)
+		task, err = newModel.CreatePayNotifyTask(l.ctx, int(pay.PayType_PAY_ORDER), orderExtension.OrderID)
 		if err != nil {
 			return err
 		}

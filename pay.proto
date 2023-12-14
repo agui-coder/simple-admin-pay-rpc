@@ -3,144 +3,37 @@ syntax = "proto3";
 package pay;
 option go_package="./pay";
 
-message AppUpdateStatusReq {
-  uint32 status = 1;
-  uint64 id = 2;
+//  base message
+enum CommonStatus {
+  Enable = 0;
+  Disable = 1;
 }
 
-message PageInfoReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
+enum PayStatus {
+  PAY_WAITING = 0;
+  PAY_SUCCESS = 1;
+  PAY_REFUND = 2;
+  PAY_CLOSED = 3;
+  PAY_FAILURE = 4;
+  PAY_REQUEST_SUCCESS = 5;
+  PAY_REQUEST_FAILURE = 6;
 }
 
-message ChannelInfo {
-  optional uint64 id = 1;
-  optional int64 created_at = 2;
-  optional int64 updated_at = 3;
-  optional uint32 status = 4;
-  optional string code = 5;
-  optional string remark = 6;
-  optional double fee_rate = 7;
-  optional uint64 app_id = 8;
-  optional string config = 9;
+enum PayType {
+  PAY_ORDER = 0;
+  PAY_RETURN = 1;
 }
 
-message RefundListReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
-  optional string no = 3;
-  optional string channel_code = 4;
-  optional string order_no = 5;
+//  TODO 给返回消息加上状态码？ 暂时没想好怎么用。
+enum RetCode {
+  SUCCESS = 0;
+  ERROR = 500;
+  TRADE_UUID_EMPTY = 7000003;
 }
 
-message AppPageReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
-}
-
-message UUIDsReq {
-  repeated string ids = 1;
-}
-
-message ChannelListReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
-  optional string code = 3;
-  optional string remark = 4;
-  optional string config = 5;
-}
-
-message ByAppIdAndCodeReq {
-  uint64 appId = 1;
-  string code = 2;
-}
-
-message OrderCreateReq {
-  uint64 appId = 1;
-  string userIp = 2;
-  string merchantOrderId = 3;
-  string subject = 4;
-  string body = 5;
-  int32 price = 6;
-  int64 expireTime = 7;
-}
-
-message AppUpdateReq {
-  string name = 1;
-  uint32 status = 2;
-  optional string remark = 3;
-  string orderNotifyUrl = 4;
-  string refundNotifyUrl = 5;
-  uint64 id = 6;
-}
-
-message DemoOrderInfo {
-  optional uint64 id = 1;
-  optional int64 created_at = 2;
-  optional int64 updated_at = 3;
-  optional string userId = 4;
-  optional uint64 spuId = 5;
-  optional string spuName = 6;
-  optional int32 price = 7;
-  optional bool pay_status = 8;
-  optional uint64 pay_orderId = 9;
-  optional int64 pay_time = 10;
-  optional string pay_channel_code = 11;
-  optional uint64 pay_refund_id = 12;
-  optional int32 refund_price = 13;
-  optional int64 refund_time = 14;
-}
-
-message DemoOrderListResp {
-  uint64 total = 1;
-  repeated DemoOrderInfo demoOrderList = 2;
-}
-
-message OrderExtensionInfo {
-  optional uint64 id = 1;
-  optional int64 created_at = 2;
-  optional int64 updated_at = 3;
-  optional uint32 status = 4;
-  optional string no = 5;
-  optional uint64 order_id = 6;
-  optional uint64 channel_id = 7;
-  optional string channel_code = 8;
-  optional string user_ip = 9;
-  map<string,string> channel_extras = 10;
-  optional string channel_error_code = 11;
-  optional string channel_error_msg = 12;
-  optional string channel_notify_data = 13;
-}
-
-//  refund message
-message RefundInfo {
-  optional uint64 id = 1;
-  optional int64 created_at = 2;
-  optional int64 updated_at = 3;
-  optional uint32 status = 4;
-  optional string no = 5;
-  optional uint64 app_id = 6;
-  optional uint64 channel_id = 7;
-  optional string channel_code = 8;
-  optional uint64 order_id = 9;
-  optional string order_no = 10;
-  optional string merchant_order_id = 11;
-  optional string merchant_refund_id = 12;
-  optional string notify_url = 13;
-  optional int32 pay_price = 14;
-  optional int32 refund_price = 15;
-  optional string reason = 16;
-  optional string user_ip = 17;
-  optional string channel_order_no = 18;
-  optional string channel_refund_no = 19;
-  optional int64 success_time = 20;
-  optional string channel_error_code = 21;
-  optional string channel_error_msg = 22;
-  optional string channel_notify_data = 23;
-}
-
-message UUIDReq {
+message BaseUUIDResp {
   string id = 1;
+  string msg = 2;
 }
 
 message ChannelUpdateReq {
@@ -151,91 +44,6 @@ message ChannelUpdateReq {
   double feeRate = 5;
   uint64 appId = 6;
   uint64 id = 7;
-}
-
-message ChannelListResp {
-  uint64 total = 1;
-  repeated ChannelInfo data = 2;
-}
-
-message DemoOrderPageReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
-}
-
-message updateDemoOrderPaidReq {
-  uint64 id = 1;
-  uint64 payOrderId = 2;
-}
-
-message RefundDemoOrderReq {
-  uint64 Id = 2;
-  string userIp = 3;
-}
-
-message NoReq {
-  string no = 1;
-}
-
-message BaseMsg {
-  string msg = 1;
-}
-
-//  base message
-message Empty {}
-
-message OrderPageReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
-  optional uint64 appId = 3;
-  optional string channelCode = 4;
-  optional string merchantOrderId = 5;
-  optional string channelOrderNo = 6;
-  optional string no = 7;
-  optional uint32 status = 8;
-  repeated int64 createTime = 9;
-}
-
-message StringList {
-  repeated string items = 1;
-}
-
-message AppInfo {
-  optional uint64 id = 1;
-  optional int64 created_at = 2;
-  optional int64 updated_at = 3;
-  optional uint32 status = 4;
-  optional string name = 5;
-  optional string remark = 6;
-  optional string order_notify_url = 7;
-  optional string refund_notify_url = 8;
-}
-
-message IDReq {
-  uint64 id = 1;
-}
-
-message BaseResp {
-  string msg = 1;
-}
-
-message BaseIDResp {
-  uint64 id = 1;
-  string msg = 2;
-}
-
-message ChannelCreateReq {
-  string code = 1;
-  string config = 2;
-  uint32 status = 3;
-  optional string remark = 4;
-  double feeRate = 5;
-  uint64 appId = 6;
-}
-
-message ValidateChannelReq {
-  uint64 appId = 1;
-  string code = 2;
 }
 
 message OrderInfo {
@@ -274,9 +82,41 @@ message NotifyOrderReq {
   uint64 channelId = 7;
 }
 
-message AppListResp {
-  uint64 total = 1;
-  repeated AppInfo appList = 2;
+message AppInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string name = 5;
+  optional string remark = 6;
+  optional string order_notify_url = 7;
+  optional string refund_notify_url = 8;
+}
+
+message BaseMsg {
+  string msg = 1;
+}
+
+message ByAppIdAndCodeReq {
+  uint64 appId = 1;
+  string code = 2;
+}
+
+message DemoOrderInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string userId = 4;
+  optional uint64 spuId = 5;
+  optional string spuName = 6;
+  optional int32 price = 7;
+  optional bool pay_status = 8;
+  optional uint64 pay_orderId = 9;
+  optional int64 pay_time = 10;
+  optional string pay_channel_code = 11;
+  optional uint64 pay_refund_id = 12;
+  optional int32 refund_price = 13;
+  optional int64 refund_time = 14;
 }
 
 message PayDemoOrderCreateReq {
@@ -288,6 +128,114 @@ message PayDemoOrderCreateReq {
 message updateDemoRefundPaidReq {
   uint64 id = 1;
   uint64 payRefundId = 2;
+}
+
+message OrderExtensionInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string no = 5;
+  optional uint64 order_id = 6;
+  optional uint64 channel_id = 7;
+  optional string channel_code = 8;
+  optional string user_ip = 9;
+  map<string,string> channel_extras = 10;
+  optional string channel_error_code = 11;
+  optional string channel_error_msg = 12;
+  optional string channel_notify_data = 13;
+}
+
+//  base message
+message Empty {}
+
+message UUIDsReq {
+  repeated string ids = 1;
+}
+
+message OrderPageReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional uint64 appId = 3;
+  optional string channelCode = 4;
+  optional string merchantOrderId = 5;
+  optional string channelOrderNo = 6;
+  optional string no = 7;
+  optional uint32 status = 8;
+  repeated int64 createTime = 9;
+}
+
+message StringList {
+  repeated string items = 1;
+}
+
+message OrderCreateExtensionReq {
+  uint64 orderID = 1;
+  string channelCode = 2;
+  map<string,string> channelExtras = 3;
+  string no = 4;
+  uint64 channelID = 5;
+  uint32 status = 6;
+  string userIP = 7;
+}
+
+message RefundListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string no = 3;
+  optional string channel_code = 4;
+  optional string order_no = 5;
+}
+
+message NotifyRefundReq {
+  uint32 Status = 1;
+  string OutRefundNo = 2;
+  string ChannelRefundNo = 3;
+  int64 SuccessTime = 4;
+  string ChannelNotifyData = 5;
+  string ChannelErrorCode = 6;
+  string ChannelErrorMsg = 7;
+  uint64 channel_id = 8;
+}
+
+message NoReq {
+  string no = 1;
+}
+
+message AppListResp {
+  uint64 total = 1;
+  repeated AppInfo appList = 2;
+}
+
+message IDsReq {
+  repeated uint64 ids = 1;
+}
+
+message UUIDReq {
+  string id = 1;
+}
+
+message ChannelListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string code = 3;
+  optional string remark = 4;
+  optional string config = 5;
+}
+
+message DemoOrderListResp {
+  uint64 total = 1;
+  repeated DemoOrderInfo demoOrderList = 2;
+}
+
+message RefundDemoOrderReq {
+  uint64 Id = 2;
+  string userIp = 3;
+}
+
+message OrderListResp {
+  uint64 total = 1;
+  repeated OrderInfo data = 2;
 }
 
 message RefundPageReq {
@@ -303,43 +251,108 @@ message RefundPageReq {
   repeated int64 createTime = 10;
 }
 
-message NotifyRefundReq {
-  uint32 Status = 1;
-  string OutRefundNo = 2;
-  string ChannelRefundNo = 3;
-  int64 SuccessTime = 4;
-  string ChannelNotifyData = 5;
-  string ChannelErrorCode = 6;
-  string ChannelErrorMsg = 7;
-  uint64 channel_id = 8;
+message updateDemoOrderPaidReq {
+  uint64 id = 1;
+  uint64 payOrderId = 2;
 }
 
-message AppCreateReq {
+message AppPageReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+}
+
+message AppUpdateStatusReq {
+  uint32 status = 1;
+  uint64 id = 2;
+}
+
+message PageInfoReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+}
+
+message ChannelInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string code = 5;
+  optional string remark = 6;
+  optional double fee_rate = 7;
+  optional uint64 app_id = 8;
+  optional string config = 9;
+}
+
+message ChannelCreateReq {
+  string code = 1;
+  string config = 2;
+  uint32 status = 3;
+  optional string remark = 4;
+  double feeRate = 5;
+  uint64 appId = 6;
+}
+
+message ChannelListResp {
+  uint64 total = 1;
+  repeated ChannelInfo data = 2;
+}
+
+message DemoOrderPageReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+}
+
+message RefundCountResp {
+  uint64 count = 1;
+}
+
+message AppUpdateReq {
   string name = 1;
   uint32 status = 2;
   optional string remark = 3;
   string orderNotifyUrl = 4;
   string refundNotifyUrl = 5;
+  uint64 id = 6;
 }
 
-message BaseUUIDResp {
-  string id = 1;
+message BaseResp {
   string msg = 2;
 }
 
-message OrderListResp {
-  uint64 total = 1;
-  repeated OrderInfo data = 2;
+message ValidateChannelReq {
+  uint64 appId = 1;
+  string code = 2;
 }
 
-message OrderCreateExtensionReq {
-  uint64 orderID = 1;
-  string channelCode = 2;
-  map<string,string> channelExtras = 3;
-  string no = 4;
-  uint64 channelID = 5;
-  uint32 status = 6;
-  string userIP = 7;
+//  refund message
+message RefundInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string no = 5;
+  optional uint64 app_id = 6;
+  optional uint64 channel_id = 7;
+  optional string channel_code = 8;
+  optional uint64 order_id = 9;
+  optional string order_no = 10;
+  optional string merchant_order_id = 11;
+  optional string merchant_refund_id = 12;
+  optional string notify_url = 13;
+  optional int32 pay_price = 14;
+  optional int32 refund_price = 15;
+  optional string reason = 16;
+  optional string user_ip = 17;
+  optional string channel_order_no = 18;
+  optional string channel_refund_no = 19;
+  optional int64 success_time = 20;
+  optional string channel_error_code = 21;
+  optional string channel_error_msg = 22;
+  optional string channel_notify_data = 23;
+}
+
+message IDReq {
+  uint64 id = 1;
 }
 
 message RefundCreateReq {
@@ -356,17 +369,33 @@ message RefundPageResp {
   repeated RefundInfo data = 2;
 }
 
-message RefundCountResp {
-  uint64 count = 1;
-}
-
 message RefundListResp {
   uint64 total = 1;
   repeated RefundInfo data = 2;
 }
 
-message IDsReq {
-  repeated uint64 ids = 1;
+message AppCreateReq {
+  string name = 1;
+  uint32 status = 2;
+  optional string remark = 3;
+  string orderNotifyUrl = 4;
+  string refundNotifyUrl = 5;
+}
+
+message BaseIDResp {
+  uint64 id = 1;
+  string msg = 2;
+}
+
+message OrderCreateReq {
+  uint64 appId = 1;
+  string userIp = 2;
+  string merchantOrderId = 3;
+  string subject = 4;
+  string body = 5;
+  int32 price = 6;
+  int64 expireTime = 7;
+  string notifyBusinessUrl = 8;
 }
 
 service Pay {
