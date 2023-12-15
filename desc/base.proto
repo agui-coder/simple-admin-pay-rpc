@@ -5,24 +5,19 @@ package pay;
 option go_package = "./pay";
 
 // base message
-enum CommonStatus {
-  Enable = 0;
-  Disable = 1;
-}
-
 enum PayStatus {
-  PAY_WAITING = 0;
-  PAY_SUCCESS = 1;
-  PAY_REFUND = 2;
-  PAY_CLOSED = 3;
-  PAY_FAILURE = 4;
-  PAY_REQUEST_SUCCESS = 5;
-  PAY_REQUEST_FAILURE = 6;
+  PAY_STATUS_UNKNOWN = 0;
+  PAY_WAITING = 1;
+  PAY_SUCCESS = 2;
+  PAY_REFUND = 3;
+  PAY_CLOSED = 4;
+  PAY_FAILURE = 5;
 }
 
 enum PayType {
-    PAY_ORDER = 0;
-    PAY_RETURN = 1;
+    PAY_TYPE_UNKNOWN = 0;
+    PAY_ORDER = 1;
+    PAY_RETURN = 2;
 }
 
 // base message

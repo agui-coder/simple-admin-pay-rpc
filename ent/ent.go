@@ -15,8 +15,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
@@ -83,8 +81,6 @@ func checkColumn(table, column string) error {
 			app.Table:            app.ValidColumn,
 			channel.Table:        channel.ValidColumn,
 			demoorder.Table:      demoorder.ValidColumn,
-			notifylog.Table:      notifylog.ValidColumn,
-			notifytask.Table:     notifytask.ValidColumn,
 			order.Table:          order.ValidColumn,
 			orderextension.Table: orderextension.ValidColumn,
 			refund.Table:         refund.ValidColumn,

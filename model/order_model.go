@@ -104,16 +104,13 @@ func (m *OrderModel) UpdateOrderSuccess(ctx context.Context, channel *ent.Channe
 	if err != nil {
 		return err
 	}
-	updateCounts, err := m.Update().Where(order.IDEQ(orderEnt.ID), order.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).
+	err = m.Update().Where(order.IDEQ(orderEnt.ID), order.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).
 		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).SetChannelID(channel.ID).SetChannelCode(channel.Code).
 		SetNotNilSuccessTime(pointy.GetTimePointer(&notifyResp.SuccessTime, 0)).SetExtensionID(orderExtension.ID).SetNo(orderExtension.No).
 		SetChannelOrderNo(notifyResp.ChannelOrderNo).SetNotNilChannelUserID(notifyResp.ChannelUserId).
-		SetChannelFeeRate(channel.FeeRate).SetChannelFeePrice(channelFeePrice).Save(ctx)
+		SetChannelFeeRate(channel.FeeRate).SetChannelFeePrice(channelFeePrice).Exec(ctx)
 	if err != nil {
 		return errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)
-	}
-	if updateCounts == 0 {
-		return errorx.NewInvalidArgumentError("pay order status is not waiting")
 	}
 	logx.Infof("[updateOrderExtensionSuccess][order %v 更新为已支付]", orderEnt)
 	return nil

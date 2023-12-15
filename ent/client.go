@@ -17,13 +17,9 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
-
-	stdsql "database/sql"
 )
 
 // Client is the client that holds all ent builders.
@@ -37,10 +33,6 @@ type Client struct {
 	Channel *ChannelClient
 	// DemoOrder is the client for interacting with the DemoOrder builders.
 	DemoOrder *DemoOrderClient
-	// NotifyLog is the client for interacting with the NotifyLog builders.
-	NotifyLog *NotifyLogClient
-	// NotifyTask is the client for interacting with the NotifyTask builders.
-	NotifyTask *NotifyTaskClient
 	// Order is the client for interacting with the Order builders.
 	Order *OrderClient
 	// OrderExtension is the client for interacting with the OrderExtension builders.
@@ -61,8 +53,6 @@ func (c *Client) init() {
 	c.App = NewAppClient(c.config)
 	c.Channel = NewChannelClient(c.config)
 	c.DemoOrder = NewDemoOrderClient(c.config)
-	c.NotifyLog = NewNotifyLogClient(c.config)
-	c.NotifyTask = NewNotifyTaskClient(c.config)
 	c.Order = NewOrderClient(c.config)
 	c.OrderExtension = NewOrderExtensionClient(c.config)
 	c.Refund = NewRefundClient(c.config)
@@ -161,8 +151,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		App:            NewAppClient(cfg),
 		Channel:        NewChannelClient(cfg),
 		DemoOrder:      NewDemoOrderClient(cfg),
-		NotifyLog:      NewNotifyLogClient(cfg),
-		NotifyTask:     NewNotifyTaskClient(cfg),
 		Order:          NewOrderClient(cfg),
 		OrderExtension: NewOrderExtensionClient(cfg),
 		Refund:         NewRefundClient(cfg),
@@ -188,8 +176,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		App:            NewAppClient(cfg),
 		Channel:        NewChannelClient(cfg),
 		DemoOrder:      NewDemoOrderClient(cfg),
-		NotifyLog:      NewNotifyLogClient(cfg),
-		NotifyTask:     NewNotifyTaskClient(cfg),
 		Order:          NewOrderClient(cfg),
 		OrderExtension: NewOrderExtensionClient(cfg),
 		Refund:         NewRefundClient(cfg),
@@ -222,8 +208,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.App, c.Channel, c.DemoOrder, c.NotifyLog, c.NotifyTask, c.Order,
-		c.OrderExtension, c.Refund,
+		c.App, c.Channel, c.DemoOrder, c.Order, c.OrderExtension, c.Refund,
 	} {
 		n.Use(hooks...)
 	}
@@ -233,8 +218,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.App, c.Channel, c.DemoOrder, c.NotifyLog, c.NotifyTask, c.Order,
-		c.OrderExtension, c.Refund,
+		c.App, c.Channel, c.DemoOrder, c.Order, c.OrderExtension, c.Refund,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -249,10 +233,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Channel.mutate(ctx, m)
 	case *DemoOrderMutation:
 		return c.DemoOrder.mutate(ctx, m)
-	case *NotifyLogMutation:
-		return c.NotifyLog.mutate(ctx, m)
-	case *NotifyTaskMutation:
-		return c.NotifyTask.mutate(ctx, m)
 	case *OrderMutation:
 		return c.Order.mutate(ctx, m)
 	case *OrderExtensionMutation:
@@ -669,276 +649,6 @@ func (c *DemoOrderClient) mutate(ctx context.Context, m *DemoOrderMutation) (Val
 	}
 }
 
-// NotifyLogClient is a client for the NotifyLog schema.
-type NotifyLogClient struct {
-	config
-}
-
-// NewNotifyLogClient returns a client for the NotifyLog from the given config.
-func NewNotifyLogClient(c config) *NotifyLogClient {
-	return &NotifyLogClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `notifylog.Hooks(f(g(h())))`.
-func (c *NotifyLogClient) Use(hooks ...Hook) {
-	c.hooks.NotifyLog = append(c.hooks.NotifyLog, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `notifylog.Intercept(f(g(h())))`.
-func (c *NotifyLogClient) Intercept(interceptors ...Interceptor) {
-	c.inters.NotifyLog = append(c.inters.NotifyLog, interceptors...)
-}
-
-// Create returns a builder for creating a NotifyLog entity.
-func (c *NotifyLogClient) Create() *NotifyLogCreate {
-	mutation := newNotifyLogMutation(c.config, OpCreate)
-	return &NotifyLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of NotifyLog entities.
-func (c *NotifyLogClient) CreateBulk(builders ...*NotifyLogCreate) *NotifyLogCreateBulk {
-	return &NotifyLogCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *NotifyLogClient) MapCreateBulk(slice any, setFunc func(*NotifyLogCreate, int)) *NotifyLogCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &NotifyLogCreateBulk{err: fmt.Errorf("calling to NotifyLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*NotifyLogCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &NotifyLogCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for NotifyLog.
-func (c *NotifyLogClient) Update() *NotifyLogUpdate {
-	mutation := newNotifyLogMutation(c.config, OpUpdate)
-	return &NotifyLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *NotifyLogClient) UpdateOne(nl *NotifyLog) *NotifyLogUpdateOne {
-	mutation := newNotifyLogMutation(c.config, OpUpdateOne, withNotifyLog(nl))
-	return &NotifyLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *NotifyLogClient) UpdateOneID(id uint64) *NotifyLogUpdateOne {
-	mutation := newNotifyLogMutation(c.config, OpUpdateOne, withNotifyLogID(id))
-	return &NotifyLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for NotifyLog.
-func (c *NotifyLogClient) Delete() *NotifyLogDelete {
-	mutation := newNotifyLogMutation(c.config, OpDelete)
-	return &NotifyLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *NotifyLogClient) DeleteOne(nl *NotifyLog) *NotifyLogDeleteOne {
-	return c.DeleteOneID(nl.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *NotifyLogClient) DeleteOneID(id uint64) *NotifyLogDeleteOne {
-	builder := c.Delete().Where(notifylog.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &NotifyLogDeleteOne{builder}
-}
-
-// Query returns a query builder for NotifyLog.
-func (c *NotifyLogClient) Query() *NotifyLogQuery {
-	return &NotifyLogQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeNotifyLog},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a NotifyLog entity by its id.
-func (c *NotifyLogClient) Get(ctx context.Context, id uint64) (*NotifyLog, error) {
-	return c.Query().Where(notifylog.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *NotifyLogClient) GetX(ctx context.Context, id uint64) *NotifyLog {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *NotifyLogClient) Hooks() []Hook {
-	hooks := c.hooks.NotifyLog
-	return append(hooks[:len(hooks):len(hooks)], notifylog.Hooks[:]...)
-}
-
-// Interceptors returns the client interceptors.
-func (c *NotifyLogClient) Interceptors() []Interceptor {
-	inters := c.inters.NotifyLog
-	return append(inters[:len(inters):len(inters)], notifylog.Interceptors[:]...)
-}
-
-func (c *NotifyLogClient) mutate(ctx context.Context, m *NotifyLogMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&NotifyLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&NotifyLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&NotifyLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&NotifyLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown NotifyLog mutation op: %q", m.Op())
-	}
-}
-
-// NotifyTaskClient is a client for the NotifyTask schema.
-type NotifyTaskClient struct {
-	config
-}
-
-// NewNotifyTaskClient returns a client for the NotifyTask from the given config.
-func NewNotifyTaskClient(c config) *NotifyTaskClient {
-	return &NotifyTaskClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `notifytask.Hooks(f(g(h())))`.
-func (c *NotifyTaskClient) Use(hooks ...Hook) {
-	c.hooks.NotifyTask = append(c.hooks.NotifyTask, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `notifytask.Intercept(f(g(h())))`.
-func (c *NotifyTaskClient) Intercept(interceptors ...Interceptor) {
-	c.inters.NotifyTask = append(c.inters.NotifyTask, interceptors...)
-}
-
-// Create returns a builder for creating a NotifyTask entity.
-func (c *NotifyTaskClient) Create() *NotifyTaskCreate {
-	mutation := newNotifyTaskMutation(c.config, OpCreate)
-	return &NotifyTaskCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of NotifyTask entities.
-func (c *NotifyTaskClient) CreateBulk(builders ...*NotifyTaskCreate) *NotifyTaskCreateBulk {
-	return &NotifyTaskCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *NotifyTaskClient) MapCreateBulk(slice any, setFunc func(*NotifyTaskCreate, int)) *NotifyTaskCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &NotifyTaskCreateBulk{err: fmt.Errorf("calling to NotifyTaskClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*NotifyTaskCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &NotifyTaskCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for NotifyTask.
-func (c *NotifyTaskClient) Update() *NotifyTaskUpdate {
-	mutation := newNotifyTaskMutation(c.config, OpUpdate)
-	return &NotifyTaskUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *NotifyTaskClient) UpdateOne(nt *NotifyTask) *NotifyTaskUpdateOne {
-	mutation := newNotifyTaskMutation(c.config, OpUpdateOne, withNotifyTask(nt))
-	return &NotifyTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *NotifyTaskClient) UpdateOneID(id uint64) *NotifyTaskUpdateOne {
-	mutation := newNotifyTaskMutation(c.config, OpUpdateOne, withNotifyTaskID(id))
-	return &NotifyTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for NotifyTask.
-func (c *NotifyTaskClient) Delete() *NotifyTaskDelete {
-	mutation := newNotifyTaskMutation(c.config, OpDelete)
-	return &NotifyTaskDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *NotifyTaskClient) DeleteOne(nt *NotifyTask) *NotifyTaskDeleteOne {
-	return c.DeleteOneID(nt.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *NotifyTaskClient) DeleteOneID(id uint64) *NotifyTaskDeleteOne {
-	builder := c.Delete().Where(notifytask.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &NotifyTaskDeleteOne{builder}
-}
-
-// Query returns a query builder for NotifyTask.
-func (c *NotifyTaskClient) Query() *NotifyTaskQuery {
-	return &NotifyTaskQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeNotifyTask},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a NotifyTask entity by its id.
-func (c *NotifyTaskClient) Get(ctx context.Context, id uint64) (*NotifyTask, error) {
-	return c.Query().Where(notifytask.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *NotifyTaskClient) GetX(ctx context.Context, id uint64) *NotifyTask {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *NotifyTaskClient) Hooks() []Hook {
-	hooks := c.hooks.NotifyTask
-	return append(hooks[:len(hooks):len(hooks)], notifytask.Hooks[:]...)
-}
-
-// Interceptors returns the client interceptors.
-func (c *NotifyTaskClient) Interceptors() []Interceptor {
-	inters := c.inters.NotifyTask
-	return append(inters[:len(inters):len(inters)], notifytask.Interceptors[:]...)
-}
-
-func (c *NotifyTaskClient) mutate(ctx context.Context, m *NotifyTaskMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&NotifyTaskCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&NotifyTaskUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&NotifyTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&NotifyTaskDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown NotifyTask mutation op: %q", m.Op())
-	}
-}
-
 // OrderClient is a client for the Order schema.
 type OrderClient struct {
 	config
@@ -1347,35 +1057,9 @@ func (c *RefundClient) mutate(ctx context.Context, m *RefundMutation) (Value, er
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		App, Channel, DemoOrder, NotifyLog, NotifyTask, Order, OrderExtension,
-		Refund []ent.Hook
+		App, Channel, DemoOrder, Order, OrderExtension, Refund []ent.Hook
 	}
 	inters struct {
-		App, Channel, DemoOrder, NotifyLog, NotifyTask, Order, OrderExtension,
-		Refund []ent.Interceptor
+		App, Channel, DemoOrder, Order, OrderExtension, Refund []ent.Interceptor
 	}
 )
-
-// ExecContext allows calling the underlying ExecContext method of the driver if it is supported by it.
-// See, database/sql#DB.ExecContext for more information.
-func (c *config) ExecContext(ctx context.Context, query string, args ...any) (stdsql.Result, error) {
-	ex, ok := c.driver.(interface {
-		ExecContext(context.Context, string, ...any) (stdsql.Result, error)
-	})
-	if !ok {
-		return nil, fmt.Errorf("Driver.ExecContext is not supported")
-	}
-	return ex.ExecContext(ctx, query, args...)
-}
-
-// QueryContext allows calling the underlying QueryContext method of the driver if it is supported by it.
-// See, database/sql#DB.QueryContext for more information.
-func (c *config) QueryContext(ctx context.Context, query string, args ...any) (*stdsql.Rows, error) {
-	q, ok := c.driver.(interface {
-		QueryContext(context.Context, string, ...any) (*stdsql.Rows, error)
-	})
-	if !ok {
-		return nil, fmt.Errorf("Driver.QueryContext is not supported")
-	}
-	return q.QueryContext(ctx, query, args...)
-}

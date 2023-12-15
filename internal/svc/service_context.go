@@ -25,7 +25,7 @@ type ServiceContext struct {
 	DB               *ent.Client
 	Model            *entModel.Model
 	Redis            *redis.Redis
-	AsynqServer      *asynq.Server
+	AsynqClient      *asynq.Client
 	PayClientFactory *payment.Factory
 	PayClientCache   *collection.Cache
 }
@@ -44,7 +44,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:           c,
 		DB:               db,
 		Model:            entModel.NewModel(db),
-		AsynqServer:      c.AsynqConf.WithRedisConf(c.RedisConf).NewServer(),
+		AsynqClient:      c.AsynqConf.WithRedisConf(c.RedisConf).NewClient(),
 		Redis:            redis.MustNewRedis(c.RedisConf),
 		PayClientFactory: payment.NewFactory(),
 		PayClientCache:   cache,
@@ -52,6 +52,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 }
 
 func (s *ServiceContext) GetPayClient(ctx context.Context, id uint64) (model.Client, error) {
+	// 每10更新一次支付客户端
 	take, err := s.PayClientCache.Take("pay_client:"+strconv.FormatUint(id, 10), func() (any, error) {
 		channel, err := s.Model.Channel.Get(ctx, id)
 		if err == nil {

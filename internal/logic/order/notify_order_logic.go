@@ -2,11 +2,16 @@ package order
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/hibiken/asynq"
+	"github.com/suyuan32/simple-admin-common/enum/common"
+	"github.com/suyuan32/simple-admin-job/types/pattern"
+	"github.com/suyuan32/simple-admin-job/types/payload"
 
-	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/notify"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 
@@ -36,7 +41,7 @@ func (l *NotifyOrderLogic) NotifyOrder(in *pay.NotifyOrderReq) (*pay.BaseResp, e
 		logx.Error(err)
 		return nil, err
 	}
-	if channel.Status == uint8(pay.CommonStatus_Disable) {
+	if channel.Status == common.StatusBanned {
 		logx.Error("channel is disable")
 	}
 
@@ -57,7 +62,7 @@ func (l *NotifyOrderLogic) NotifyOrder(in *pay.NotifyOrderReq) (*pay.BaseResp, e
 
 // notifyOrderSuccess 支付成功
 func (l *NotifyOrderLogic) notifyOrderSuccess(channel *ent.Channel, notifyResp *pay.NotifyOrderReq) error {
-	var task *ent.NotifyTask
+	var id uint64
 	err := entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
 		newModel := model.NewModel(tx.Client())
 		orderExtension, err := newModel.OrderExtension.UpdateOrderSuccess(l.ctx, notifyResp)
@@ -68,16 +73,24 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channel *ent.Channel, notifyResp *
 		if err != nil {
 			return err
 		}
-		task, err = newModel.CreatePayNotifyTask(l.ctx, int(pay.PayType_PAY_ORDER), orderExtension.OrderID)
-		if err != nil {
-			return err
-		}
+		id = orderExtension.OrderID
 		return nil
 	})
 	if err != nil {
 		return err
 	}
-	err = notify.NewExecuteNotifyLogic(context.Background(), l.svcCtx).ExecuteNotify(task)
+	order, err := l.svcCtx.Model.Order.Get(l.ctx, id)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, id)
+	}
+	paySuccessPayload, err := json.Marshal(payload.PayOrderNotifyReq{
+		MerchantOrderId: order.MerchantOrderID,
+		PayOrderId:      order.ID,
+	})
+	if err != nil {
+		return err
+	}
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(pattern.PayOrderSuccessNotify, paySuccessPayload))
 	if err != nil {
 		return err
 	}

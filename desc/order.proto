@@ -52,6 +52,7 @@ message OrderCreateReq {
   string body = 5;
   int32 price =6;
   int64 expireTime =7;
+  string notifyBusinessUrl = 8;
 }
 
 message OrderPageReq {

@@ -70,46 +70,6 @@ var (
 		Columns:    PayDemoOrderColumns,
 		PrimaryKey: []*schema.Column{PayDemoOrderColumns[0]},
 	}
-	// PayNotifyLogColumns holds the columns for the "pay_notify_log" table.
-	PayNotifyLogColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "created_at", Type: field.TypeTime, Comment: "Create Time | 创建日期"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "Update Time | 修改日期"},
-		{Name: "status", Type: field.TypeUint8, Nullable: true, Comment: "Status 1: normal 2: ban | 状态 1 正常 2 禁用", Default: 1},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
-		{Name: "task_id", Type: field.TypeUint64, Comment: "通知任务编号"},
-		{Name: "notify_times", Type: field.TypeInt8, Comment: "第几次被通知"},
-		{Name: "response", Type: field.TypeString, Size: 2147483647, Comment: "请求参数"},
-	}
-	// PayNotifyLogTable holds the schema information for the "pay_notify_log" table.
-	PayNotifyLogTable = &schema.Table{
-		Name:       "pay_notify_log",
-		Columns:    PayNotifyLogColumns,
-		PrimaryKey: []*schema.Column{PayNotifyLogColumns[0]},
-	}
-	// PayNotifyTaskColumns holds the columns for the "pay_notify_task" table.
-	PayNotifyTaskColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true, Comment: "任务编号"},
-		{Name: "created_at", Type: field.TypeTime, Comment: "Create Time | 创建日期"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "Update Time | 修改日期"},
-		{Name: "status", Type: field.TypeUint8, Nullable: true, Comment: "Status 1: normal 2: ban | 状态 1 正常 2 禁用", Default: 1},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
-		{Name: "app_id", Type: field.TypeUint64, Comment: "应用编号"},
-		{Name: "type", Type: field.TypeInt, Comment: "通知类型"},
-		{Name: "data_id", Type: field.TypeUint64, Comment: "数据编号"},
-		{Name: "merchant_order_id", Type: field.TypeString, Comment: "商户订单编号"},
-		{Name: "next_notify_time", Type: field.TypeTime, Comment: "下一次通知时间"},
-		{Name: "last_execute_time", Type: field.TypeTime, Comment: "最后一次执行时间"},
-		{Name: "notify_times", Type: field.TypeInt8, Comment: "当前通知次数"},
-		{Name: "max_notify_times", Type: field.TypeInt8, Comment: "最大可通知次数"},
-		{Name: "notify_url", Type: field.TypeString, Comment: "异步通知地址"},
-	}
-	// PayNotifyTaskTable holds the schema information for the "pay_notify_task" table.
-	PayNotifyTaskTable = &schema.Table{
-		Name:       "pay_notify_task",
-		Columns:    PayNotifyTaskColumns,
-		PrimaryKey: []*schema.Column{PayNotifyTaskColumns[0]},
-	}
 	// PayOrderColumns holds the columns for the "pay_order" table.
 	PayOrderColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
@@ -204,8 +164,6 @@ var (
 		PayAppTable,
 		PayChannelTable,
 		PayDemoOrderTable,
-		PayNotifyLogTable,
-		PayNotifyTaskTable,
 		PayOrderTable,
 		PayOrderExtensionTable,
 		PayRefundTable,
@@ -221,12 +179,6 @@ func init() {
 	}
 	PayDemoOrderTable.Annotation = &entsql.Annotation{
 		Table: "pay_demo_order",
-	}
-	PayNotifyLogTable.Annotation = &entsql.Annotation{
-		Table: "pay_notify_log",
-	}
-	PayNotifyTaskTable.Annotation = &entsql.Annotation{
-		Table: "pay_notify_task",
 	}
 	PayOrderTable.Annotation = &entsql.Annotation{
 		Table: "pay_order",

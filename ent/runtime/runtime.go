@@ -8,8 +8,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
@@ -89,56 +87,6 @@ func init() {
 	demoorder.DefaultUpdatedAt = demoorderDescUpdatedAt.Default.(func() time.Time)
 	// demoorder.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	demoorder.UpdateDefaultUpdatedAt = demoorderDescUpdatedAt.UpdateDefault.(func() time.Time)
-	notifylogMixin := schema.NotifyLog{}.Mixin()
-	notifylogMixinHooks2 := notifylogMixin[2].Hooks()
-	notifylog.Hooks[0] = notifylogMixinHooks2[0]
-	notifylogMixinInters2 := notifylogMixin[2].Interceptors()
-	notifylog.Interceptors[0] = notifylogMixinInters2[0]
-	notifylogMixinFields0 := notifylogMixin[0].Fields()
-	_ = notifylogMixinFields0
-	notifylogMixinFields1 := notifylogMixin[1].Fields()
-	_ = notifylogMixinFields1
-	notifylogFields := schema.NotifyLog{}.Fields()
-	_ = notifylogFields
-	// notifylogDescCreatedAt is the schema descriptor for created_at field.
-	notifylogDescCreatedAt := notifylogMixinFields0[1].Descriptor()
-	// notifylog.DefaultCreatedAt holds the default value on creation for the created_at field.
-	notifylog.DefaultCreatedAt = notifylogDescCreatedAt.Default.(func() time.Time)
-	// notifylogDescUpdatedAt is the schema descriptor for updated_at field.
-	notifylogDescUpdatedAt := notifylogMixinFields0[2].Descriptor()
-	// notifylog.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	notifylog.DefaultUpdatedAt = notifylogDescUpdatedAt.Default.(func() time.Time)
-	// notifylog.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	notifylog.UpdateDefaultUpdatedAt = notifylogDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// notifylogDescStatus is the schema descriptor for status field.
-	notifylogDescStatus := notifylogMixinFields1[0].Descriptor()
-	// notifylog.DefaultStatus holds the default value on creation for the status field.
-	notifylog.DefaultStatus = notifylogDescStatus.Default.(uint8)
-	notifytaskMixin := schema.NotifyTask{}.Mixin()
-	notifytaskMixinHooks2 := notifytaskMixin[2].Hooks()
-	notifytask.Hooks[0] = notifytaskMixinHooks2[0]
-	notifytaskMixinInters2 := notifytaskMixin[2].Interceptors()
-	notifytask.Interceptors[0] = notifytaskMixinInters2[0]
-	notifytaskMixinFields0 := notifytaskMixin[0].Fields()
-	_ = notifytaskMixinFields0
-	notifytaskMixinFields1 := notifytaskMixin[1].Fields()
-	_ = notifytaskMixinFields1
-	notifytaskFields := schema.NotifyTask{}.Fields()
-	_ = notifytaskFields
-	// notifytaskDescCreatedAt is the schema descriptor for created_at field.
-	notifytaskDescCreatedAt := notifytaskMixinFields0[1].Descriptor()
-	// notifytask.DefaultCreatedAt holds the default value on creation for the created_at field.
-	notifytask.DefaultCreatedAt = notifytaskDescCreatedAt.Default.(func() time.Time)
-	// notifytaskDescUpdatedAt is the schema descriptor for updated_at field.
-	notifytaskDescUpdatedAt := notifytaskMixinFields0[2].Descriptor()
-	// notifytask.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	notifytask.DefaultUpdatedAt = notifytaskDescUpdatedAt.Default.(func() time.Time)
-	// notifytask.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	notifytask.UpdateDefaultUpdatedAt = notifytaskDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// notifytaskDescStatus is the schema descriptor for status field.
-	notifytaskDescStatus := notifytaskMixinFields1[0].Descriptor()
-	// notifytask.DefaultStatus holds the default value on creation for the status field.
-	notifytask.DefaultStatus = notifytaskDescStatus.Default.(uint8)
 	orderMixin := schema.Order{}.Mixin()
 	orderMixinHooks2 := orderMixin[2].Hooks()
 	order.Hooks[0] = orderMixinHooks2[0]

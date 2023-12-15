@@ -3,6 +3,7 @@ package channel
 import (
 	"context"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
+	"github.com/suyuan32/simple-admin-common/enum/common"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -29,7 +30,7 @@ func NewGetEnableChannelListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetEnableChannelListLogic) GetEnableChannelList(in *pay.IDReq) (*pay.ChannelListResp, error) {
-	channels, err := l.svcCtx.DB.Channel.Query().Where(channel.AppIDEQ(in.Id), channel.StatusEQ(uint8(pay.CommonStatus_Enable))).All(l.ctx)
+	channels, err := l.svcCtx.DB.Channel.Query().Where(channel.AppIDEQ(in.Id), channel.StatusEQ(common.StatusNormal)).All(l.ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}

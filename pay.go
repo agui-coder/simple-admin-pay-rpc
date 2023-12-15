@@ -7,11 +7,8 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/config"
-	"github.com/agui-coder/simple-admin-pay-rpc/internal/mqs/amq/task/mqtask"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/server"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -35,15 +32,7 @@ func main() {
 			reflection.Register(grpcServer)
 		}
 	})
-	go func() {
-		s.Start()
-	}()
-	serviceGroup := service.NewServiceGroup()
-	defer func() {
-		serviceGroup.Stop()
-		logx.Close()
-	}()
-	serviceGroup.Add(mqtask.NewPayMQTask(ctx))
+	defer s.Stop()
+	s.Start()
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
-	serviceGroup.Start()
 }

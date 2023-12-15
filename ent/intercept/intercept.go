@@ -11,8 +11,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifylog"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/notifytask"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/predicate"
@@ -156,60 +154,6 @@ func (f TraverseDemoOrder) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.DemoOrderQuery", q)
 }
 
-// The NotifyLogFunc type is an adapter to allow the use of ordinary function as a Querier.
-type NotifyLogFunc func(context.Context, *ent.NotifyLogQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f NotifyLogFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.NotifyLogQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.NotifyLogQuery", q)
-}
-
-// The TraverseNotifyLog type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseNotifyLog func(context.Context, *ent.NotifyLogQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseNotifyLog) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseNotifyLog) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.NotifyLogQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.NotifyLogQuery", q)
-}
-
-// The NotifyTaskFunc type is an adapter to allow the use of ordinary function as a Querier.
-type NotifyTaskFunc func(context.Context, *ent.NotifyTaskQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f NotifyTaskFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.NotifyTaskQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.NotifyTaskQuery", q)
-}
-
-// The TraverseNotifyTask type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseNotifyTask func(context.Context, *ent.NotifyTaskQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseNotifyTask) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseNotifyTask) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.NotifyTaskQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.NotifyTaskQuery", q)
-}
-
 // The OrderFunc type is an adapter to allow the use of ordinary function as a Querier.
 type OrderFunc func(context.Context, *ent.OrderQuery) (ent.Value, error)
 
@@ -300,10 +244,6 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.ChannelQuery, predicate.Channel, channel.OrderOption]{typ: ent.TypeChannel, tq: q}, nil
 	case *ent.DemoOrderQuery:
 		return &query[*ent.DemoOrderQuery, predicate.DemoOrder, demoorder.OrderOption]{typ: ent.TypeDemoOrder, tq: q}, nil
-	case *ent.NotifyLogQuery:
-		return &query[*ent.NotifyLogQuery, predicate.NotifyLog, notifylog.OrderOption]{typ: ent.TypeNotifyLog, tq: q}, nil
-	case *ent.NotifyTaskQuery:
-		return &query[*ent.NotifyTaskQuery, predicate.NotifyTask, notifytask.OrderOption]{typ: ent.TypeNotifyTask, tq: q}, nil
 	case *ent.OrderQuery:
 		return &query[*ent.OrderQuery, predicate.Order, order.OrderOption]{typ: ent.TypeOrder, tq: q}, nil
 	case *ent.OrderExtensionQuery:

@@ -15,12 +15,6 @@ type Channel func(*sql.Selector)
 // DemoOrder is the predicate function for demoorder builders.
 type DemoOrder func(*sql.Selector)
 
-// NotifyLog is the predicate function for notifylog builders.
-type NotifyLog func(*sql.Selector)
-
-// NotifyTask is the predicate function for notifytask builders.
-type NotifyTask func(*sql.Selector)
-
 // Order is the predicate function for order builders.
 type Order func(*sql.Selector)
 

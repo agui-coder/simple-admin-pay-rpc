@@ -45,30 +45,6 @@ func (f DemoOrderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DemoOrderMutation", m)
 }
 
-// The NotifyLogFunc type is an adapter to allow the use of ordinary
-// function as NotifyLog mutator.
-type NotifyLogFunc func(context.Context, *ent.NotifyLogMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f NotifyLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.NotifyLogMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotifyLogMutation", m)
-}
-
-// The NotifyTaskFunc type is an adapter to allow the use of ordinary
-// function as NotifyTask mutator.
-type NotifyTaskFunc func(context.Context, *ent.NotifyTaskMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f NotifyTaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.NotifyTaskMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotifyTaskMutation", m)
-}
-
 // The OrderFunc type is an adapter to allow the use of ordinary
 // function as Order mutator.
 type OrderFunc func(context.Context, *ent.OrderMutation) (ent.Value, error)

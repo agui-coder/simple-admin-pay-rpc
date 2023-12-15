@@ -3,11 +3,12 @@ package refund
 import (
 	"context"
 	"encoding/json"
+	"github.com/hibiken/asynq"
+	"github.com/suyuan32/simple-admin-job/types/pattern"
+	"github.com/suyuan32/simple-admin-job/types/payload"
 
 	payModel "github.com/agui-coder/simple-admin-pay-common/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
-	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/notify"
-	"github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
@@ -76,7 +77,6 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 	if refundInfo.Status != uint8(pay.PayStatus_PAY_WAITING) {
 		return errorx.NewInvalidArgumentError("refund status is not waiting")
 	}
-	var task *ent.NotifyTask
 	err = entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
 		channelNotifyData, err := json.Marshal(resp.RawData)
 		if err != nil {
@@ -108,16 +108,19 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 		if err != nil {
 			return errorhandler.DefaultEntError(l.Logger, err, orderInfo)
 		}
-		task, err = model.NewModel(tx.Client()).CreatePayNotifyTask(l.ctx, int(pay.PayStatus_PAY_REFUND), refundInfo.ID)
-		if err != nil {
-			return err
-		}
 		return nil
 	})
 	if err != nil {
 		return err
 	}
-	err = notify.NewExecuteNotifyLogic(l.ctx, l.svcCtx).ExecuteNotify(task)
+	notifyRep, err := json.Marshal(payload.PayRefundNotifyReq{
+		PayRefundId:     refundInfo.ID,
+		MerchantOrderId: refundInfo.MerchantOrderID,
+	})
+	if err != nil {
+		return err
+	}
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(pattern.PayRefundSuccessNotify, notifyRep))
 	if err != nil {
 		return err
 	}
