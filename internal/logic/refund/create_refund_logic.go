@@ -74,7 +74,7 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 			NotifyUrl:   l.svcCtx.Config.PayProperties.RefundNotifyUrl + "/" + refundInfo.ChannelCode,
 		})
 		if err != nil {
-			logx.Errorf("[RefundApproved][退款 id:%d err:%s", refundInfo.ID, err.Error())
+			logx.Errorf("[CreateRefund][退款 id:%d err:%s", refundInfo.ID, err.Error())
 		}
 		err = NewNotifyRefundLogic(newCtx, l.svcCtx).ProcessRefundStatus(refundUnifiedResp)
 		if err != nil {

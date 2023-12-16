@@ -40,8 +40,6 @@ type (
 	RefundCreateReq         = pay.RefundCreateReq
 	RefundDemoOrderReq      = pay.RefundDemoOrderReq
 	RefundInfo              = pay.RefundInfo
-	RefundListReq           = pay.RefundListReq
-	RefundListResp          = pay.RefundListResp
 	RefundPageReq           = pay.RefundPageReq
 	RefundPageResp          = pay.RefundPageResp
 	StringList              = pay.StringList

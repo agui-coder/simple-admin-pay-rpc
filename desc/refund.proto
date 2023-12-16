@@ -45,26 +45,12 @@ message RefundPageReq {
   optional string merchantRefundId = 6;
   optional string channelOrderNo = 7;
   optional string channelRefundNo = 8;
-  optional string status = 9;
+  optional uint32 status = 9;
   repeated int64 createTime = 10;
-
 }
 
 message RefundCountResp {
   uint64 count = 1;
-}
-
-message RefundListResp {
-  uint64 total = 1;
-  repeated RefundInfo data = 2;
-}
-
-message RefundListReq {
-  uint64 page = 1;
-  uint64 page_size = 2;
-  optional string no = 3;
-  optional string channel_code = 4;
-  optional string order_no = 5;
 }
 
 message NotifyRefundReq {
