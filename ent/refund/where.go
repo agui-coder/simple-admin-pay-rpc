@@ -79,16 +79,6 @@ func No(v string) predicate.Refund {
 	return predicate.Refund(sql.FieldEQ(FieldNo, v))
 }
 
-// AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
-func AppID(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldEQ(FieldAppID, v))
-}
-
-// ChannelID applies equality check predicate on the "channel_id" field. It's identical to ChannelIDEQ.
-func ChannelID(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldEQ(FieldChannelID, v))
-}
-
 // ChannelCode applies equality check predicate on the "channel_code" field. It's identical to ChannelCodeEQ.
 func ChannelCode(v string) predicate.Refund {
 	return predicate.Refund(sql.FieldEQ(FieldChannelCode, v))
@@ -412,86 +402,6 @@ func NoEqualFold(v string) predicate.Refund {
 // NoContainsFold applies the ContainsFold predicate on the "no" field.
 func NoContainsFold(v string) predicate.Refund {
 	return predicate.Refund(sql.FieldContainsFold(FieldNo, v))
-}
-
-// AppIDEQ applies the EQ predicate on the "app_id" field.
-func AppIDEQ(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldEQ(FieldAppID, v))
-}
-
-// AppIDNEQ applies the NEQ predicate on the "app_id" field.
-func AppIDNEQ(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldNEQ(FieldAppID, v))
-}
-
-// AppIDIn applies the In predicate on the "app_id" field.
-func AppIDIn(vs ...uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldIn(FieldAppID, vs...))
-}
-
-// AppIDNotIn applies the NotIn predicate on the "app_id" field.
-func AppIDNotIn(vs ...uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldNotIn(FieldAppID, vs...))
-}
-
-// AppIDGT applies the GT predicate on the "app_id" field.
-func AppIDGT(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldGT(FieldAppID, v))
-}
-
-// AppIDGTE applies the GTE predicate on the "app_id" field.
-func AppIDGTE(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldGTE(FieldAppID, v))
-}
-
-// AppIDLT applies the LT predicate on the "app_id" field.
-func AppIDLT(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldLT(FieldAppID, v))
-}
-
-// AppIDLTE applies the LTE predicate on the "app_id" field.
-func AppIDLTE(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldLTE(FieldAppID, v))
-}
-
-// ChannelIDEQ applies the EQ predicate on the "channel_id" field.
-func ChannelIDEQ(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldEQ(FieldChannelID, v))
-}
-
-// ChannelIDNEQ applies the NEQ predicate on the "channel_id" field.
-func ChannelIDNEQ(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldNEQ(FieldChannelID, v))
-}
-
-// ChannelIDIn applies the In predicate on the "channel_id" field.
-func ChannelIDIn(vs ...uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldIn(FieldChannelID, vs...))
-}
-
-// ChannelIDNotIn applies the NotIn predicate on the "channel_id" field.
-func ChannelIDNotIn(vs ...uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldNotIn(FieldChannelID, vs...))
-}
-
-// ChannelIDGT applies the GT predicate on the "channel_id" field.
-func ChannelIDGT(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldGT(FieldChannelID, v))
-}
-
-// ChannelIDGTE applies the GTE predicate on the "channel_id" field.
-func ChannelIDGTE(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldGTE(FieldChannelID, v))
-}
-
-// ChannelIDLT applies the LT predicate on the "channel_id" field.
-func ChannelIDLT(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldLT(FieldChannelID, v))
-}
-
-// ChannelIDLTE applies the LTE predicate on the "channel_id" field.
-func ChannelIDLTE(v uint64) predicate.Refund {
-	return predicate.Refund(sql.FieldLTE(FieldChannelID, v))
 }
 
 // ChannelCodeEQ applies the EQ predicate on the "channel_code" field.

@@ -20,6 +20,18 @@ enum PayType {
     PAY_RETURN = 2;
 }
 
+enum PayChannel {
+  ChannelUnknown = 0;
+  WxPub = 1;
+  WxLite = 2;
+  WxApp = 3;
+  WxNative = 4;
+  AlipayPc = 5;
+  AlipayWap = 6;
+  AlipayQr = 7;
+  AlipayBar = 8;
+}
+
 // base message
 message Empty {}
 

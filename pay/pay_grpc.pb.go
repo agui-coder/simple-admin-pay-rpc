@@ -19,79 +19,32 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Pay_CreateApp_FullMethodName                    = "/pay.Pay/createApp"
-	Pay_UpdateApp_FullMethodName                    = "/pay.Pay/updateApp"
-	Pay_UpdateAppStatus_FullMethodName              = "/pay.Pay/updateAppStatus"
-	Pay_DeleteApp_FullMethodName                    = "/pay.Pay/deleteApp"
-	Pay_GetApp_FullMethodName                       = "/pay.Pay/getApp"
-	Pay_GetAppList_FullMethodName                   = "/pay.Pay/getAppList"
-	Pay_GetAppPage_FullMethodName                   = "/pay.Pay/getAppPage"
-	Pay_InitDatabase_FullMethodName                 = "/pay.Pay/initDatabase"
-	Pay_CreateChannel_FullMethodName                = "/pay.Pay/createChannel"
-	Pay_UpdateChannel_FullMethodName                = "/pay.Pay/updateChannel"
-	Pay_DeleteChannel_FullMethodName                = "/pay.Pay/deleteChannel"
-	Pay_GetChannelById_FullMethodName               = "/pay.Pay/getChannelById"
-	Pay_GetChannelListByAppIds_FullMethodName       = "/pay.Pay/getChannelListByAppIds"
-	Pay_GetChannelListByAppIdAndCode_FullMethodName = "/pay.Pay/getChannelListByAppIdAndCode"
-	Pay_GetEnableChannelList_FullMethodName         = "/pay.Pay/getEnableChannelList"
-	Pay_ValidateChannelCanSubmit_FullMethodName     = "/pay.Pay/validateChannelCanSubmit"
-	Pay_CreateDemoOrder_FullMethodName              = "/pay.Pay/createDemoOrder"
-	Pay_GetDemoOrder_FullMethodName                 = "/pay.Pay/getDemoOrder"
-	Pay_GetListDemoOrder_FullMethodName             = "/pay.Pay/getListDemoOrder"
-	Pay_UpdateDemoOrderPaid_FullMethodName          = "/pay.Pay/updateDemoOrderPaid"
-	Pay_RefundDemoOrder_FullMethodName              = "/pay.Pay/refundDemoOrder"
-	Pay_UpdateDemoRefundPaid_FullMethodName         = "/pay.Pay/updateDemoRefundPaid"
-	Pay_CreateOrder_FullMethodName                  = "/pay.Pay/createOrder"
-	Pay_GetOrder_FullMethodName                     = "/pay.Pay/getOrder"
-	Pay_GetOrderPage_FullMethodName                 = "/pay.Pay/getOrderPage"
-	Pay_CreateOrderExtension_FullMethodName         = "/pay.Pay/createOrderExtension"
-	Pay_GetOrderExtension_FullMethodName            = "/pay.Pay/getOrderExtension"
-	Pay_NotifyOrder_FullMethodName                  = "/pay.Pay/notifyOrder"
-	Pay_ValidateOrderCanSubmit_FullMethodName       = "/pay.Pay/validateOrderCanSubmit"
-	Pay_CreateRefund_FullMethodName                 = "/pay.Pay/createRefund"
-	Pay_GetRefundPage_FullMethodName                = "/pay.Pay/getRefundPage"
-	Pay_GetRefundById_FullMethodName                = "/pay.Pay/getRefundById"
-	Pay_NotifyRefund_FullMethodName                 = "/pay.Pay/notifyRefund"
+	Pay_InitDatabase_FullMethodName         = "/pay.Pay/initDatabase"
+	Pay_CreateDemoOrder_FullMethodName      = "/pay.Pay/createDemoOrder"
+	Pay_GetDemoOrder_FullMethodName         = "/pay.Pay/getDemoOrder"
+	Pay_GetListDemoOrder_FullMethodName     = "/pay.Pay/getListDemoOrder"
+	Pay_UpdateDemoOrderPaid_FullMethodName  = "/pay.Pay/updateDemoOrderPaid"
+	Pay_RefundDemoOrder_FullMethodName      = "/pay.Pay/refundDemoOrder"
+	Pay_UpdateDemoRefundPaid_FullMethodName = "/pay.Pay/updateDemoRefundPaid"
+	Pay_CreateOrder_FullMethodName          = "/pay.Pay/createOrder"
+	Pay_GetOrder_FullMethodName             = "/pay.Pay/getOrder"
+	Pay_GetOrderPage_FullMethodName         = "/pay.Pay/getOrderPage"
+	Pay_CreateOrderExtension_FullMethodName = "/pay.Pay/createOrderExtension"
+	Pay_GetOrderExtension_FullMethodName    = "/pay.Pay/getOrderExtension"
+	Pay_NotifyOrder_FullMethodName          = "/pay.Pay/notifyOrder"
+	Pay_SubmitPayOrder_FullMethodName       = "/pay.Pay/submitPayOrder"
+	Pay_CreateRefund_FullMethodName         = "/pay.Pay/createRefund"
+	Pay_GetRefundPage_FullMethodName        = "/pay.Pay/getRefundPage"
+	Pay_GetRefundById_FullMethodName        = "/pay.Pay/getRefundById"
+	Pay_NotifyRefund_FullMethodName         = "/pay.Pay/notifyRefund"
 )
 
 // PayClient is the client API for Pay service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PayClient interface {
-	// App management
-	// group: app
-	CreateApp(ctx context.Context, in *AppCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
-	// group: app
-	UpdateApp(ctx context.Context, in *AppUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
-	// group: app
-	UpdateAppStatus(ctx context.Context, in *AppUpdateStatusReq, opts ...grpc.CallOption) (*BaseResp, error)
-	// group: app
-	DeleteApp(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BaseResp, error)
-	// group: app
-	GetApp(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*AppInfo, error)
-	// group: app
-	GetAppList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AppListResp, error)
-	// group: app
-	GetAppPage(ctx context.Context, in *AppPageReq, opts ...grpc.CallOption) (*AppListResp, error)
 	// group: base
 	InitDatabase(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error)
-	// Channel management
-	// group: channel
-	CreateChannel(ctx context.Context, in *ChannelCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
-	// group: channel
-	UpdateChannel(ctx context.Context, in *ChannelUpdateReq, opts ...grpc.CallOption) (*BaseResp, error)
-	// group: channel
-	DeleteChannel(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BaseResp, error)
-	// group: channel
-	GetChannelById(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*ChannelInfo, error)
-	// group: channel
-	GetChannelListByAppIds(ctx context.Context, in *IDsReq, opts ...grpc.CallOption) (*ChannelListResp, error)
-	// group: channel
-	GetChannelListByAppIdAndCode(ctx context.Context, in *ByAppIdAndCodeReq, opts ...grpc.CallOption) (*ChannelInfo, error)
-	// group: channel
-	GetEnableChannelList(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*ChannelListResp, error)
-	// group: channel
-	ValidateChannelCanSubmit(ctx context.Context, in *ValidateChannelReq, opts ...grpc.CallOption) (*ChannelInfo, error)
 	// Demo management
 	// group: demo
 	CreateDemoOrder(ctx context.Context, in *PayDemoOrderCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
@@ -119,7 +72,7 @@ type PayClient interface {
 	// group: order
 	NotifyOrder(ctx context.Context, in *NotifyOrderReq, opts ...grpc.CallOption) (*BaseResp, error)
 	// group: order
-	ValidateOrderCanSubmit(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*OrderInfo, error)
+	SubmitPayOrder(ctx context.Context, in *OrderSubmitReq, opts ...grpc.CallOption) (*OrderSubmitResp, error)
 	// refund management
 	// group: refund
 	CreateRefund(ctx context.Context, in *RefundCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error)
@@ -139,144 +92,9 @@ func NewPayClient(cc grpc.ClientConnInterface) PayClient {
 	return &payClient{cc}
 }
 
-func (c *payClient) CreateApp(ctx context.Context, in *AppCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error) {
-	out := new(BaseIDResp)
-	err := c.cc.Invoke(ctx, Pay_CreateApp_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) UpdateApp(ctx context.Context, in *AppUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, Pay_UpdateApp_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) UpdateAppStatus(ctx context.Context, in *AppUpdateStatusReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, Pay_UpdateAppStatus_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) DeleteApp(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, Pay_DeleteApp_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetApp(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*AppInfo, error) {
-	out := new(AppInfo)
-	err := c.cc.Invoke(ctx, Pay_GetApp_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetAppList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*AppListResp, error) {
-	out := new(AppListResp)
-	err := c.cc.Invoke(ctx, Pay_GetAppList_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetAppPage(ctx context.Context, in *AppPageReq, opts ...grpc.CallOption) (*AppListResp, error) {
-	out := new(AppListResp)
-	err := c.cc.Invoke(ctx, Pay_GetAppPage_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *payClient) InitDatabase(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error) {
 	out := new(BaseResp)
 	err := c.cc.Invoke(ctx, Pay_InitDatabase_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) CreateChannel(ctx context.Context, in *ChannelCreateReq, opts ...grpc.CallOption) (*BaseIDResp, error) {
-	out := new(BaseIDResp)
-	err := c.cc.Invoke(ctx, Pay_CreateChannel_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) UpdateChannel(ctx context.Context, in *ChannelUpdateReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, Pay_UpdateChannel_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) DeleteChannel(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*BaseResp, error) {
-	out := new(BaseResp)
-	err := c.cc.Invoke(ctx, Pay_DeleteChannel_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetChannelById(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*ChannelInfo, error) {
-	out := new(ChannelInfo)
-	err := c.cc.Invoke(ctx, Pay_GetChannelById_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetChannelListByAppIds(ctx context.Context, in *IDsReq, opts ...grpc.CallOption) (*ChannelListResp, error) {
-	out := new(ChannelListResp)
-	err := c.cc.Invoke(ctx, Pay_GetChannelListByAppIds_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetChannelListByAppIdAndCode(ctx context.Context, in *ByAppIdAndCodeReq, opts ...grpc.CallOption) (*ChannelInfo, error) {
-	out := new(ChannelInfo)
-	err := c.cc.Invoke(ctx, Pay_GetChannelListByAppIdAndCode_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) GetEnableChannelList(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*ChannelListResp, error) {
-	out := new(ChannelListResp)
-	err := c.cc.Invoke(ctx, Pay_GetEnableChannelList_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payClient) ValidateChannelCanSubmit(ctx context.Context, in *ValidateChannelReq, opts ...grpc.CallOption) (*ChannelInfo, error) {
-	out := new(ChannelInfo)
-	err := c.cc.Invoke(ctx, Pay_ValidateChannelCanSubmit_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -391,9 +209,9 @@ func (c *payClient) NotifyOrder(ctx context.Context, in *NotifyOrderReq, opts ..
 	return out, nil
 }
 
-func (c *payClient) ValidateOrderCanSubmit(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*OrderInfo, error) {
-	out := new(OrderInfo)
-	err := c.cc.Invoke(ctx, Pay_ValidateOrderCanSubmit_FullMethodName, in, out, opts...)
+func (c *payClient) SubmitPayOrder(ctx context.Context, in *OrderSubmitReq, opts ...grpc.CallOption) (*OrderSubmitResp, error) {
+	out := new(OrderSubmitResp)
+	err := c.cc.Invoke(ctx, Pay_SubmitPayOrder_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -440,40 +258,8 @@ func (c *payClient) NotifyRefund(ctx context.Context, in *NotifyRefundReq, opts 
 // All implementations must embed UnimplementedPayServer
 // for forward compatibility
 type PayServer interface {
-	// App management
-	// group: app
-	CreateApp(context.Context, *AppCreateReq) (*BaseIDResp, error)
-	// group: app
-	UpdateApp(context.Context, *AppUpdateReq) (*BaseResp, error)
-	// group: app
-	UpdateAppStatus(context.Context, *AppUpdateStatusReq) (*BaseResp, error)
-	// group: app
-	DeleteApp(context.Context, *IDReq) (*BaseResp, error)
-	// group: app
-	GetApp(context.Context, *IDReq) (*AppInfo, error)
-	// group: app
-	GetAppList(context.Context, *Empty) (*AppListResp, error)
-	// group: app
-	GetAppPage(context.Context, *AppPageReq) (*AppListResp, error)
 	// group: base
 	InitDatabase(context.Context, *Empty) (*BaseResp, error)
-	// Channel management
-	// group: channel
-	CreateChannel(context.Context, *ChannelCreateReq) (*BaseIDResp, error)
-	// group: channel
-	UpdateChannel(context.Context, *ChannelUpdateReq) (*BaseResp, error)
-	// group: channel
-	DeleteChannel(context.Context, *IDReq) (*BaseResp, error)
-	// group: channel
-	GetChannelById(context.Context, *IDReq) (*ChannelInfo, error)
-	// group: channel
-	GetChannelListByAppIds(context.Context, *IDsReq) (*ChannelListResp, error)
-	// group: channel
-	GetChannelListByAppIdAndCode(context.Context, *ByAppIdAndCodeReq) (*ChannelInfo, error)
-	// group: channel
-	GetEnableChannelList(context.Context, *IDReq) (*ChannelListResp, error)
-	// group: channel
-	ValidateChannelCanSubmit(context.Context, *ValidateChannelReq) (*ChannelInfo, error)
 	// Demo management
 	// group: demo
 	CreateDemoOrder(context.Context, *PayDemoOrderCreateReq) (*BaseIDResp, error)
@@ -501,7 +287,7 @@ type PayServer interface {
 	// group: order
 	NotifyOrder(context.Context, *NotifyOrderReq) (*BaseResp, error)
 	// group: order
-	ValidateOrderCanSubmit(context.Context, *IDReq) (*OrderInfo, error)
+	SubmitPayOrder(context.Context, *OrderSubmitReq) (*OrderSubmitResp, error)
 	// refund management
 	// group: refund
 	CreateRefund(context.Context, *RefundCreateReq) (*BaseIDResp, error)
@@ -518,53 +304,8 @@ type PayServer interface {
 type UnimplementedPayServer struct {
 }
 
-func (UnimplementedPayServer) CreateApp(context.Context, *AppCreateReq) (*BaseIDResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateApp not implemented")
-}
-func (UnimplementedPayServer) UpdateApp(context.Context, *AppUpdateReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateApp not implemented")
-}
-func (UnimplementedPayServer) UpdateAppStatus(context.Context, *AppUpdateStatusReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateAppStatus not implemented")
-}
-func (UnimplementedPayServer) DeleteApp(context.Context, *IDReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteApp not implemented")
-}
-func (UnimplementedPayServer) GetApp(context.Context, *IDReq) (*AppInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetApp not implemented")
-}
-func (UnimplementedPayServer) GetAppList(context.Context, *Empty) (*AppListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAppList not implemented")
-}
-func (UnimplementedPayServer) GetAppPage(context.Context, *AppPageReq) (*AppListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAppPage not implemented")
-}
 func (UnimplementedPayServer) InitDatabase(context.Context, *Empty) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitDatabase not implemented")
-}
-func (UnimplementedPayServer) CreateChannel(context.Context, *ChannelCreateReq) (*BaseIDResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateChannel not implemented")
-}
-func (UnimplementedPayServer) UpdateChannel(context.Context, *ChannelUpdateReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateChannel not implemented")
-}
-func (UnimplementedPayServer) DeleteChannel(context.Context, *IDReq) (*BaseResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteChannel not implemented")
-}
-func (UnimplementedPayServer) GetChannelById(context.Context, *IDReq) (*ChannelInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChannelById not implemented")
-}
-func (UnimplementedPayServer) GetChannelListByAppIds(context.Context, *IDsReq) (*ChannelListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChannelListByAppIds not implemented")
-}
-func (UnimplementedPayServer) GetChannelListByAppIdAndCode(context.Context, *ByAppIdAndCodeReq) (*ChannelInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetChannelListByAppIdAndCode not implemented")
-}
-func (UnimplementedPayServer) GetEnableChannelList(context.Context, *IDReq) (*ChannelListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEnableChannelList not implemented")
-}
-func (UnimplementedPayServer) ValidateChannelCanSubmit(context.Context, *ValidateChannelReq) (*ChannelInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateChannelCanSubmit not implemented")
 }
 func (UnimplementedPayServer) CreateDemoOrder(context.Context, *PayDemoOrderCreateReq) (*BaseIDResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDemoOrder not implemented")
@@ -602,8 +343,8 @@ func (UnimplementedPayServer) GetOrderExtension(context.Context, *IDReq) (*Order
 func (UnimplementedPayServer) NotifyOrder(context.Context, *NotifyOrderReq) (*BaseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NotifyOrder not implemented")
 }
-func (UnimplementedPayServer) ValidateOrderCanSubmit(context.Context, *IDReq) (*OrderInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ValidateOrderCanSubmit not implemented")
+func (UnimplementedPayServer) SubmitPayOrder(context.Context, *OrderSubmitReq) (*OrderSubmitResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitPayOrder not implemented")
 }
 func (UnimplementedPayServer) CreateRefund(context.Context, *RefundCreateReq) (*BaseIDResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRefund not implemented")
@@ -630,132 +371,6 @@ func RegisterPayServer(s grpc.ServiceRegistrar, srv PayServer) {
 	s.RegisterService(&Pay_ServiceDesc, srv)
 }
 
-func _Pay_CreateApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppCreateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).CreateApp(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_CreateApp_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).CreateApp(ctx, req.(*AppCreateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_UpdateApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppUpdateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).UpdateApp(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_UpdateApp_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).UpdateApp(ctx, req.(*AppUpdateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_UpdateAppStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppUpdateStatusReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).UpdateAppStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_UpdateAppStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).UpdateAppStatus(ctx, req.(*AppUpdateStatusReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_DeleteApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).DeleteApp(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_DeleteApp_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).DeleteApp(ctx, req.(*IDReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetApp(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetApp_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetApp(ctx, req.(*IDReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetAppList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetAppList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetAppList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetAppList(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetAppPage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppPageReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetAppPage(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetAppPage_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetAppPage(ctx, req.(*AppPageReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Pay_InitDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
@@ -770,150 +385,6 @@ func _Pay_InitDatabase_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PayServer).InitDatabase(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_CreateChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChannelCreateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).CreateChannel(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_CreateChannel_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).CreateChannel(ctx, req.(*ChannelCreateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_UpdateChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ChannelUpdateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).UpdateChannel(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_UpdateChannel_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).UpdateChannel(ctx, req.(*ChannelUpdateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_DeleteChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).DeleteChannel(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_DeleteChannel_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).DeleteChannel(ctx, req.(*IDReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetChannelById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetChannelById(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetChannelById_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetChannelById(ctx, req.(*IDReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetChannelListByAppIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetChannelListByAppIds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetChannelListByAppIds_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetChannelListByAppIds(ctx, req.(*IDsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetChannelListByAppIdAndCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ByAppIdAndCodeReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetChannelListByAppIdAndCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetChannelListByAppIdAndCode_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetChannelListByAppIdAndCode(ctx, req.(*ByAppIdAndCodeReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_GetEnableChannelList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).GetEnableChannelList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_GetEnableChannelList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).GetEnableChannelList(ctx, req.(*IDReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Pay_ValidateChannelCanSubmit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ValidateChannelReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayServer).ValidateChannelCanSubmit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Pay_ValidateChannelCanSubmit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).ValidateChannelCanSubmit(ctx, req.(*ValidateChannelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1134,20 +605,20 @@ func _Pay_NotifyOrder_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Pay_ValidateOrderCanSubmit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IDReq)
+func _Pay_SubmitPayOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderSubmitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PayServer).ValidateOrderCanSubmit(ctx, in)
+		return srv.(PayServer).SubmitPayOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Pay_ValidateOrderCanSubmit_FullMethodName,
+		FullMethod: Pay_SubmitPayOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayServer).ValidateOrderCanSubmit(ctx, req.(*IDReq))
+		return srv.(PayServer).SubmitPayOrder(ctx, req.(*OrderSubmitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1232,68 +703,8 @@ var Pay_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PayServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "createApp",
-			Handler:    _Pay_CreateApp_Handler,
-		},
-		{
-			MethodName: "updateApp",
-			Handler:    _Pay_UpdateApp_Handler,
-		},
-		{
-			MethodName: "updateAppStatus",
-			Handler:    _Pay_UpdateAppStatus_Handler,
-		},
-		{
-			MethodName: "deleteApp",
-			Handler:    _Pay_DeleteApp_Handler,
-		},
-		{
-			MethodName: "getApp",
-			Handler:    _Pay_GetApp_Handler,
-		},
-		{
-			MethodName: "getAppList",
-			Handler:    _Pay_GetAppList_Handler,
-		},
-		{
-			MethodName: "getAppPage",
-			Handler:    _Pay_GetAppPage_Handler,
-		},
-		{
 			MethodName: "initDatabase",
 			Handler:    _Pay_InitDatabase_Handler,
-		},
-		{
-			MethodName: "createChannel",
-			Handler:    _Pay_CreateChannel_Handler,
-		},
-		{
-			MethodName: "updateChannel",
-			Handler:    _Pay_UpdateChannel_Handler,
-		},
-		{
-			MethodName: "deleteChannel",
-			Handler:    _Pay_DeleteChannel_Handler,
-		},
-		{
-			MethodName: "getChannelById",
-			Handler:    _Pay_GetChannelById_Handler,
-		},
-		{
-			MethodName: "getChannelListByAppIds",
-			Handler:    _Pay_GetChannelListByAppIds_Handler,
-		},
-		{
-			MethodName: "getChannelListByAppIdAndCode",
-			Handler:    _Pay_GetChannelListByAppIdAndCode_Handler,
-		},
-		{
-			MethodName: "getEnableChannelList",
-			Handler:    _Pay_GetEnableChannelList_Handler,
-		},
-		{
-			MethodName: "validateChannelCanSubmit",
-			Handler:    _Pay_ValidateChannelCanSubmit_Handler,
 		},
 		{
 			MethodName: "createDemoOrder",
@@ -1344,8 +755,8 @@ var Pay_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Pay_NotifyOrder_Handler,
 		},
 		{
-			MethodName: "validateOrderCanSubmit",
-			Handler:    _Pay_ValidateOrderCanSubmit_Handler,
+			MethodName: "submitPayOrder",
+			Handler:    _Pay_SubmitPayOrder_Handler,
 		},
 		{
 			MethodName: "createRefund",

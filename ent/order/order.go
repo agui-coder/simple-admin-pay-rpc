@@ -22,10 +22,6 @@ const (
 	FieldStatus = "status"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
-	// FieldAppID holds the string denoting the app_id field in the database.
-	FieldAppID = "app_id"
-	// FieldChannelID holds the string denoting the channel_id field in the database.
-	FieldChannelID = "channel_id"
 	// FieldChannelCode holds the string denoting the channel_code field in the database.
 	FieldChannelCode = "channel_code"
 	// FieldMerchantOrderID holds the string denoting the merchant_order_id field in the database.
@@ -34,8 +30,6 @@ const (
 	FieldSubject = "subject"
 	// FieldBody holds the string denoting the body field in the database.
 	FieldBody = "body"
-	// FieldNotifyURL holds the string denoting the notify_url field in the database.
-	FieldNotifyURL = "notify_url"
 	// FieldPrice holds the string denoting the price field in the database.
 	FieldPrice = "price"
 	// FieldChannelFeeRate holds the string denoting the channel_fee_rate field in the database.
@@ -71,13 +65,10 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldStatus,
 	FieldDeletedAt,
-	FieldAppID,
-	FieldChannelID,
 	FieldChannelCode,
 	FieldMerchantOrderID,
 	FieldSubject,
 	FieldBody,
-	FieldNotifyURL,
 	FieldPrice,
 	FieldChannelFeeRate,
 	FieldChannelFeePrice,
@@ -148,16 +139,6 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
 }
 
-// ByAppID orders the results by the app_id field.
-func ByAppID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAppID, opts...).ToFunc()
-}
-
-// ByChannelID orders the results by the channel_id field.
-func ByChannelID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldChannelID, opts...).ToFunc()
-}
-
 // ByChannelCode orders the results by the channel_code field.
 func ByChannelCode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldChannelCode, opts...).ToFunc()
@@ -176,11 +157,6 @@ func BySubject(opts ...sql.OrderTermOption) OrderOption {
 // ByBody orders the results by the body field.
 func ByBody(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBody, opts...).ToFunc()
-}
-
-// ByNotifyURL orders the results by the notify_url field.
-func ByNotifyURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNotifyURL, opts...).ToFunc()
 }
 
 // ByPrice orders the results by the price field.

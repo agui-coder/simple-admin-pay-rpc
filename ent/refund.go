@@ -27,10 +27,6 @@ type Refund struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// 退款单号
 	No string `json:"no,omitempty"`
-	// 应用编号
-	AppID uint64 `json:"app_id,omitempty"`
-	// 渠道编号
-	ChannelID uint64 `json:"channel_id,omitempty"`
 	// 渠道编码
 	ChannelCode string `json:"channel_code,omitempty"`
 	// 支付订单编号 pay_order 表id
@@ -71,7 +67,7 @@ func (*Refund) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case refund.FieldID, refund.FieldStatus, refund.FieldAppID, refund.FieldChannelID, refund.FieldOrderID, refund.FieldPayPrice, refund.FieldRefundPrice:
+		case refund.FieldID, refund.FieldStatus, refund.FieldOrderID, refund.FieldPayPrice, refund.FieldRefundPrice:
 			values[i] = new(sql.NullInt64)
 		case refund.FieldNo, refund.FieldChannelCode, refund.FieldOrderNo, refund.FieldMerchantOrderID, refund.FieldMerchantRefundID, refund.FieldNotifyURL, refund.FieldReason, refund.FieldUserIP, refund.FieldChannelOrderNo, refund.FieldChannelRefundNo, refund.FieldChannelErrorCode, refund.FieldChannelErrorMsg, refund.FieldChannelNotifyData:
 			values[i] = new(sql.NullString)
@@ -127,18 +123,6 @@ func (r *Refund) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field no", values[i])
 			} else if value.Valid {
 				r.No = value.String
-			}
-		case refund.FieldAppID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field app_id", values[i])
-			} else if value.Valid {
-				r.AppID = uint64(value.Int64)
-			}
-		case refund.FieldChannelID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field channel_id", values[i])
-			} else if value.Valid {
-				r.ChannelID = uint64(value.Int64)
 			}
 		case refund.FieldChannelCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -286,12 +270,6 @@ func (r *Refund) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("no=")
 	builder.WriteString(r.No)
-	builder.WriteString(", ")
-	builder.WriteString("app_id=")
-	builder.WriteString(fmt.Sprintf("%v", r.AppID))
-	builder.WriteString(", ")
-	builder.WriteString("channel_id=")
-	builder.WriteString(fmt.Sprintf("%v", r.ChannelID))
 	builder.WriteString(", ")
 	builder.WriteString("channel_code=")
 	builder.WriteString(r.ChannelCode)

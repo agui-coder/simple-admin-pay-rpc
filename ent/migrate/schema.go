@@ -9,43 +9,6 @@ import (
 )
 
 var (
-	// PayAppColumns holds the columns for the "pay_app" table.
-	PayAppColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "created_at", Type: field.TypeTime, Comment: "Create Time | 创建日期"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "Update Time | 修改日期"},
-		{Name: "status", Type: field.TypeUint8, Nullable: true, Comment: "Status 1: normal 2: ban | 状态 1 正常 2 禁用", Default: 1},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
-		{Name: "name", Type: field.TypeString, Comment: "应用名"},
-		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "应用名"},
-		{Name: "order_notify_url", Type: field.TypeString, Comment: "支付结果的回调地址"},
-		{Name: "refund_notify_url", Type: field.TypeString, Comment: "退款结果的回调地址"},
-	}
-	// PayAppTable holds the schema information for the "pay_app" table.
-	PayAppTable = &schema.Table{
-		Name:       "pay_app",
-		Columns:    PayAppColumns,
-		PrimaryKey: []*schema.Column{PayAppColumns[0]},
-	}
-	// PayChannelColumns holds the columns for the "pay_channel" table.
-	PayChannelColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "created_at", Type: field.TypeTime, Comment: "Create Time | 创建日期"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "Update Time | 修改日期"},
-		{Name: "status", Type: field.TypeUint8, Nullable: true, Comment: "Status 1: normal 2: ban | 状态 1 正常 2 禁用", Default: 1},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
-		{Name: "code", Type: field.TypeString, Comment: "渠道编码"},
-		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "应用名"},
-		{Name: "fee_rate", Type: field.TypeFloat64, Comment: "渠道费率，单位：百分比"},
-		{Name: "app_id", Type: field.TypeUint64, Comment: "应用编号"},
-		{Name: "config", Type: field.TypeString, Size: 2147483647, Comment: "支付渠道配置"},
-	}
-	// PayChannelTable holds the schema information for the "pay_channel" table.
-	PayChannelTable = &schema.Table{
-		Name:       "pay_channel",
-		Columns:    PayChannelColumns,
-		PrimaryKey: []*schema.Column{PayChannelColumns[0]},
-	}
 	// PayDemoOrderColumns holds the columns for the "pay_demo_order" table.
 	PayDemoOrderColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
@@ -77,13 +40,10 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Comment: "Update Time | 修改日期"},
 		{Name: "status", Type: field.TypeUint8, Nullable: true, Comment: "Status 1: normal 2: ban | 状态 1 正常 2 禁用", Default: 1},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
-		{Name: "app_id", Type: field.TypeUint64, Comment: "应用编号"},
-		{Name: "channel_id", Type: field.TypeUint64, Nullable: true, Comment: "渠道编号"},
 		{Name: "channel_code", Type: field.TypeString, Nullable: true, Comment: "渠道编码"},
 		{Name: "merchant_order_id", Type: field.TypeString, Comment: "商户订单编号"},
 		{Name: "subject", Type: field.TypeString, Comment: "商品标题"},
 		{Name: "body", Type: field.TypeString, Comment: "商品描述"},
-		{Name: "notify_url", Type: field.TypeString, Size: 2147483647, Comment: "异步通知地址"},
 		{Name: "price", Type: field.TypeInt32, Comment: "支付金额，单位：分"},
 		{Name: "channel_fee_rate", Type: field.TypeFloat64, Nullable: true, Comment: "渠道手续费，单位：百分比"},
 		{Name: "channel_fee_price", Type: field.TypeInt32, Nullable: true, Comment: "渠道手续金额，单位：分"},
@@ -112,7 +72,6 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
 		{Name: "no", Type: field.TypeString, Comment: "支付订单号"},
 		{Name: "order_id", Type: field.TypeUint64, Comment: "渠道编号"},
-		{Name: "channel_id", Type: field.TypeUint64, Comment: "渠道编号"},
 		{Name: "channel_code", Type: field.TypeString, Comment: "渠道编码"},
 		{Name: "user_ip", Type: field.TypeString, Comment: "用户 IP"},
 		{Name: "channel_extras", Type: field.TypeJSON, Nullable: true, Comment: "支付渠道的额外参数"},
@@ -134,8 +93,6 @@ var (
 		{Name: "status", Type: field.TypeUint8, Nullable: true, Comment: "Status 1: normal 2: ban | 状态 1 正常 2 禁用", Default: 1},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "Delete Time | 删除日期"},
 		{Name: "no", Type: field.TypeString, Comment: "退款单号"},
-		{Name: "app_id", Type: field.TypeUint64, Comment: "应用编号"},
-		{Name: "channel_id", Type: field.TypeUint64, Comment: "渠道编号"},
 		{Name: "channel_code", Type: field.TypeString, Comment: "渠道编码"},
 		{Name: "order_id", Type: field.TypeUint64, Comment: "支付订单编号 pay_order 表id"},
 		{Name: "order_no", Type: field.TypeString, Comment: "支付订单 no"},
@@ -161,8 +118,6 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		PayAppTable,
-		PayChannelTable,
 		PayDemoOrderTable,
 		PayOrderTable,
 		PayOrderExtensionTable,
@@ -171,12 +126,6 @@ var (
 )
 
 func init() {
-	PayAppTable.Annotation = &entsql.Annotation{
-		Table: "pay_app",
-	}
-	PayChannelTable.Annotation = &entsql.Annotation{
-		Table: "pay_channel",
-	}
 	PayDemoOrderTable.Annotation = &entsql.Annotation{
 		Table: "pay_demo_order",
 	}

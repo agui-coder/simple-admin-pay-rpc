@@ -7,25 +7,22 @@ message OrderInfo {
   optional int64 created_at = 2;
   optional int64 updated_at = 3;
   optional uint32 status = 4;
-  optional uint64 app_id = 5;
-  optional uint64 channel_id = 6;
-  optional string channel_code = 7;
-  optional string merchant_order_id = 8;
-  optional string subject = 9;
-  optional string body = 10;
-  optional string notify_url = 11;
-  optional int32 price = 12;
-  optional double channel_fee_rate = 13;
-  optional int32 channel_fee_price = 14;
-  optional string user_ip = 15;
-  optional int64  expire_time = 16;
-  optional int64  success_time = 17;
-  optional int64  notify_time = 18;
-  optional uint64 extension_id = 19;
-  optional string no = 20;
-  optional int32 refund_price = 21;
-  optional string channel_user_id = 22;
-  optional string channel_order_no = 23;
+  optional string channel_code = 5;
+  optional string merchant_order_id = 6;
+  optional string subject = 7;
+  optional string body = 8;
+  optional int32 price = 9;
+  optional double channel_fee_rate = 10;
+  optional int32 channel_fee_price = 11;
+  optional string user_ip = 12;
+  optional int64  expire_time = 13;
+  optional int64  success_time = 14;
+  optional int64  notify_time = 15;
+  optional uint64 extension_id = 16;
+  optional string no = 17;
+  optional int32 refund_price = 18;
+  optional string channel_user_id = 19;
+  optional string channel_order_no = 20;
 }
 
 message OrderExtensionInfo {
@@ -35,7 +32,6 @@ message OrderExtensionInfo {
   optional uint32 status = 4;
   optional string no = 5;
   optional uint64 order_id = 6;
-  optional uint64 channel_id = 7;
   optional string channel_code = 8;
   optional string user_ip = 9;
   map<string,string> channel_extras = 10;
@@ -45,7 +41,6 @@ message OrderExtensionInfo {
 }
 
 message OrderCreateReq {
-  uint64 appId = 1;
   string userIp = 2;
   string merchantOrderId =3;
   string subject =4;
@@ -58,7 +53,6 @@ message OrderCreateReq {
 message OrderPageReq {
   uint64 page = 1;
   uint64 page_size = 2;
-  optional uint64 appId = 3;
   optional string channelCode =4;
   optional string merchantOrderId =5;
   optional string channelOrderNo =6;
@@ -80,13 +74,8 @@ message StringList {
 }
 
 message NotifyOrderReq {
-  uint32 Status   = 1;
-  string OutTradeNo   = 2;
-  string channelNotifyData =3;
-  int64 successTime =4;
-  string ChannelOrderNo = 5;
-  optional string  ChannelUserId = 6;
-  uint64 channelId = 7;
+  bytes r   = 1;
+  string code =2;
 }
 
 
@@ -95,9 +84,23 @@ message OrderCreateExtensionReq {
   string channelCode = 2;
   map<string,string> channelExtras =3;
   string no =4;
-  uint64 channelID = 5;
   uint32 status =6;
   string userIP =7;
+}
+
+message OrderSubmitReq {
+  uint64  Id = 1;
+  string ChannelCode =2;
+  map<string,string>  ChannelExtras =3;
+  string  DisplayMode = 4;
+  string  ReturnUrl  =5;
+  string UserIP = 6;
+}
+
+message OrderSubmitResp {
+    uint32 Status = 1;
+  optional string DisplayMode =2;
+  optional string DisplayContent =3;
 }
 
 service Pay {
@@ -116,5 +119,5 @@ service Pay {
   // group: order
   rpc notifyOrder(NotifyOrderReq) returns(BaseResp);
   // group: order
-  rpc validateOrderCanSubmit(IDReq) returns(OrderInfo);
+  rpc submitPayOrder(OrderSubmitReq) returns(OrderSubmitResp);
 }

@@ -13,8 +13,6 @@ import (
 )
 
 type Model struct {
-	App            *AppModel
-	Channel        *ChannelModel
 	OrderExtension *OrderExtensionModel
 	Order          *OrderModel
 	Refund         *RefundModel
@@ -22,8 +20,6 @@ type Model struct {
 
 func NewModel(client *ent.Client) *Model {
 	return &Model{
-		App:            NewAppModel(client.App),
-		Channel:        NewChannelModel(client.Channel),
 		OrderExtension: NewOrderExtensionModel(client.OrderExtension),
 		Order:          NewOrderModel(client.Order),
 		Refund:         NewRefundModel(client.Refund),
@@ -31,7 +27,7 @@ func NewModel(client *ent.Client) *Model {
 }
 
 func (m *Model) ValidatePayOrderCanRefund(ctx context.Context, in *pay.RefundCreateReq) (*ent.Order, error) {
-	order, err := m.Order.Query().Where(order.AppIDEQ(in.AppId), order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(ctx)
+	order, err := m.Order.Query().Where(order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, in)
 	}
@@ -41,7 +37,7 @@ func (m *Model) ValidatePayOrderCanRefund(ctx context.Context, in *pay.RefundCre
 	if in.Price+order.RefundPrice > order.Price {
 		return nil, errorx.NewInvalidArgumentError("refund price exceed")
 	}
-	count, err := m.Refund.Query().Where(refund.AppIDEQ(in.AppId), refund.OrderIDEQ(order.ID),
+	count, err := m.Refund.Query().Where(refund.OrderIDEQ(order.ID),
 		refund.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).Count(ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, in)

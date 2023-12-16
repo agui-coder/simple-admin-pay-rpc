@@ -12,10 +12,6 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// App is the client for interacting with the App builders.
-	App *AppClient
-	// Channel is the client for interacting with the Channel builders.
-	Channel *ChannelClient
 	// DemoOrder is the client for interacting with the DemoOrder builders.
 	DemoOrder *DemoOrderClient
 	// Order is the client for interacting with the Order builders.
@@ -155,8 +151,6 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.App = NewAppClient(tx.config)
-	tx.Channel = NewChannelClient(tx.config)
 	tx.DemoOrder = NewDemoOrderClient(tx.config)
 	tx.Order = NewOrderClient(tx.config)
 	tx.OrderExtension = NewOrderExtensionClient(tx.config)
@@ -170,7 +164,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: App.QueryXXX(), the query will be executed
+// applies a query, for example: DemoOrder.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

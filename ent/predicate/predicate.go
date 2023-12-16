@@ -6,12 +6,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// App is the predicate function for app builders.
-type App func(*sql.Selector)
-
-// Channel is the predicate function for channel builders.
-type Channel func(*sql.Selector)
-
 // DemoOrder is the predicate function for demoorder builders.
 type DemoOrder func(*sql.Selector)
 

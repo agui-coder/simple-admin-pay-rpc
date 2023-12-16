@@ -74,16 +74,6 @@ func DeletedAt(v time.Time) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldDeletedAt, v))
 }
 
-// AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
-func AppID(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldAppID, v))
-}
-
-// ChannelID applies equality check predicate on the "channel_id" field. It's identical to ChannelIDEQ.
-func ChannelID(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldChannelID, v))
-}
-
 // ChannelCode applies equality check predicate on the "channel_code" field. It's identical to ChannelCodeEQ.
 func ChannelCode(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldChannelCode, v))
@@ -102,11 +92,6 @@ func Subject(v string) predicate.Order {
 // Body applies equality check predicate on the "body" field. It's identical to BodyEQ.
 func Body(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldBody, v))
-}
-
-// NotifyURL applies equality check predicate on the "notify_url" field. It's identical to NotifyURLEQ.
-func NotifyURL(v string) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldNotifyURL, v))
 }
 
 // Price applies equality check predicate on the "price" field. It's identical to PriceEQ.
@@ -347,96 +332,6 @@ func DeletedAtIsNil() predicate.Order {
 // DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
 func DeletedAtNotNil() predicate.Order {
 	return predicate.Order(sql.FieldNotNull(FieldDeletedAt))
-}
-
-// AppIDEQ applies the EQ predicate on the "app_id" field.
-func AppIDEQ(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldAppID, v))
-}
-
-// AppIDNEQ applies the NEQ predicate on the "app_id" field.
-func AppIDNEQ(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldNEQ(FieldAppID, v))
-}
-
-// AppIDIn applies the In predicate on the "app_id" field.
-func AppIDIn(vs ...uint64) predicate.Order {
-	return predicate.Order(sql.FieldIn(FieldAppID, vs...))
-}
-
-// AppIDNotIn applies the NotIn predicate on the "app_id" field.
-func AppIDNotIn(vs ...uint64) predicate.Order {
-	return predicate.Order(sql.FieldNotIn(FieldAppID, vs...))
-}
-
-// AppIDGT applies the GT predicate on the "app_id" field.
-func AppIDGT(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldGT(FieldAppID, v))
-}
-
-// AppIDGTE applies the GTE predicate on the "app_id" field.
-func AppIDGTE(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldGTE(FieldAppID, v))
-}
-
-// AppIDLT applies the LT predicate on the "app_id" field.
-func AppIDLT(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldLT(FieldAppID, v))
-}
-
-// AppIDLTE applies the LTE predicate on the "app_id" field.
-func AppIDLTE(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldLTE(FieldAppID, v))
-}
-
-// ChannelIDEQ applies the EQ predicate on the "channel_id" field.
-func ChannelIDEQ(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldChannelID, v))
-}
-
-// ChannelIDNEQ applies the NEQ predicate on the "channel_id" field.
-func ChannelIDNEQ(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldNEQ(FieldChannelID, v))
-}
-
-// ChannelIDIn applies the In predicate on the "channel_id" field.
-func ChannelIDIn(vs ...uint64) predicate.Order {
-	return predicate.Order(sql.FieldIn(FieldChannelID, vs...))
-}
-
-// ChannelIDNotIn applies the NotIn predicate on the "channel_id" field.
-func ChannelIDNotIn(vs ...uint64) predicate.Order {
-	return predicate.Order(sql.FieldNotIn(FieldChannelID, vs...))
-}
-
-// ChannelIDGT applies the GT predicate on the "channel_id" field.
-func ChannelIDGT(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldGT(FieldChannelID, v))
-}
-
-// ChannelIDGTE applies the GTE predicate on the "channel_id" field.
-func ChannelIDGTE(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldGTE(FieldChannelID, v))
-}
-
-// ChannelIDLT applies the LT predicate on the "channel_id" field.
-func ChannelIDLT(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldLT(FieldChannelID, v))
-}
-
-// ChannelIDLTE applies the LTE predicate on the "channel_id" field.
-func ChannelIDLTE(v uint64) predicate.Order {
-	return predicate.Order(sql.FieldLTE(FieldChannelID, v))
-}
-
-// ChannelIDIsNil applies the IsNil predicate on the "channel_id" field.
-func ChannelIDIsNil() predicate.Order {
-	return predicate.Order(sql.FieldIsNull(FieldChannelID))
-}
-
-// ChannelIDNotNil applies the NotNil predicate on the "channel_id" field.
-func ChannelIDNotNil() predicate.Order {
-	return predicate.Order(sql.FieldNotNull(FieldChannelID))
 }
 
 // ChannelCodeEQ applies the EQ predicate on the "channel_code" field.
@@ -707,71 +602,6 @@ func BodyEqualFold(v string) predicate.Order {
 // BodyContainsFold applies the ContainsFold predicate on the "body" field.
 func BodyContainsFold(v string) predicate.Order {
 	return predicate.Order(sql.FieldContainsFold(FieldBody, v))
-}
-
-// NotifyURLEQ applies the EQ predicate on the "notify_url" field.
-func NotifyURLEQ(v string) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldNotifyURL, v))
-}
-
-// NotifyURLNEQ applies the NEQ predicate on the "notify_url" field.
-func NotifyURLNEQ(v string) predicate.Order {
-	return predicate.Order(sql.FieldNEQ(FieldNotifyURL, v))
-}
-
-// NotifyURLIn applies the In predicate on the "notify_url" field.
-func NotifyURLIn(vs ...string) predicate.Order {
-	return predicate.Order(sql.FieldIn(FieldNotifyURL, vs...))
-}
-
-// NotifyURLNotIn applies the NotIn predicate on the "notify_url" field.
-func NotifyURLNotIn(vs ...string) predicate.Order {
-	return predicate.Order(sql.FieldNotIn(FieldNotifyURL, vs...))
-}
-
-// NotifyURLGT applies the GT predicate on the "notify_url" field.
-func NotifyURLGT(v string) predicate.Order {
-	return predicate.Order(sql.FieldGT(FieldNotifyURL, v))
-}
-
-// NotifyURLGTE applies the GTE predicate on the "notify_url" field.
-func NotifyURLGTE(v string) predicate.Order {
-	return predicate.Order(sql.FieldGTE(FieldNotifyURL, v))
-}
-
-// NotifyURLLT applies the LT predicate on the "notify_url" field.
-func NotifyURLLT(v string) predicate.Order {
-	return predicate.Order(sql.FieldLT(FieldNotifyURL, v))
-}
-
-// NotifyURLLTE applies the LTE predicate on the "notify_url" field.
-func NotifyURLLTE(v string) predicate.Order {
-	return predicate.Order(sql.FieldLTE(FieldNotifyURL, v))
-}
-
-// NotifyURLContains applies the Contains predicate on the "notify_url" field.
-func NotifyURLContains(v string) predicate.Order {
-	return predicate.Order(sql.FieldContains(FieldNotifyURL, v))
-}
-
-// NotifyURLHasPrefix applies the HasPrefix predicate on the "notify_url" field.
-func NotifyURLHasPrefix(v string) predicate.Order {
-	return predicate.Order(sql.FieldHasPrefix(FieldNotifyURL, v))
-}
-
-// NotifyURLHasSuffix applies the HasSuffix predicate on the "notify_url" field.
-func NotifyURLHasSuffix(v string) predicate.Order {
-	return predicate.Order(sql.FieldHasSuffix(FieldNotifyURL, v))
-}
-
-// NotifyURLEqualFold applies the EqualFold predicate on the "notify_url" field.
-func NotifyURLEqualFold(v string) predicate.Order {
-	return predicate.Order(sql.FieldEqualFold(FieldNotifyURL, v))
-}
-
-// NotifyURLContainsFold applies the ContainsFold predicate on the "notify_url" field.
-func NotifyURLContainsFold(v string) predicate.Order {
-	return predicate.Order(sql.FieldContainsFold(FieldNotifyURL, v))
 }
 
 // PriceEQ applies the EQ predicate on the "price" field.

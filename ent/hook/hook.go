@@ -9,30 +9,6 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 )
 
-// The AppFunc type is an adapter to allow the use of ordinary
-// function as App mutator.
-type AppFunc func(context.Context, *ent.AppMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f AppFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.AppMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppMutation", m)
-}
-
-// The ChannelFunc type is an adapter to allow the use of ordinary
-// function as Channel mutator.
-type ChannelFunc func(context.Context, *ent.ChannelMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ChannelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ChannelMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ChannelMutation", m)
-}
-
 // The DemoOrderFunc type is an adapter to allow the use of ordinary
 // function as DemoOrder mutator.
 type DemoOrderFunc func(context.Context, *ent.DemoOrderMutation) (ent.Value, error)

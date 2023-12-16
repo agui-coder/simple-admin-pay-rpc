@@ -16,12 +16,6 @@ type Order struct {
 
 func (Order) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("app_id").
-			Annotations(entsql.WithComments(true)).
-			Comment("应用编号"),
-		field.Uint64("channel_id").Optional().
-			Annotations(entsql.WithComments(true)).
-			Comment("渠道编号"),
 		field.String("channel_code").Optional().
 			Annotations(entsql.WithComments(true)).
 			Comment("渠道编码"),
@@ -34,9 +28,6 @@ func (Order) Fields() []ent.Field {
 		field.String("body").
 			Annotations(entsql.WithComments(true)).
 			Comment("商品描述"),
-		field.Text("notify_url").
-			Annotations(entsql.WithComments(true)).
-			Comment("异步通知地址"),
 		field.Int32("price").
 			Annotations(entsql.WithComments(true)).
 			Comment("支付金额，单位：分"),

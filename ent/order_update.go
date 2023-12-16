@@ -81,54 +81,6 @@ func (ou *OrderUpdate) ClearDeletedAt() *OrderUpdate {
 	return ou
 }
 
-// SetAppID sets the "app_id" field.
-func (ou *OrderUpdate) SetAppID(u uint64) *OrderUpdate {
-	ou.mutation.ResetAppID()
-	ou.mutation.SetAppID(u)
-	return ou
-}
-
-// SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableAppID(u *uint64) *OrderUpdate {
-	if u != nil {
-		ou.SetAppID(*u)
-	}
-	return ou
-}
-
-// AddAppID adds u to the "app_id" field.
-func (ou *OrderUpdate) AddAppID(u int64) *OrderUpdate {
-	ou.mutation.AddAppID(u)
-	return ou
-}
-
-// SetChannelID sets the "channel_id" field.
-func (ou *OrderUpdate) SetChannelID(u uint64) *OrderUpdate {
-	ou.mutation.ResetChannelID()
-	ou.mutation.SetChannelID(u)
-	return ou
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableChannelID(u *uint64) *OrderUpdate {
-	if u != nil {
-		ou.SetChannelID(*u)
-	}
-	return ou
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (ou *OrderUpdate) AddChannelID(u int64) *OrderUpdate {
-	ou.mutation.AddChannelID(u)
-	return ou
-}
-
-// ClearChannelID clears the value of the "channel_id" field.
-func (ou *OrderUpdate) ClearChannelID() *OrderUpdate {
-	ou.mutation.ClearChannelID()
-	return ou
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (ou *OrderUpdate) SetChannelCode(s string) *OrderUpdate {
 	ou.mutation.SetChannelCode(s)
@@ -187,20 +139,6 @@ func (ou *OrderUpdate) SetBody(s string) *OrderUpdate {
 func (ou *OrderUpdate) SetNillableBody(s *string) *OrderUpdate {
 	if s != nil {
 		ou.SetBody(*s)
-	}
-	return ou
-}
-
-// SetNotifyURL sets the "notify_url" field.
-func (ou *OrderUpdate) SetNotifyURL(s string) *OrderUpdate {
-	ou.mutation.SetNotifyURL(s)
-	return ou
-}
-
-// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
-func (ou *OrderUpdate) SetNillableNotifyURL(s *string) *OrderUpdate {
-	if s != nil {
-		ou.SetNotifyURL(*s)
 	}
 	return ou
 }
@@ -530,21 +468,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ou.mutation.DeletedAtCleared() {
 		_spec.ClearField(order.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := ou.mutation.AppID(); ok {
-		_spec.SetField(order.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ou.mutation.AddedAppID(); ok {
-		_spec.AddField(order.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ou.mutation.ChannelID(); ok {
-		_spec.SetField(order.FieldChannelID, field.TypeUint64, value)
-	}
-	if value, ok := ou.mutation.AddedChannelID(); ok {
-		_spec.AddField(order.FieldChannelID, field.TypeUint64, value)
-	}
-	if ou.mutation.ChannelIDCleared() {
-		_spec.ClearField(order.FieldChannelID, field.TypeUint64)
-	}
 	if value, ok := ou.mutation.ChannelCode(); ok {
 		_spec.SetField(order.FieldChannelCode, field.TypeString, value)
 	}
@@ -559,9 +482,6 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := ou.mutation.Body(); ok {
 		_spec.SetField(order.FieldBody, field.TypeString, value)
-	}
-	if value, ok := ou.mutation.NotifyURL(); ok {
-		_spec.SetField(order.FieldNotifyURL, field.TypeString, value)
 	}
 	if value, ok := ou.mutation.Price(); ok {
 		_spec.SetField(order.FieldPrice, field.TypeInt32, value)
@@ -711,54 +631,6 @@ func (ouo *OrderUpdateOne) ClearDeletedAt() *OrderUpdateOne {
 	return ouo
 }
 
-// SetAppID sets the "app_id" field.
-func (ouo *OrderUpdateOne) SetAppID(u uint64) *OrderUpdateOne {
-	ouo.mutation.ResetAppID()
-	ouo.mutation.SetAppID(u)
-	return ouo
-}
-
-// SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableAppID(u *uint64) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetAppID(*u)
-	}
-	return ouo
-}
-
-// AddAppID adds u to the "app_id" field.
-func (ouo *OrderUpdateOne) AddAppID(u int64) *OrderUpdateOne {
-	ouo.mutation.AddAppID(u)
-	return ouo
-}
-
-// SetChannelID sets the "channel_id" field.
-func (ouo *OrderUpdateOne) SetChannelID(u uint64) *OrderUpdateOne {
-	ouo.mutation.ResetChannelID()
-	ouo.mutation.SetChannelID(u)
-	return ouo
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableChannelID(u *uint64) *OrderUpdateOne {
-	if u != nil {
-		ouo.SetChannelID(*u)
-	}
-	return ouo
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (ouo *OrderUpdateOne) AddChannelID(u int64) *OrderUpdateOne {
-	ouo.mutation.AddChannelID(u)
-	return ouo
-}
-
-// ClearChannelID clears the value of the "channel_id" field.
-func (ouo *OrderUpdateOne) ClearChannelID() *OrderUpdateOne {
-	ouo.mutation.ClearChannelID()
-	return ouo
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (ouo *OrderUpdateOne) SetChannelCode(s string) *OrderUpdateOne {
 	ouo.mutation.SetChannelCode(s)
@@ -817,20 +689,6 @@ func (ouo *OrderUpdateOne) SetBody(s string) *OrderUpdateOne {
 func (ouo *OrderUpdateOne) SetNillableBody(s *string) *OrderUpdateOne {
 	if s != nil {
 		ouo.SetBody(*s)
-	}
-	return ouo
-}
-
-// SetNotifyURL sets the "notify_url" field.
-func (ouo *OrderUpdateOne) SetNotifyURL(s string) *OrderUpdateOne {
-	ouo.mutation.SetNotifyURL(s)
-	return ouo
-}
-
-// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
-func (ouo *OrderUpdateOne) SetNillableNotifyURL(s *string) *OrderUpdateOne {
-	if s != nil {
-		ouo.SetNotifyURL(*s)
 	}
 	return ouo
 }
@@ -1190,21 +1048,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	if ouo.mutation.DeletedAtCleared() {
 		_spec.ClearField(order.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := ouo.mutation.AppID(); ok {
-		_spec.SetField(order.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ouo.mutation.AddedAppID(); ok {
-		_spec.AddField(order.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ouo.mutation.ChannelID(); ok {
-		_spec.SetField(order.FieldChannelID, field.TypeUint64, value)
-	}
-	if value, ok := ouo.mutation.AddedChannelID(); ok {
-		_spec.AddField(order.FieldChannelID, field.TypeUint64, value)
-	}
-	if ouo.mutation.ChannelIDCleared() {
-		_spec.ClearField(order.FieldChannelID, field.TypeUint64)
-	}
 	if value, ok := ouo.mutation.ChannelCode(); ok {
 		_spec.SetField(order.FieldChannelCode, field.TypeString, value)
 	}
@@ -1219,9 +1062,6 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	}
 	if value, ok := ouo.mutation.Body(); ok {
 		_spec.SetField(order.FieldBody, field.TypeString, value)
-	}
-	if value, ok := ouo.mutation.NotifyURL(); ok {
-		_spec.SetField(order.FieldNotifyURL, field.TypeString, value)
 	}
 	if value, ok := ouo.mutation.Price(); ok {
 		_spec.SetField(order.FieldPrice, field.TypeInt32, value)

@@ -33,7 +33,6 @@ func (l *CreateOrderExtensionLogic) CreateOrderExtension(in *pay.OrderCreateExte
 		SetChannelCode(in.ChannelCode).
 		SetChannelExtras(in.ChannelExtras).
 		SetNo(in.No).
-		SetChannelID(in.ChannelID).
 		SetStatus(uint8(pay.PayStatus_PAY_WAITING)).SetUserIP(in.UserIP).Save(l.ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)

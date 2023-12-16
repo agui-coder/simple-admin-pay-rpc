@@ -5,8 +5,6 @@ package runtime
 import (
 	"time"
 
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
@@ -18,56 +16,6 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	appMixin := schema.App{}.Mixin()
-	appMixinHooks2 := appMixin[2].Hooks()
-	app.Hooks[0] = appMixinHooks2[0]
-	appMixinInters2 := appMixin[2].Interceptors()
-	app.Interceptors[0] = appMixinInters2[0]
-	appMixinFields0 := appMixin[0].Fields()
-	_ = appMixinFields0
-	appMixinFields1 := appMixin[1].Fields()
-	_ = appMixinFields1
-	appFields := schema.App{}.Fields()
-	_ = appFields
-	// appDescCreatedAt is the schema descriptor for created_at field.
-	appDescCreatedAt := appMixinFields0[1].Descriptor()
-	// app.DefaultCreatedAt holds the default value on creation for the created_at field.
-	app.DefaultCreatedAt = appDescCreatedAt.Default.(func() time.Time)
-	// appDescUpdatedAt is the schema descriptor for updated_at field.
-	appDescUpdatedAt := appMixinFields0[2].Descriptor()
-	// app.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	app.DefaultUpdatedAt = appDescUpdatedAt.Default.(func() time.Time)
-	// app.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	app.UpdateDefaultUpdatedAt = appDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// appDescStatus is the schema descriptor for status field.
-	appDescStatus := appMixinFields1[0].Descriptor()
-	// app.DefaultStatus holds the default value on creation for the status field.
-	app.DefaultStatus = appDescStatus.Default.(uint8)
-	channelMixin := schema.Channel{}.Mixin()
-	channelMixinHooks2 := channelMixin[2].Hooks()
-	channel.Hooks[0] = channelMixinHooks2[0]
-	channelMixinInters2 := channelMixin[2].Interceptors()
-	channel.Interceptors[0] = channelMixinInters2[0]
-	channelMixinFields0 := channelMixin[0].Fields()
-	_ = channelMixinFields0
-	channelMixinFields1 := channelMixin[1].Fields()
-	_ = channelMixinFields1
-	channelFields := schema.Channel{}.Fields()
-	_ = channelFields
-	// channelDescCreatedAt is the schema descriptor for created_at field.
-	channelDescCreatedAt := channelMixinFields0[1].Descriptor()
-	// channel.DefaultCreatedAt holds the default value on creation for the created_at field.
-	channel.DefaultCreatedAt = channelDescCreatedAt.Default.(func() time.Time)
-	// channelDescUpdatedAt is the schema descriptor for updated_at field.
-	channelDescUpdatedAt := channelMixinFields0[2].Descriptor()
-	// channel.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	channel.DefaultUpdatedAt = channelDescUpdatedAt.Default.(func() time.Time)
-	// channel.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	channel.UpdateDefaultUpdatedAt = channelDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// channelDescStatus is the schema descriptor for status field.
-	channelDescStatus := channelMixinFields1[0].Descriptor()
-	// channel.DefaultStatus holds the default value on creation for the status field.
-	channel.DefaultStatus = channelDescStatus.Default.(uint8)
 	demoorderMixin := schema.DemoOrder{}.Mixin()
 	demoorderMixinHooks1 := demoorderMixin[1].Hooks()
 	demoorder.Hooks[0] = demoorderMixinHooks1[0]

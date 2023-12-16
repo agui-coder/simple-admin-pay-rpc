@@ -30,8 +30,6 @@ type OrderExtension struct {
 	No string `json:"no,omitempty"`
 	// 渠道编号
 	OrderID uint64 `json:"order_id,omitempty"`
-	// 渠道编号
-	ChannelID uint64 `json:"channel_id,omitempty"`
 	// 渠道编码
 	ChannelCode string `json:"channel_code,omitempty"`
 	// 用户 IP
@@ -54,7 +52,7 @@ func (*OrderExtension) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case orderextension.FieldChannelExtras:
 			values[i] = new([]byte)
-		case orderextension.FieldID, orderextension.FieldStatus, orderextension.FieldOrderID, orderextension.FieldChannelID:
+		case orderextension.FieldID, orderextension.FieldStatus, orderextension.FieldOrderID:
 			values[i] = new(sql.NullInt64)
 		case orderextension.FieldNo, orderextension.FieldChannelCode, orderextension.FieldUserIP, orderextension.FieldChannelErrorCode, orderextension.FieldChannelErrorMsg, orderextension.FieldChannelNotifyData:
 			values[i] = new(sql.NullString)
@@ -116,12 +114,6 @@ func (oe *OrderExtension) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value.Valid {
 				oe.OrderID = uint64(value.Int64)
-			}
-		case orderextension.FieldChannelID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field channel_id", values[i])
-			} else if value.Valid {
-				oe.ChannelID = uint64(value.Int64)
 			}
 		case orderextension.FieldChannelCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -214,9 +206,6 @@ func (oe *OrderExtension) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("order_id=")
 	builder.WriteString(fmt.Sprintf("%v", oe.OrderID))
-	builder.WriteString(", ")
-	builder.WriteString("channel_id=")
-	builder.WriteString(fmt.Sprintf("%v", oe.ChannelID))
 	builder.WriteString(", ")
 	builder.WriteString("channel_code=")
 	builder.WriteString(oe.ChannelCode)

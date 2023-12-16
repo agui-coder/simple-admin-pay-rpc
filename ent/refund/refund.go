@@ -24,10 +24,6 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldNo holds the string denoting the no field in the database.
 	FieldNo = "no"
-	// FieldAppID holds the string denoting the app_id field in the database.
-	FieldAppID = "app_id"
-	// FieldChannelID holds the string denoting the channel_id field in the database.
-	FieldChannelID = "channel_id"
 	// FieldChannelCode holds the string denoting the channel_code field in the database.
 	FieldChannelCode = "channel_code"
 	// FieldOrderID holds the string denoting the order_id field in the database.
@@ -72,8 +68,6 @@ var Columns = []string{
 	FieldStatus,
 	FieldDeletedAt,
 	FieldNo,
-	FieldAppID,
-	FieldChannelID,
 	FieldChannelCode,
 	FieldOrderID,
 	FieldOrderNo,
@@ -151,16 +145,6 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByNo orders the results by the no field.
 func ByNo(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNo, opts...).ToFunc()
-}
-
-// ByAppID orders the results by the app_id field.
-func ByAppID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAppID, opts...).ToFunc()
-}
-
-// ByChannelID orders the results by the channel_id field.
-func ByChannelID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldChannelID, opts...).ToFunc()
 }
 
 // ByChannelCode orders the results by the channel_code field.

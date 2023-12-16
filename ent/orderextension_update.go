@@ -116,27 +116,6 @@ func (oeu *OrderExtensionUpdate) AddOrderID(u int64) *OrderExtensionUpdate {
 	return oeu
 }
 
-// SetChannelID sets the "channel_id" field.
-func (oeu *OrderExtensionUpdate) SetChannelID(u uint64) *OrderExtensionUpdate {
-	oeu.mutation.ResetChannelID()
-	oeu.mutation.SetChannelID(u)
-	return oeu
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (oeu *OrderExtensionUpdate) SetNillableChannelID(u *uint64) *OrderExtensionUpdate {
-	if u != nil {
-		oeu.SetChannelID(*u)
-	}
-	return oeu
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (oeu *OrderExtensionUpdate) AddChannelID(u int64) *OrderExtensionUpdate {
-	oeu.mutation.AddChannelID(u)
-	return oeu
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (oeu *OrderExtensionUpdate) SetChannelCode(s string) *OrderExtensionUpdate {
 	oeu.mutation.SetChannelCode(s)
@@ -320,12 +299,6 @@ func (oeu *OrderExtensionUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if value, ok := oeu.mutation.AddedOrderID(); ok {
 		_spec.AddField(orderextension.FieldOrderID, field.TypeUint64, value)
 	}
-	if value, ok := oeu.mutation.ChannelID(); ok {
-		_spec.SetField(orderextension.FieldChannelID, field.TypeUint64, value)
-	}
-	if value, ok := oeu.mutation.AddedChannelID(); ok {
-		_spec.AddField(orderextension.FieldChannelID, field.TypeUint64, value)
-	}
 	if value, ok := oeu.mutation.ChannelCode(); ok {
 		_spec.SetField(orderextension.FieldChannelCode, field.TypeString, value)
 	}
@@ -461,27 +434,6 @@ func (oeuo *OrderExtensionUpdateOne) SetNillableOrderID(u *uint64) *OrderExtensi
 // AddOrderID adds u to the "order_id" field.
 func (oeuo *OrderExtensionUpdateOne) AddOrderID(u int64) *OrderExtensionUpdateOne {
 	oeuo.mutation.AddOrderID(u)
-	return oeuo
-}
-
-// SetChannelID sets the "channel_id" field.
-func (oeuo *OrderExtensionUpdateOne) SetChannelID(u uint64) *OrderExtensionUpdateOne {
-	oeuo.mutation.ResetChannelID()
-	oeuo.mutation.SetChannelID(u)
-	return oeuo
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (oeuo *OrderExtensionUpdateOne) SetNillableChannelID(u *uint64) *OrderExtensionUpdateOne {
-	if u != nil {
-		oeuo.SetChannelID(*u)
-	}
-	return oeuo
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (oeuo *OrderExtensionUpdateOne) AddChannelID(u int64) *OrderExtensionUpdateOne {
-	oeuo.mutation.AddChannelID(u)
 	return oeuo
 }
 
@@ -697,12 +649,6 @@ func (oeuo *OrderExtensionUpdateOne) sqlSave(ctx context.Context) (_node *OrderE
 	}
 	if value, ok := oeuo.mutation.AddedOrderID(); ok {
 		_spec.AddField(orderextension.FieldOrderID, field.TypeUint64, value)
-	}
-	if value, ok := oeuo.mutation.ChannelID(); ok {
-		_spec.SetField(orderextension.FieldChannelID, field.TypeUint64, value)
-	}
-	if value, ok := oeuo.mutation.AddedChannelID(); ok {
-		_spec.AddField(orderextension.FieldChannelID, field.TypeUint64, value)
 	}
 	if value, ok := oeuo.mutation.ChannelCode(); ok {
 		_spec.SetField(orderextension.FieldChannelCode, field.TypeString, value)

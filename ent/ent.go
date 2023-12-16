@@ -12,8 +12,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
@@ -78,8 +76,6 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			app.Table:            app.ValidColumn,
-			channel.Table:        channel.ValidColumn,
 			demoorder.Table:      demoorder.ValidColumn,
 			order.Table:          order.ValidColumn,
 			orderextension.Table: orderextension.ValidColumn,

@@ -39,7 +39,6 @@ func (l *GetOrderExtensionLogic) GetOrderExtension(in *pay.IDReq) (*pay.OrderExt
 		Status:            pointy.GetPointer(uint32(orderExtension.Status)),
 		No:                &orderExtension.No,
 		OrderId:           &orderExtension.OrderID,
-		ChannelId:         &orderExtension.ChannelID,
 		ChannelCode:       &orderExtension.ChannelCode,
 		UserIp:            &orderExtension.UserIP,
 		ChannelExtras:     orderExtension.ChannelExtras,

@@ -44,8 +44,6 @@ func NewCreateDemoOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 	}
 }
 
-const PayAppId = 2
-
 // Demo management
 func (l *CreateDemoOrderLogic) CreateDemoOrder(in *pay.PayDemoOrderCreateReq) (*pay.BaseIDResp, error) {
 	spus, ok := l.spuNames[in.SpuId]
@@ -62,7 +60,6 @@ func (l *CreateDemoOrderLogic) CreateDemoOrder(in *pay.PayDemoOrderCreateReq) (*
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	payOrder, err := order.NewCreateOrderLogic(l.ctx, l.svcCtx).CreateOrder(&pay.OrderCreateReq{
-		AppId:           PayAppId,
 		UserIp:          in.UserIp,
 		Subject:         spus.name,
 		Price:           spus.price,

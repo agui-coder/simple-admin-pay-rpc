@@ -40,7 +40,6 @@ func (l *RefundDemoOrderLogic) RefundDemoOrder(in *pay.RefundDemoOrderReq) (*pay
 	}
 	refundId := strconv.FormatUint(order.ID, 10) + "-refund"
 	resp, err := refund.NewCreateRefundLogic(l.ctx, l.svcCtx).CreateRefund(&pay.RefundCreateReq{
-		AppId:            PayAppId,
 		UserIp:           in.UserIp,
 		MerchantOrderId:  strconv.FormatUint(in.Id, 10),
 		MerchantRefundId: refundId,

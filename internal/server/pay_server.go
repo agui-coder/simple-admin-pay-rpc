@@ -6,9 +6,7 @@ package server
 import (
 	"context"
 
-	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/app"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/base"
-	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/demo"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/refund"
@@ -27,86 +25,9 @@ func NewPayServer(svcCtx *svc.ServiceContext) *PayServer {
 	}
 }
 
-// App management
-func (s *PayServer) CreateApp(ctx context.Context, in *pay.AppCreateReq) (*pay.BaseIDResp, error) {
-	l := app.NewCreateAppLogic(ctx, s.svcCtx)
-	return l.CreateApp(in)
-}
-
-func (s *PayServer) UpdateApp(ctx context.Context, in *pay.AppUpdateReq) (*pay.BaseResp, error) {
-	l := app.NewUpdateAppLogic(ctx, s.svcCtx)
-	return l.UpdateApp(in)
-}
-
-func (s *PayServer) UpdateAppStatus(ctx context.Context, in *pay.AppUpdateStatusReq) (*pay.BaseResp, error) {
-	l := app.NewUpdateAppStatusLogic(ctx, s.svcCtx)
-	return l.UpdateAppStatus(in)
-}
-
-func (s *PayServer) DeleteApp(ctx context.Context, in *pay.IDReq) (*pay.BaseResp, error) {
-	l := app.NewDeleteAppLogic(ctx, s.svcCtx)
-	return l.DeleteApp(in)
-}
-
-func (s *PayServer) GetApp(ctx context.Context, in *pay.IDReq) (*pay.AppInfo, error) {
-	l := app.NewGetAppLogic(ctx, s.svcCtx)
-	return l.GetApp(in)
-}
-
-func (s *PayServer) GetAppList(ctx context.Context, in *pay.Empty) (*pay.AppListResp, error) {
-	l := app.NewGetAppListLogic(ctx, s.svcCtx)
-	return l.GetAppList(in)
-}
-
-func (s *PayServer) GetAppPage(ctx context.Context, in *pay.AppPageReq) (*pay.AppListResp, error) {
-	l := app.NewGetAppPageLogic(ctx, s.svcCtx)
-	return l.GetAppPage(in)
-}
-
 func (s *PayServer) InitDatabase(ctx context.Context, in *pay.Empty) (*pay.BaseResp, error) {
 	l := base.NewInitDatabaseLogic(ctx, s.svcCtx)
 	return l.InitDatabase(in)
-}
-
-// Channel management
-func (s *PayServer) CreateChannel(ctx context.Context, in *pay.ChannelCreateReq) (*pay.BaseIDResp, error) {
-	l := channel.NewCreateChannelLogic(ctx, s.svcCtx)
-	return l.CreateChannel(in)
-}
-
-func (s *PayServer) UpdateChannel(ctx context.Context, in *pay.ChannelUpdateReq) (*pay.BaseResp, error) {
-	l := channel.NewUpdateChannelLogic(ctx, s.svcCtx)
-	return l.UpdateChannel(in)
-}
-
-func (s *PayServer) DeleteChannel(ctx context.Context, in *pay.IDReq) (*pay.BaseResp, error) {
-	l := channel.NewDeleteChannelLogic(ctx, s.svcCtx)
-	return l.DeleteChannel(in)
-}
-
-func (s *PayServer) GetChannelById(ctx context.Context, in *pay.IDReq) (*pay.ChannelInfo, error) {
-	l := channel.NewGetChannelByIdLogic(ctx, s.svcCtx)
-	return l.GetChannelById(in)
-}
-
-func (s *PayServer) GetChannelListByAppIds(ctx context.Context, in *pay.IDsReq) (*pay.ChannelListResp, error) {
-	l := channel.NewGetChannelListByAppIdsLogic(ctx, s.svcCtx)
-	return l.GetChannelListByAppIds(in)
-}
-
-func (s *PayServer) GetChannelListByAppIdAndCode(ctx context.Context, in *pay.ByAppIdAndCodeReq) (*pay.ChannelInfo, error) {
-	l := channel.NewGetChannelListByAppIdAndCodeLogic(ctx, s.svcCtx)
-	return l.GetChannelListByAppIdAndCode(in)
-}
-
-func (s *PayServer) GetEnableChannelList(ctx context.Context, in *pay.IDReq) (*pay.ChannelListResp, error) {
-	l := channel.NewGetEnableChannelListLogic(ctx, s.svcCtx)
-	return l.GetEnableChannelList(in)
-}
-
-func (s *PayServer) ValidateChannelCanSubmit(ctx context.Context, in *pay.ValidateChannelReq) (*pay.ChannelInfo, error) {
-	l := channel.NewValidateChannelCanSubmitLogic(ctx, s.svcCtx)
-	return l.ValidateChannelCanSubmit(in)
 }
 
 // Demo management
@@ -171,9 +92,9 @@ func (s *PayServer) NotifyOrder(ctx context.Context, in *pay.NotifyOrderReq) (*p
 	return l.NotifyOrder(in)
 }
 
-func (s *PayServer) ValidateOrderCanSubmit(ctx context.Context, in *pay.IDReq) (*pay.OrderInfo, error) {
-	l := order.NewValidateOrderCanSubmitLogic(ctx, s.svcCtx)
-	return l.ValidateOrderCanSubmit(in)
+func (s *PayServer) SubmitPayOrder(ctx context.Context, in *pay.OrderSubmitReq) (*pay.OrderSubmitResp, error) {
+	l := order.NewSubmitPayOrderLogic(ctx, s.svcCtx)
+	return l.SubmitPayOrder(in)
 }
 
 // refund management

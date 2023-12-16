@@ -76,26 +76,6 @@ func (oc *OrderCreate) SetNillableDeletedAt(t *time.Time) *OrderCreate {
 	return oc
 }
 
-// SetAppID sets the "app_id" field.
-func (oc *OrderCreate) SetAppID(u uint64) *OrderCreate {
-	oc.mutation.SetAppID(u)
-	return oc
-}
-
-// SetChannelID sets the "channel_id" field.
-func (oc *OrderCreate) SetChannelID(u uint64) *OrderCreate {
-	oc.mutation.SetChannelID(u)
-	return oc
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (oc *OrderCreate) SetNillableChannelID(u *uint64) *OrderCreate {
-	if u != nil {
-		oc.SetChannelID(*u)
-	}
-	return oc
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (oc *OrderCreate) SetChannelCode(s string) *OrderCreate {
 	oc.mutation.SetChannelCode(s)
@@ -125,12 +105,6 @@ func (oc *OrderCreate) SetSubject(s string) *OrderCreate {
 // SetBody sets the "body" field.
 func (oc *OrderCreate) SetBody(s string) *OrderCreate {
 	oc.mutation.SetBody(s)
-	return oc
-}
-
-// SetNotifyURL sets the "notify_url" field.
-func (oc *OrderCreate) SetNotifyURL(s string) *OrderCreate {
-	oc.mutation.SetNotifyURL(s)
 	return oc
 }
 
@@ -342,9 +316,6 @@ func (oc *OrderCreate) check() error {
 	if _, ok := oc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Order.updated_at"`)}
 	}
-	if _, ok := oc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Order.app_id"`)}
-	}
 	if _, ok := oc.mutation.MerchantOrderID(); !ok {
 		return &ValidationError{Name: "merchant_order_id", err: errors.New(`ent: missing required field "Order.merchant_order_id"`)}
 	}
@@ -353,9 +324,6 @@ func (oc *OrderCreate) check() error {
 	}
 	if _, ok := oc.mutation.Body(); !ok {
 		return &ValidationError{Name: "body", err: errors.New(`ent: missing required field "Order.body"`)}
-	}
-	if _, ok := oc.mutation.NotifyURL(); !ok {
-		return &ValidationError{Name: "notify_url", err: errors.New(`ent: missing required field "Order.notify_url"`)}
 	}
 	if _, ok := oc.mutation.Price(); !ok {
 		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "Order.price"`)}
@@ -417,14 +385,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.SetField(order.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
-	if value, ok := oc.mutation.AppID(); ok {
-		_spec.SetField(order.FieldAppID, field.TypeUint64, value)
-		_node.AppID = value
-	}
-	if value, ok := oc.mutation.ChannelID(); ok {
-		_spec.SetField(order.FieldChannelID, field.TypeUint64, value)
-		_node.ChannelID = value
-	}
 	if value, ok := oc.mutation.ChannelCode(); ok {
 		_spec.SetField(order.FieldChannelCode, field.TypeString, value)
 		_node.ChannelCode = value
@@ -440,10 +400,6 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	if value, ok := oc.mutation.Body(); ok {
 		_spec.SetField(order.FieldBody, field.TypeString, value)
 		_node.Body = value
-	}
-	if value, ok := oc.mutation.NotifyURL(); ok {
-		_spec.SetField(order.FieldNotifyURL, field.TypeString, value)
-		_node.NotifyURL = value
 	}
 	if value, ok := oc.mutation.Price(); ok {
 		_spec.SetField(order.FieldPrice, field.TypeInt32, value)

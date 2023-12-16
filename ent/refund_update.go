@@ -95,48 +95,6 @@ func (ru *RefundUpdate) SetNillableNo(s *string) *RefundUpdate {
 	return ru
 }
 
-// SetAppID sets the "app_id" field.
-func (ru *RefundUpdate) SetAppID(u uint64) *RefundUpdate {
-	ru.mutation.ResetAppID()
-	ru.mutation.SetAppID(u)
-	return ru
-}
-
-// SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (ru *RefundUpdate) SetNillableAppID(u *uint64) *RefundUpdate {
-	if u != nil {
-		ru.SetAppID(*u)
-	}
-	return ru
-}
-
-// AddAppID adds u to the "app_id" field.
-func (ru *RefundUpdate) AddAppID(u int64) *RefundUpdate {
-	ru.mutation.AddAppID(u)
-	return ru
-}
-
-// SetChannelID sets the "channel_id" field.
-func (ru *RefundUpdate) SetChannelID(u uint64) *RefundUpdate {
-	ru.mutation.ResetChannelID()
-	ru.mutation.SetChannelID(u)
-	return ru
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (ru *RefundUpdate) SetNillableChannelID(u *uint64) *RefundUpdate {
-	if u != nil {
-		ru.SetChannelID(*u)
-	}
-	return ru
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (ru *RefundUpdate) AddChannelID(u int64) *RefundUpdate {
-	ru.mutation.AddChannelID(u)
-	return ru
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (ru *RefundUpdate) SetChannelCode(s string) *RefundUpdate {
 	ru.mutation.SetChannelCode(s)
@@ -495,18 +453,6 @@ func (ru *RefundUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ru.mutation.No(); ok {
 		_spec.SetField(refund.FieldNo, field.TypeString, value)
 	}
-	if value, ok := ru.mutation.AppID(); ok {
-		_spec.SetField(refund.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ru.mutation.AddedAppID(); ok {
-		_spec.AddField(refund.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ru.mutation.ChannelID(); ok {
-		_spec.SetField(refund.FieldChannelID, field.TypeUint64, value)
-	}
-	if value, ok := ru.mutation.AddedChannelID(); ok {
-		_spec.AddField(refund.FieldChannelID, field.TypeUint64, value)
-	}
 	if value, ok := ru.mutation.ChannelCode(); ok {
 		_spec.SetField(refund.FieldChannelCode, field.TypeString, value)
 	}
@@ -666,48 +612,6 @@ func (ruo *RefundUpdateOne) SetNillableNo(s *string) *RefundUpdateOne {
 	if s != nil {
 		ruo.SetNo(*s)
 	}
-	return ruo
-}
-
-// SetAppID sets the "app_id" field.
-func (ruo *RefundUpdateOne) SetAppID(u uint64) *RefundUpdateOne {
-	ruo.mutation.ResetAppID()
-	ruo.mutation.SetAppID(u)
-	return ruo
-}
-
-// SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (ruo *RefundUpdateOne) SetNillableAppID(u *uint64) *RefundUpdateOne {
-	if u != nil {
-		ruo.SetAppID(*u)
-	}
-	return ruo
-}
-
-// AddAppID adds u to the "app_id" field.
-func (ruo *RefundUpdateOne) AddAppID(u int64) *RefundUpdateOne {
-	ruo.mutation.AddAppID(u)
-	return ruo
-}
-
-// SetChannelID sets the "channel_id" field.
-func (ruo *RefundUpdateOne) SetChannelID(u uint64) *RefundUpdateOne {
-	ruo.mutation.ResetChannelID()
-	ruo.mutation.SetChannelID(u)
-	return ruo
-}
-
-// SetNillableChannelID sets the "channel_id" field if the given value is not nil.
-func (ruo *RefundUpdateOne) SetNillableChannelID(u *uint64) *RefundUpdateOne {
-	if u != nil {
-		ruo.SetChannelID(*u)
-	}
-	return ruo
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (ruo *RefundUpdateOne) AddChannelID(u int64) *RefundUpdateOne {
-	ruo.mutation.AddChannelID(u)
 	return ruo
 }
 
@@ -1098,18 +1002,6 @@ func (ruo *RefundUpdateOne) sqlSave(ctx context.Context) (_node *Refund, err err
 	}
 	if value, ok := ruo.mutation.No(); ok {
 		_spec.SetField(refund.FieldNo, field.TypeString, value)
-	}
-	if value, ok := ruo.mutation.AppID(); ok {
-		_spec.SetField(refund.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ruo.mutation.AddedAppID(); ok {
-		_spec.AddField(refund.FieldAppID, field.TypeUint64, value)
-	}
-	if value, ok := ruo.mutation.ChannelID(); ok {
-		_spec.SetField(refund.FieldChannelID, field.TypeUint64, value)
-	}
-	if value, ok := ruo.mutation.AddedChannelID(); ok {
-		_spec.AddField(refund.FieldChannelID, field.TypeUint64, value)
 	}
 	if value, ok := ruo.mutation.ChannelCode(); ok {
 		_spec.SetField(refund.FieldChannelCode, field.TypeString, value)

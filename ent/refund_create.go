@@ -82,18 +82,6 @@ func (rc *RefundCreate) SetNo(s string) *RefundCreate {
 	return rc
 }
 
-// SetAppID sets the "app_id" field.
-func (rc *RefundCreate) SetAppID(u uint64) *RefundCreate {
-	rc.mutation.SetAppID(u)
-	return rc
-}
-
-// SetChannelID sets the "channel_id" field.
-func (rc *RefundCreate) SetChannelID(u uint64) *RefundCreate {
-	rc.mutation.SetChannelID(u)
-	return rc
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (rc *RefundCreate) SetChannelCode(s string) *RefundCreate {
 	rc.mutation.SetChannelCode(s)
@@ -313,12 +301,6 @@ func (rc *RefundCreate) check() error {
 	if _, ok := rc.mutation.No(); !ok {
 		return &ValidationError{Name: "no", err: errors.New(`ent: missing required field "Refund.no"`)}
 	}
-	if _, ok := rc.mutation.AppID(); !ok {
-		return &ValidationError{Name: "app_id", err: errors.New(`ent: missing required field "Refund.app_id"`)}
-	}
-	if _, ok := rc.mutation.ChannelID(); !ok {
-		return &ValidationError{Name: "channel_id", err: errors.New(`ent: missing required field "Refund.channel_id"`)}
-	}
 	if _, ok := rc.mutation.ChannelCode(); !ok {
 		return &ValidationError{Name: "channel_code", err: errors.New(`ent: missing required field "Refund.channel_code"`)}
 	}
@@ -400,14 +382,6 @@ func (rc *RefundCreate) createSpec() (*Refund, *sqlgraph.CreateSpec) {
 	if value, ok := rc.mutation.No(); ok {
 		_spec.SetField(refund.FieldNo, field.TypeString, value)
 		_node.No = value
-	}
-	if value, ok := rc.mutation.AppID(); ok {
-		_spec.SetField(refund.FieldAppID, field.TypeUint64, value)
-		_node.AppID = value
-	}
-	if value, ok := rc.mutation.ChannelID(); ok {
-		_spec.SetField(refund.FieldChannelID, field.TypeUint64, value)
-		_node.ChannelID = value
 	}
 	if value, ok := rc.mutation.ChannelCode(); ok {
 		_spec.SetField(refund.FieldChannelCode, field.TypeString, value)

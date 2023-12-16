@@ -30,17 +30,12 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 
 // CreateOrder Order management
 func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp, error) {
-	app, err := l.svcCtx.Model.App.ValidPayApp(l.ctx, in.AppId)
-
-	if err != nil {
-		return nil, err
-	}
-	order, err := l.svcCtx.Model.Order.QueryByAppIdAndMerchantOrderId(l.ctx, in.AppId, in.MerchantOrderId)
+	order, err := l.svcCtx.Model.Order.QueryByAppIdAndMerchantOrderId(l.ctx, in.MerchantOrderId)
 	if err != nil {
 		return nil, err
 	}
 	if order != nil {
-		logx.Infof("[createOrder][appId(%d) merchantOrderId(%s) 已经存在对应的支付单(%s)]", in.AppId, in.MerchantOrderId, order)
+		logx.Infof("[createOrder][merchantOrderId(%s) 已经存在对应的支付单(%s)]", in.MerchantOrderId, order)
 		return &pay.BaseIDResp{Id: order.ID, Msg: "订单已存在"}, nil
 	}
 	order, err = l.svcCtx.DB.Order.Create().
@@ -50,8 +45,6 @@ func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp,
 		SetBody(in.Body).
 		SetPrice(in.Price).
 		SetNotNilExpireTime(pointy.GetTimePointer(&in.ExpireTime, 0)).
-		SetAppID(app.ID).
-		SetNotifyURL(app.OrderNotifyURL).
 		SetStatus(uint8(pay.PayStatus_PAY_WAITING)).
 		SetRefundPrice(0).Save(l.ctx)
 	if err != nil {

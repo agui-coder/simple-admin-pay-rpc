@@ -8,8 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
@@ -71,60 +69,6 @@ func (f TraverseFunc) Traverse(ctx context.Context, q ent.Query) error {
 		return err
 	}
 	return f(ctx, query)
-}
-
-// The AppFunc type is an adapter to allow the use of ordinary function as a Querier.
-type AppFunc func(context.Context, *ent.AppQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f AppFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.AppQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppQuery", q)
-}
-
-// The TraverseApp type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseApp func(context.Context, *ent.AppQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseApp) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseApp) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.AppQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.AppQuery", q)
-}
-
-// The ChannelFunc type is an adapter to allow the use of ordinary function as a Querier.
-type ChannelFunc func(context.Context, *ent.ChannelQuery) (ent.Value, error)
-
-// Query calls f(ctx, q).
-func (f ChannelFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.ChannelQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ChannelQuery", q)
-}
-
-// The TraverseChannel type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseChannel func(context.Context, *ent.ChannelQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseChannel) Intercept(next ent.Querier) ent.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseChannel) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.ChannelQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.ChannelQuery", q)
 }
 
 // The DemoOrderFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -238,10 +182,6 @@ func (f TraverseRefund) Traverse(ctx context.Context, q ent.Query) error {
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q ent.Query) (Query, error) {
 	switch q := q.(type) {
-	case *ent.AppQuery:
-		return &query[*ent.AppQuery, predicate.App, app.OrderOption]{typ: ent.TypeApp, tq: q}, nil
-	case *ent.ChannelQuery:
-		return &query[*ent.ChannelQuery, predicate.Channel, channel.OrderOption]{typ: ent.TypeChannel, tq: q}, nil
 	case *ent.DemoOrderQuery:
 		return &query[*ent.DemoOrderQuery, predicate.DemoOrder, demoorder.OrderOption]{typ: ent.TypeDemoOrder, tq: q}, nil
 	case *ent.OrderQuery:

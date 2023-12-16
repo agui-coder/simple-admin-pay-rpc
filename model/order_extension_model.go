@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"encoding/json"
+	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
@@ -30,7 +31,7 @@ func (m *OrderExtensionModel) QueryByNo(ctx context.Context, no string) (*ent.Or
 	return orderExtension, nil
 }
 
-func (m *OrderExtensionModel) UpdateOrderSuccess(ctx context.Context, notifyResp *pay.NotifyOrderReq) (*ent.OrderExtension, error) {
+func (m *OrderExtensionModel) UpdateOrderSuccess(ctx context.Context, notifyResp *model.OrderResp) (*ent.OrderExtension, error) {
 	orderExtension, err := m.Query().Where().Where(orderextension.NoEQ(notifyResp.OutTradeNo)).Only(ctx)
 	if err != nil {
 		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)

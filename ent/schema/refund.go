@@ -19,12 +19,6 @@ func (Refund) Fields() []ent.Field {
 		field.String("no").
 			Annotations(entsql.WithComments(true)).
 			Comment("退款单号"),
-		field.Uint64("app_id").
-			Annotations(entsql.WithComments(true)).
-			Comment("应用编号"),
-		field.Uint64("channel_id").
-			Annotations(entsql.WithComments(true)).
-			Comment("渠道编号"),
 		field.String("channel_code").
 			Annotations(entsql.WithComments(true)).
 			Comment("渠道编码"),

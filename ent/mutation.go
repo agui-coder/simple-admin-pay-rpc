@@ -11,8 +11,6 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/app"
-	"github.com/agui-coder/simple-admin-pay-rpc/ent/channel"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/demoorder"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
@@ -29,1747 +27,11 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeApp            = "App"
-	TypeChannel        = "Channel"
 	TypeDemoOrder      = "DemoOrder"
 	TypeOrder          = "Order"
 	TypeOrderExtension = "OrderExtension"
 	TypeRefund         = "Refund"
 )
-
-// AppMutation represents an operation that mutates the App nodes in the graph.
-type AppMutation struct {
-	config
-	op                Op
-	typ               string
-	id                *uint64
-	created_at        *time.Time
-	updated_at        *time.Time
-	status            *uint8
-	addstatus         *int8
-	deleted_at        *time.Time
-	name              *string
-	remark            *string
-	order_notify_url  *string
-	refund_notify_url *string
-	clearedFields     map[string]struct{}
-	done              bool
-	oldValue          func(context.Context) (*App, error)
-	predicates        []predicate.App
-}
-
-var _ ent.Mutation = (*AppMutation)(nil)
-
-// appOption allows management of the mutation configuration using functional options.
-type appOption func(*AppMutation)
-
-// newAppMutation creates new mutation for the App entity.
-func newAppMutation(c config, op Op, opts ...appOption) *AppMutation {
-	m := &AppMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeApp,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withAppID sets the ID field of the mutation.
-func withAppID(id uint64) appOption {
-	return func(m *AppMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *App
-		)
-		m.oldValue = func(ctx context.Context) (*App, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().App.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withApp sets the old App of the mutation.
-func withApp(node *App) appOption {
-	return func(m *AppMutation) {
-		m.oldValue = func(context.Context) (*App, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m AppMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m AppMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of App entities.
-func (m *AppMutation) SetID(id uint64) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *AppMutation) ID() (id uint64, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *AppMutation) IDs(ctx context.Context) ([]uint64, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uint64{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().App.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *AppMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *AppMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *AppMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *AppMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *AppMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *AppMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
-// SetStatus sets the "status" field.
-func (m *AppMutation) SetStatus(u uint8) {
-	m.status = &u
-	m.addstatus = nil
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *AppMutation) Status() (r uint8, exists bool) {
-	v := m.status
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldStatus(ctx context.Context) (v uint8, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// AddStatus adds u to the "status" field.
-func (m *AppMutation) AddStatus(u int8) {
-	if m.addstatus != nil {
-		*m.addstatus += u
-	} else {
-		m.addstatus = &u
-	}
-}
-
-// AddedStatus returns the value that was added to the "status" field in this mutation.
-func (m *AppMutation) AddedStatus() (r int8, exists bool) {
-	v := m.addstatus
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearStatus clears the value of the "status" field.
-func (m *AppMutation) ClearStatus() {
-	m.status = nil
-	m.addstatus = nil
-	m.clearedFields[app.FieldStatus] = struct{}{}
-}
-
-// StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *AppMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[app.FieldStatus]
-	return ok
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *AppMutation) ResetStatus() {
-	m.status = nil
-	m.addstatus = nil
-	delete(m.clearedFields, app.FieldStatus)
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *AppMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *AppMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *AppMutation) ClearDeletedAt() {
-	m.deleted_at = nil
-	m.clearedFields[app.FieldDeletedAt] = struct{}{}
-}
-
-// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *AppMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[app.FieldDeletedAt]
-	return ok
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *AppMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	delete(m.clearedFields, app.FieldDeletedAt)
-}
-
-// SetName sets the "name" field.
-func (m *AppMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the value of the "name" field in the mutation.
-func (m *AppMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old "name" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName resets all changes to the "name" field.
-func (m *AppMutation) ResetName() {
-	m.name = nil
-}
-
-// SetRemark sets the "remark" field.
-func (m *AppMutation) SetRemark(s string) {
-	m.remark = &s
-}
-
-// Remark returns the value of the "remark" field in the mutation.
-func (m *AppMutation) Remark() (r string, exists bool) {
-	v := m.remark
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRemark returns the old "remark" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldRemark(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRemark requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
-	}
-	return oldValue.Remark, nil
-}
-
-// ClearRemark clears the value of the "remark" field.
-func (m *AppMutation) ClearRemark() {
-	m.remark = nil
-	m.clearedFields[app.FieldRemark] = struct{}{}
-}
-
-// RemarkCleared returns if the "remark" field was cleared in this mutation.
-func (m *AppMutation) RemarkCleared() bool {
-	_, ok := m.clearedFields[app.FieldRemark]
-	return ok
-}
-
-// ResetRemark resets all changes to the "remark" field.
-func (m *AppMutation) ResetRemark() {
-	m.remark = nil
-	delete(m.clearedFields, app.FieldRemark)
-}
-
-// SetOrderNotifyURL sets the "order_notify_url" field.
-func (m *AppMutation) SetOrderNotifyURL(s string) {
-	m.order_notify_url = &s
-}
-
-// OrderNotifyURL returns the value of the "order_notify_url" field in the mutation.
-func (m *AppMutation) OrderNotifyURL() (r string, exists bool) {
-	v := m.order_notify_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOrderNotifyURL returns the old "order_notify_url" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldOrderNotifyURL(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrderNotifyURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrderNotifyURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrderNotifyURL: %w", err)
-	}
-	return oldValue.OrderNotifyURL, nil
-}
-
-// ResetOrderNotifyURL resets all changes to the "order_notify_url" field.
-func (m *AppMutation) ResetOrderNotifyURL() {
-	m.order_notify_url = nil
-}
-
-// SetRefundNotifyURL sets the "refund_notify_url" field.
-func (m *AppMutation) SetRefundNotifyURL(s string) {
-	m.refund_notify_url = &s
-}
-
-// RefundNotifyURL returns the value of the "refund_notify_url" field in the mutation.
-func (m *AppMutation) RefundNotifyURL() (r string, exists bool) {
-	v := m.refund_notify_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRefundNotifyURL returns the old "refund_notify_url" field's value of the App entity.
-// If the App object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldRefundNotifyURL(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRefundNotifyURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRefundNotifyURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRefundNotifyURL: %w", err)
-	}
-	return oldValue.RefundNotifyURL, nil
-}
-
-// ResetRefundNotifyURL resets all changes to the "refund_notify_url" field.
-func (m *AppMutation) ResetRefundNotifyURL() {
-	m.refund_notify_url = nil
-}
-
-// Where appends a list predicates to the AppMutation builder.
-func (m *AppMutation) Where(ps ...predicate.App) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the AppMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *AppMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.App, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *AppMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *AppMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (App).
-func (m *AppMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *AppMutation) Fields() []string {
-	fields := make([]string, 0, 8)
-	if m.created_at != nil {
-		fields = append(fields, app.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, app.FieldUpdatedAt)
-	}
-	if m.status != nil {
-		fields = append(fields, app.FieldStatus)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, app.FieldDeletedAt)
-	}
-	if m.name != nil {
-		fields = append(fields, app.FieldName)
-	}
-	if m.remark != nil {
-		fields = append(fields, app.FieldRemark)
-	}
-	if m.order_notify_url != nil {
-		fields = append(fields, app.FieldOrderNotifyURL)
-	}
-	if m.refund_notify_url != nil {
-		fields = append(fields, app.FieldRefundNotifyURL)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *AppMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case app.FieldCreatedAt:
-		return m.CreatedAt()
-	case app.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case app.FieldStatus:
-		return m.Status()
-	case app.FieldDeletedAt:
-		return m.DeletedAt()
-	case app.FieldName:
-		return m.Name()
-	case app.FieldRemark:
-		return m.Remark()
-	case app.FieldOrderNotifyURL:
-		return m.OrderNotifyURL()
-	case app.FieldRefundNotifyURL:
-		return m.RefundNotifyURL()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *AppMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case app.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case app.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case app.FieldStatus:
-		return m.OldStatus(ctx)
-	case app.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
-	case app.FieldName:
-		return m.OldName(ctx)
-	case app.FieldRemark:
-		return m.OldRemark(ctx)
-	case app.FieldOrderNotifyURL:
-		return m.OldOrderNotifyURL(ctx)
-	case app.FieldRefundNotifyURL:
-		return m.OldRefundNotifyURL(ctx)
-	}
-	return nil, fmt.Errorf("unknown App field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *AppMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case app.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case app.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case app.FieldStatus:
-		v, ok := value.(uint8)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
-		return nil
-	case app.FieldDeletedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
-	case app.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	case app.FieldRemark:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRemark(v)
-		return nil
-	case app.FieldOrderNotifyURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOrderNotifyURL(v)
-		return nil
-	case app.FieldRefundNotifyURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRefundNotifyURL(v)
-		return nil
-	}
-	return fmt.Errorf("unknown App field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *AppMutation) AddedFields() []string {
-	var fields []string
-	if m.addstatus != nil {
-		fields = append(fields, app.FieldStatus)
-	}
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *AppMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case app.FieldStatus:
-		return m.AddedStatus()
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *AppMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	case app.FieldStatus:
-		v, ok := value.(int8)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddStatus(v)
-		return nil
-	}
-	return fmt.Errorf("unknown App numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *AppMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(app.FieldStatus) {
-		fields = append(fields, app.FieldStatus)
-	}
-	if m.FieldCleared(app.FieldDeletedAt) {
-		fields = append(fields, app.FieldDeletedAt)
-	}
-	if m.FieldCleared(app.FieldRemark) {
-		fields = append(fields, app.FieldRemark)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *AppMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *AppMutation) ClearField(name string) error {
-	switch name {
-	case app.FieldStatus:
-		m.ClearStatus()
-		return nil
-	case app.FieldDeletedAt:
-		m.ClearDeletedAt()
-		return nil
-	case app.FieldRemark:
-		m.ClearRemark()
-		return nil
-	}
-	return fmt.Errorf("unknown App nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *AppMutation) ResetField(name string) error {
-	switch name {
-	case app.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case app.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case app.FieldStatus:
-		m.ResetStatus()
-		return nil
-	case app.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
-	case app.FieldName:
-		m.ResetName()
-		return nil
-	case app.FieldRemark:
-		m.ResetRemark()
-		return nil
-	case app.FieldOrderNotifyURL:
-		m.ResetOrderNotifyURL()
-		return nil
-	case app.FieldRefundNotifyURL:
-		m.ResetRefundNotifyURL()
-		return nil
-	}
-	return fmt.Errorf("unknown App field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *AppMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *AppMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *AppMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *AppMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *AppMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *AppMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *AppMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown App unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *AppMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown App edge %s", name)
-}
-
-// ChannelMutation represents an operation that mutates the Channel nodes in the graph.
-type ChannelMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *uint64
-	created_at    *time.Time
-	updated_at    *time.Time
-	status        *uint8
-	addstatus     *int8
-	deleted_at    *time.Time
-	code          *string
-	remark        *string
-	fee_rate      *float64
-	addfee_rate   *float64
-	app_id        *uint64
-	addapp_id     *int64
-	_config       *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Channel, error)
-	predicates    []predicate.Channel
-}
-
-var _ ent.Mutation = (*ChannelMutation)(nil)
-
-// channelOption allows management of the mutation configuration using functional options.
-type channelOption func(*ChannelMutation)
-
-// newChannelMutation creates new mutation for the Channel entity.
-func newChannelMutation(c config, op Op, opts ...channelOption) *ChannelMutation {
-	m := &ChannelMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeChannel,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withChannelID sets the ID field of the mutation.
-func withChannelID(id uint64) channelOption {
-	return func(m *ChannelMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Channel
-		)
-		m.oldValue = func(ctx context.Context) (*Channel, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Channel.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withChannel sets the old Channel of the mutation.
-func withChannel(node *Channel) channelOption {
-	return func(m *ChannelMutation) {
-		m.oldValue = func(context.Context) (*Channel, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ChannelMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ChannelMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Channel entities.
-func (m *ChannelMutation) SetID(id uint64) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *ChannelMutation) ID() (id uint64, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *ChannelMutation) IDs(ctx context.Context) ([]uint64, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uint64{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Channel.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *ChannelMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ChannelMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ChannelMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *ChannelMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *ChannelMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *ChannelMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
-// SetStatus sets the "status" field.
-func (m *ChannelMutation) SetStatus(u uint8) {
-	m.status = &u
-	m.addstatus = nil
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *ChannelMutation) Status() (r uint8, exists bool) {
-	v := m.status
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldStatus(ctx context.Context) (v uint8, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// AddStatus adds u to the "status" field.
-func (m *ChannelMutation) AddStatus(u int8) {
-	if m.addstatus != nil {
-		*m.addstatus += u
-	} else {
-		m.addstatus = &u
-	}
-}
-
-// AddedStatus returns the value that was added to the "status" field in this mutation.
-func (m *ChannelMutation) AddedStatus() (r int8, exists bool) {
-	v := m.addstatus
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearStatus clears the value of the "status" field.
-func (m *ChannelMutation) ClearStatus() {
-	m.status = nil
-	m.addstatus = nil
-	m.clearedFields[channel.FieldStatus] = struct{}{}
-}
-
-// StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *ChannelMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[channel.FieldStatus]
-	return ok
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *ChannelMutation) ResetStatus() {
-	m.status = nil
-	m.addstatus = nil
-	delete(m.clearedFields, channel.FieldStatus)
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (m *ChannelMutation) SetDeletedAt(t time.Time) {
-	m.deleted_at = &t
-}
-
-// DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *ChannelMutation) DeletedAt() (r time.Time, exists bool) {
-	v := m.deleted_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeletedAt returns the old "deleted_at" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
-	}
-	return oldValue.DeletedAt, nil
-}
-
-// ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *ChannelMutation) ClearDeletedAt() {
-	m.deleted_at = nil
-	m.clearedFields[channel.FieldDeletedAt] = struct{}{}
-}
-
-// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *ChannelMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[channel.FieldDeletedAt]
-	return ok
-}
-
-// ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *ChannelMutation) ResetDeletedAt() {
-	m.deleted_at = nil
-	delete(m.clearedFields, channel.FieldDeletedAt)
-}
-
-// SetCode sets the "code" field.
-func (m *ChannelMutation) SetCode(s string) {
-	m.code = &s
-}
-
-// Code returns the value of the "code" field in the mutation.
-func (m *ChannelMutation) Code() (r string, exists bool) {
-	v := m.code
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCode returns the old "code" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldCode(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCode is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCode requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCode: %w", err)
-	}
-	return oldValue.Code, nil
-}
-
-// ResetCode resets all changes to the "code" field.
-func (m *ChannelMutation) ResetCode() {
-	m.code = nil
-}
-
-// SetRemark sets the "remark" field.
-func (m *ChannelMutation) SetRemark(s string) {
-	m.remark = &s
-}
-
-// Remark returns the value of the "remark" field in the mutation.
-func (m *ChannelMutation) Remark() (r string, exists bool) {
-	v := m.remark
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRemark returns the old "remark" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldRemark(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRemark requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
-	}
-	return oldValue.Remark, nil
-}
-
-// ClearRemark clears the value of the "remark" field.
-func (m *ChannelMutation) ClearRemark() {
-	m.remark = nil
-	m.clearedFields[channel.FieldRemark] = struct{}{}
-}
-
-// RemarkCleared returns if the "remark" field was cleared in this mutation.
-func (m *ChannelMutation) RemarkCleared() bool {
-	_, ok := m.clearedFields[channel.FieldRemark]
-	return ok
-}
-
-// ResetRemark resets all changes to the "remark" field.
-func (m *ChannelMutation) ResetRemark() {
-	m.remark = nil
-	delete(m.clearedFields, channel.FieldRemark)
-}
-
-// SetFeeRate sets the "fee_rate" field.
-func (m *ChannelMutation) SetFeeRate(f float64) {
-	m.fee_rate = &f
-	m.addfee_rate = nil
-}
-
-// FeeRate returns the value of the "fee_rate" field in the mutation.
-func (m *ChannelMutation) FeeRate() (r float64, exists bool) {
-	v := m.fee_rate
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldFeeRate returns the old "fee_rate" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldFeeRate(ctx context.Context) (v float64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldFeeRate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldFeeRate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFeeRate: %w", err)
-	}
-	return oldValue.FeeRate, nil
-}
-
-// AddFeeRate adds f to the "fee_rate" field.
-func (m *ChannelMutation) AddFeeRate(f float64) {
-	if m.addfee_rate != nil {
-		*m.addfee_rate += f
-	} else {
-		m.addfee_rate = &f
-	}
-}
-
-// AddedFeeRate returns the value that was added to the "fee_rate" field in this mutation.
-func (m *ChannelMutation) AddedFeeRate() (r float64, exists bool) {
-	v := m.addfee_rate
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetFeeRate resets all changes to the "fee_rate" field.
-func (m *ChannelMutation) ResetFeeRate() {
-	m.fee_rate = nil
-	m.addfee_rate = nil
-}
-
-// SetAppID sets the "app_id" field.
-func (m *ChannelMutation) SetAppID(u uint64) {
-	m.app_id = &u
-	m.addapp_id = nil
-}
-
-// AppID returns the value of the "app_id" field in the mutation.
-func (m *ChannelMutation) AppID() (r uint64, exists bool) {
-	v := m.app_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppID returns the old "app_id" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldAppID(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
-	}
-	return oldValue.AppID, nil
-}
-
-// AddAppID adds u to the "app_id" field.
-func (m *ChannelMutation) AddAppID(u int64) {
-	if m.addapp_id != nil {
-		*m.addapp_id += u
-	} else {
-		m.addapp_id = &u
-	}
-}
-
-// AddedAppID returns the value that was added to the "app_id" field in this mutation.
-func (m *ChannelMutation) AddedAppID() (r int64, exists bool) {
-	v := m.addapp_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetAppID resets all changes to the "app_id" field.
-func (m *ChannelMutation) ResetAppID() {
-	m.app_id = nil
-	m.addapp_id = nil
-}
-
-// SetConfig sets the "config" field.
-func (m *ChannelMutation) SetConfig(s string) {
-	m._config = &s
-}
-
-// Config returns the value of the "config" field in the mutation.
-func (m *ChannelMutation) Config() (r string, exists bool) {
-	v := m._config
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldConfig returns the old "config" field's value of the Channel entity.
-// If the Channel object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ChannelMutation) OldConfig(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldConfig is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldConfig requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldConfig: %w", err)
-	}
-	return oldValue.Config, nil
-}
-
-// ResetConfig resets all changes to the "config" field.
-func (m *ChannelMutation) ResetConfig() {
-	m._config = nil
-}
-
-// Where appends a list predicates to the ChannelMutation builder.
-func (m *ChannelMutation) Where(ps ...predicate.Channel) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the ChannelMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *ChannelMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.Channel, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *ChannelMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *ChannelMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (Channel).
-func (m *ChannelMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *ChannelMutation) Fields() []string {
-	fields := make([]string, 0, 9)
-	if m.created_at != nil {
-		fields = append(fields, channel.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, channel.FieldUpdatedAt)
-	}
-	if m.status != nil {
-		fields = append(fields, channel.FieldStatus)
-	}
-	if m.deleted_at != nil {
-		fields = append(fields, channel.FieldDeletedAt)
-	}
-	if m.code != nil {
-		fields = append(fields, channel.FieldCode)
-	}
-	if m.remark != nil {
-		fields = append(fields, channel.FieldRemark)
-	}
-	if m.fee_rate != nil {
-		fields = append(fields, channel.FieldFeeRate)
-	}
-	if m.app_id != nil {
-		fields = append(fields, channel.FieldAppID)
-	}
-	if m._config != nil {
-		fields = append(fields, channel.FieldConfig)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *ChannelMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case channel.FieldCreatedAt:
-		return m.CreatedAt()
-	case channel.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case channel.FieldStatus:
-		return m.Status()
-	case channel.FieldDeletedAt:
-		return m.DeletedAt()
-	case channel.FieldCode:
-		return m.Code()
-	case channel.FieldRemark:
-		return m.Remark()
-	case channel.FieldFeeRate:
-		return m.FeeRate()
-	case channel.FieldAppID:
-		return m.AppID()
-	case channel.FieldConfig:
-		return m.Config()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *ChannelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case channel.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case channel.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case channel.FieldStatus:
-		return m.OldStatus(ctx)
-	case channel.FieldDeletedAt:
-		return m.OldDeletedAt(ctx)
-	case channel.FieldCode:
-		return m.OldCode(ctx)
-	case channel.FieldRemark:
-		return m.OldRemark(ctx)
-	case channel.FieldFeeRate:
-		return m.OldFeeRate(ctx)
-	case channel.FieldAppID:
-		return m.OldAppID(ctx)
-	case channel.FieldConfig:
-		return m.OldConfig(ctx)
-	}
-	return nil, fmt.Errorf("unknown Channel field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *ChannelMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case channel.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case channel.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case channel.FieldStatus:
-		v, ok := value.(uint8)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
-		return nil
-	case channel.FieldDeletedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeletedAt(v)
-		return nil
-	case channel.FieldCode:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCode(v)
-		return nil
-	case channel.FieldRemark:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRemark(v)
-		return nil
-	case channel.FieldFeeRate:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetFeeRate(v)
-		return nil
-	case channel.FieldAppID:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppID(v)
-		return nil
-	case channel.FieldConfig:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetConfig(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Channel field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *ChannelMutation) AddedFields() []string {
-	var fields []string
-	if m.addstatus != nil {
-		fields = append(fields, channel.FieldStatus)
-	}
-	if m.addfee_rate != nil {
-		fields = append(fields, channel.FieldFeeRate)
-	}
-	if m.addapp_id != nil {
-		fields = append(fields, channel.FieldAppID)
-	}
-	return fields
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *ChannelMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case channel.FieldStatus:
-		return m.AddedStatus()
-	case channel.FieldFeeRate:
-		return m.AddedFeeRate()
-	case channel.FieldAppID:
-		return m.AddedAppID()
-	}
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *ChannelMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	case channel.FieldStatus:
-		v, ok := value.(int8)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddStatus(v)
-		return nil
-	case channel.FieldFeeRate:
-		v, ok := value.(float64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddFeeRate(v)
-		return nil
-	case channel.FieldAppID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddAppID(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Channel numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *ChannelMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(channel.FieldStatus) {
-		fields = append(fields, channel.FieldStatus)
-	}
-	if m.FieldCleared(channel.FieldDeletedAt) {
-		fields = append(fields, channel.FieldDeletedAt)
-	}
-	if m.FieldCleared(channel.FieldRemark) {
-		fields = append(fields, channel.FieldRemark)
-	}
-	return fields
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *ChannelMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ChannelMutation) ClearField(name string) error {
-	switch name {
-	case channel.FieldStatus:
-		m.ClearStatus()
-		return nil
-	case channel.FieldDeletedAt:
-		m.ClearDeletedAt()
-		return nil
-	case channel.FieldRemark:
-		m.ClearRemark()
-		return nil
-	}
-	return fmt.Errorf("unknown Channel nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *ChannelMutation) ResetField(name string) error {
-	switch name {
-	case channel.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case channel.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case channel.FieldStatus:
-		m.ResetStatus()
-		return nil
-	case channel.FieldDeletedAt:
-		m.ResetDeletedAt()
-		return nil
-	case channel.FieldCode:
-		m.ResetCode()
-		return nil
-	case channel.FieldRemark:
-		m.ResetRemark()
-		return nil
-	case channel.FieldFeeRate:
-		m.ResetFeeRate()
-		return nil
-	case channel.FieldAppID:
-		m.ResetAppID()
-		return nil
-	case channel.FieldConfig:
-		m.ResetConfig()
-		return nil
-	}
-	return fmt.Errorf("unknown Channel field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *ChannelMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *ChannelMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *ChannelMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *ChannelMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *ChannelMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *ChannelMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *ChannelMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown Channel unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *ChannelMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown Channel edge %s", name)
-}
 
 // DemoOrderMutation represents an operation that mutates the DemoOrder nodes in the graph.
 type DemoOrderMutation struct {
@@ -3123,15 +1385,10 @@ type OrderMutation struct {
 	status               *uint8
 	addstatus            *int8
 	deleted_at           *time.Time
-	app_id               *uint64
-	addapp_id            *int64
-	channel_id           *uint64
-	addchannel_id        *int64
 	channel_code         *string
 	merchant_order_id    *string
 	subject              *string
 	body                 *string
-	notify_url           *string
 	price                *int32
 	addprice             *int32
 	channel_fee_rate     *float64
@@ -3450,132 +1707,6 @@ func (m *OrderMutation) ResetDeletedAt() {
 	delete(m.clearedFields, order.FieldDeletedAt)
 }
 
-// SetAppID sets the "app_id" field.
-func (m *OrderMutation) SetAppID(u uint64) {
-	m.app_id = &u
-	m.addapp_id = nil
-}
-
-// AppID returns the value of the "app_id" field in the mutation.
-func (m *OrderMutation) AppID() (r uint64, exists bool) {
-	v := m.app_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppID returns the old "app_id" field's value of the Order entity.
-// If the Order object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldAppID(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
-	}
-	return oldValue.AppID, nil
-}
-
-// AddAppID adds u to the "app_id" field.
-func (m *OrderMutation) AddAppID(u int64) {
-	if m.addapp_id != nil {
-		*m.addapp_id += u
-	} else {
-		m.addapp_id = &u
-	}
-}
-
-// AddedAppID returns the value that was added to the "app_id" field in this mutation.
-func (m *OrderMutation) AddedAppID() (r int64, exists bool) {
-	v := m.addapp_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetAppID resets all changes to the "app_id" field.
-func (m *OrderMutation) ResetAppID() {
-	m.app_id = nil
-	m.addapp_id = nil
-}
-
-// SetChannelID sets the "channel_id" field.
-func (m *OrderMutation) SetChannelID(u uint64) {
-	m.channel_id = &u
-	m.addchannel_id = nil
-}
-
-// ChannelID returns the value of the "channel_id" field in the mutation.
-func (m *OrderMutation) ChannelID() (r uint64, exists bool) {
-	v := m.channel_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChannelID returns the old "channel_id" field's value of the Order entity.
-// If the Order object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldChannelID(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannelID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannelID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannelID: %w", err)
-	}
-	return oldValue.ChannelID, nil
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (m *OrderMutation) AddChannelID(u int64) {
-	if m.addchannel_id != nil {
-		*m.addchannel_id += u
-	} else {
-		m.addchannel_id = &u
-	}
-}
-
-// AddedChannelID returns the value that was added to the "channel_id" field in this mutation.
-func (m *OrderMutation) AddedChannelID() (r int64, exists bool) {
-	v := m.addchannel_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearChannelID clears the value of the "channel_id" field.
-func (m *OrderMutation) ClearChannelID() {
-	m.channel_id = nil
-	m.addchannel_id = nil
-	m.clearedFields[order.FieldChannelID] = struct{}{}
-}
-
-// ChannelIDCleared returns if the "channel_id" field was cleared in this mutation.
-func (m *OrderMutation) ChannelIDCleared() bool {
-	_, ok := m.clearedFields[order.FieldChannelID]
-	return ok
-}
-
-// ResetChannelID resets all changes to the "channel_id" field.
-func (m *OrderMutation) ResetChannelID() {
-	m.channel_id = nil
-	m.addchannel_id = nil
-	delete(m.clearedFields, order.FieldChannelID)
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (m *OrderMutation) SetChannelCode(s string) {
 	m.channel_code = &s
@@ -3731,42 +1862,6 @@ func (m *OrderMutation) OldBody(ctx context.Context) (v string, err error) {
 // ResetBody resets all changes to the "body" field.
 func (m *OrderMutation) ResetBody() {
 	m.body = nil
-}
-
-// SetNotifyURL sets the "notify_url" field.
-func (m *OrderMutation) SetNotifyURL(s string) {
-	m.notify_url = &s
-}
-
-// NotifyURL returns the value of the "notify_url" field in the mutation.
-func (m *OrderMutation) NotifyURL() (r string, exists bool) {
-	v := m.notify_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldNotifyURL returns the old "notify_url" field's value of the Order entity.
-// If the Order object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldNotifyURL(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldNotifyURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldNotifyURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldNotifyURL: %w", err)
-	}
-	return oldValue.NotifyURL, nil
-}
-
-// ResetNotifyURL resets all changes to the "notify_url" field.
-func (m *OrderMutation) ResetNotifyURL() {
-	m.notify_url = nil
 }
 
 // SetPrice sets the "price" field.
@@ -4442,7 +2537,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -4455,12 +2550,6 @@ func (m *OrderMutation) Fields() []string {
 	if m.deleted_at != nil {
 		fields = append(fields, order.FieldDeletedAt)
 	}
-	if m.app_id != nil {
-		fields = append(fields, order.FieldAppID)
-	}
-	if m.channel_id != nil {
-		fields = append(fields, order.FieldChannelID)
-	}
 	if m.channel_code != nil {
 		fields = append(fields, order.FieldChannelCode)
 	}
@@ -4472,9 +2561,6 @@ func (m *OrderMutation) Fields() []string {
 	}
 	if m.body != nil {
 		fields = append(fields, order.FieldBody)
-	}
-	if m.notify_url != nil {
-		fields = append(fields, order.FieldNotifyURL)
 	}
 	if m.price != nil {
 		fields = append(fields, order.FieldPrice)
@@ -4528,10 +2614,6 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case order.FieldDeletedAt:
 		return m.DeletedAt()
-	case order.FieldAppID:
-		return m.AppID()
-	case order.FieldChannelID:
-		return m.ChannelID()
 	case order.FieldChannelCode:
 		return m.ChannelCode()
 	case order.FieldMerchantOrderID:
@@ -4540,8 +2622,6 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.Subject()
 	case order.FieldBody:
 		return m.Body()
-	case order.FieldNotifyURL:
-		return m.NotifyURL()
 	case order.FieldPrice:
 		return m.Price()
 	case order.FieldChannelFeeRate:
@@ -4583,10 +2663,6 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldStatus(ctx)
 	case order.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case order.FieldAppID:
-		return m.OldAppID(ctx)
-	case order.FieldChannelID:
-		return m.OldChannelID(ctx)
 	case order.FieldChannelCode:
 		return m.OldChannelCode(ctx)
 	case order.FieldMerchantOrderID:
@@ -4595,8 +2671,6 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldSubject(ctx)
 	case order.FieldBody:
 		return m.OldBody(ctx)
-	case order.FieldNotifyURL:
-		return m.OldNotifyURL(ctx)
 	case order.FieldPrice:
 		return m.OldPrice(ctx)
 	case order.FieldChannelFeeRate:
@@ -4658,20 +2732,6 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case order.FieldAppID:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppID(v)
-		return nil
-	case order.FieldChannelID:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChannelID(v)
-		return nil
 	case order.FieldChannelCode:
 		v, ok := value.(string)
 		if !ok {
@@ -4699,13 +2759,6 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBody(v)
-		return nil
-	case order.FieldNotifyURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetNotifyURL(v)
 		return nil
 	case order.FieldPrice:
 		v, ok := value.(int32)
@@ -4802,12 +2855,6 @@ func (m *OrderMutation) AddedFields() []string {
 	if m.addstatus != nil {
 		fields = append(fields, order.FieldStatus)
 	}
-	if m.addapp_id != nil {
-		fields = append(fields, order.FieldAppID)
-	}
-	if m.addchannel_id != nil {
-		fields = append(fields, order.FieldChannelID)
-	}
 	if m.addprice != nil {
 		fields = append(fields, order.FieldPrice)
 	}
@@ -4833,10 +2880,6 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case order.FieldStatus:
 		return m.AddedStatus()
-	case order.FieldAppID:
-		return m.AddedAppID()
-	case order.FieldChannelID:
-		return m.AddedChannelID()
 	case order.FieldPrice:
 		return m.AddedPrice()
 	case order.FieldChannelFeeRate:
@@ -4862,20 +2905,6 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddStatus(v)
-		return nil
-	case order.FieldAppID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddAppID(v)
-		return nil
-	case order.FieldChannelID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChannelID(v)
 		return nil
 	case order.FieldPrice:
 		v, ok := value.(int32)
@@ -4926,9 +2955,6 @@ func (m *OrderMutation) ClearedFields() []string {
 	if m.FieldCleared(order.FieldDeletedAt) {
 		fields = append(fields, order.FieldDeletedAt)
 	}
-	if m.FieldCleared(order.FieldChannelID) {
-		fields = append(fields, order.FieldChannelID)
-	}
 	if m.FieldCleared(order.FieldChannelCode) {
 		fields = append(fields, order.FieldChannelCode)
 	}
@@ -4975,9 +3001,6 @@ func (m *OrderMutation) ClearField(name string) error {
 		return nil
 	case order.FieldDeletedAt:
 		m.ClearDeletedAt()
-		return nil
-	case order.FieldChannelID:
-		m.ClearChannelID()
 		return nil
 	case order.FieldChannelCode:
 		m.ClearChannelCode()
@@ -5026,12 +3049,6 @@ func (m *OrderMutation) ResetField(name string) error {
 	case order.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case order.FieldAppID:
-		m.ResetAppID()
-		return nil
-	case order.FieldChannelID:
-		m.ResetChannelID()
-		return nil
 	case order.FieldChannelCode:
 		m.ResetChannelCode()
 		return nil
@@ -5043,9 +3060,6 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldBody:
 		m.ResetBody()
-		return nil
-	case order.FieldNotifyURL:
-		m.ResetNotifyURL()
 		return nil
 	case order.FieldPrice:
 		m.ResetPrice()
@@ -5149,8 +3163,6 @@ type OrderExtensionMutation struct {
 	no                  *string
 	order_id            *uint64
 	addorder_id         *int64
-	channel_id          *uint64
-	addchannel_id       *int64
 	channel_code        *string
 	user_ip             *string
 	channel_extras      *map[string]string
@@ -5550,62 +3562,6 @@ func (m *OrderExtensionMutation) ResetOrderID() {
 	m.addorder_id = nil
 }
 
-// SetChannelID sets the "channel_id" field.
-func (m *OrderExtensionMutation) SetChannelID(u uint64) {
-	m.channel_id = &u
-	m.addchannel_id = nil
-}
-
-// ChannelID returns the value of the "channel_id" field in the mutation.
-func (m *OrderExtensionMutation) ChannelID() (r uint64, exists bool) {
-	v := m.channel_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChannelID returns the old "channel_id" field's value of the OrderExtension entity.
-// If the OrderExtension object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderExtensionMutation) OldChannelID(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannelID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannelID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannelID: %w", err)
-	}
-	return oldValue.ChannelID, nil
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (m *OrderExtensionMutation) AddChannelID(u int64) {
-	if m.addchannel_id != nil {
-		*m.addchannel_id += u
-	} else {
-		m.addchannel_id = &u
-	}
-}
-
-// AddedChannelID returns the value that was added to the "channel_id" field in this mutation.
-func (m *OrderExtensionMutation) AddedChannelID() (r int64, exists bool) {
-	v := m.addchannel_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetChannelID resets all changes to the "channel_id" field.
-func (m *OrderExtensionMutation) ResetChannelID() {
-	m.channel_id = nil
-	m.addchannel_id = nil
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (m *OrderExtensionMutation) SetChannelCode(s string) {
 	m.channel_code = &s
@@ -5908,7 +3864,7 @@ func (m *OrderExtensionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderExtensionMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, orderextension.FieldCreatedAt)
 	}
@@ -5926,9 +3882,6 @@ func (m *OrderExtensionMutation) Fields() []string {
 	}
 	if m.order_id != nil {
 		fields = append(fields, orderextension.FieldOrderID)
-	}
-	if m.channel_id != nil {
-		fields = append(fields, orderextension.FieldChannelID)
 	}
 	if m.channel_code != nil {
 		fields = append(fields, orderextension.FieldChannelCode)
@@ -5968,8 +3921,6 @@ func (m *OrderExtensionMutation) Field(name string) (ent.Value, bool) {
 		return m.No()
 	case orderextension.FieldOrderID:
 		return m.OrderID()
-	case orderextension.FieldChannelID:
-		return m.ChannelID()
 	case orderextension.FieldChannelCode:
 		return m.ChannelCode()
 	case orderextension.FieldUserIP:
@@ -6003,8 +3954,6 @@ func (m *OrderExtensionMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldNo(ctx)
 	case orderextension.FieldOrderID:
 		return m.OldOrderID(ctx)
-	case orderextension.FieldChannelID:
-		return m.OldChannelID(ctx)
 	case orderextension.FieldChannelCode:
 		return m.OldChannelCode(ctx)
 	case orderextension.FieldUserIP:
@@ -6068,13 +4017,6 @@ func (m *OrderExtensionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOrderID(v)
 		return nil
-	case orderextension.FieldChannelID:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChannelID(v)
-		return nil
 	case orderextension.FieldChannelCode:
 		v, ok := value.(string)
 		if !ok {
@@ -6131,9 +4073,6 @@ func (m *OrderExtensionMutation) AddedFields() []string {
 	if m.addorder_id != nil {
 		fields = append(fields, orderextension.FieldOrderID)
 	}
-	if m.addchannel_id != nil {
-		fields = append(fields, orderextension.FieldChannelID)
-	}
 	return fields
 }
 
@@ -6146,8 +4085,6 @@ func (m *OrderExtensionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedStatus()
 	case orderextension.FieldOrderID:
 		return m.AddedOrderID()
-	case orderextension.FieldChannelID:
-		return m.AddedChannelID()
 	}
 	return nil, false
 }
@@ -6170,13 +4107,6 @@ func (m *OrderExtensionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOrderID(v)
-		return nil
-	case orderextension.FieldChannelID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChannelID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrderExtension numeric field %s", name)
@@ -6262,9 +4192,6 @@ func (m *OrderExtensionMutation) ResetField(name string) error {
 	case orderextension.FieldOrderID:
 		m.ResetOrderID()
 		return nil
-	case orderextension.FieldChannelID:
-		m.ResetChannelID()
-		return nil
 	case orderextension.FieldChannelCode:
 		m.ResetChannelCode()
 		return nil
@@ -6347,10 +4274,6 @@ type RefundMutation struct {
 	addstatus           *int8
 	deleted_at          *time.Time
 	no                  *string
-	app_id              *uint64
-	addapp_id           *int64
-	channel_id          *uint64
-	addchannel_id       *int64
 	channel_code        *string
 	order_id            *uint64
 	addorder_id         *int64
@@ -6705,118 +4628,6 @@ func (m *RefundMutation) OldNo(ctx context.Context) (v string, err error) {
 // ResetNo resets all changes to the "no" field.
 func (m *RefundMutation) ResetNo() {
 	m.no = nil
-}
-
-// SetAppID sets the "app_id" field.
-func (m *RefundMutation) SetAppID(u uint64) {
-	m.app_id = &u
-	m.addapp_id = nil
-}
-
-// AppID returns the value of the "app_id" field in the mutation.
-func (m *RefundMutation) AppID() (r uint64, exists bool) {
-	v := m.app_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppID returns the old "app_id" field's value of the Refund entity.
-// If the Refund object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefundMutation) OldAppID(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
-	}
-	return oldValue.AppID, nil
-}
-
-// AddAppID adds u to the "app_id" field.
-func (m *RefundMutation) AddAppID(u int64) {
-	if m.addapp_id != nil {
-		*m.addapp_id += u
-	} else {
-		m.addapp_id = &u
-	}
-}
-
-// AddedAppID returns the value that was added to the "app_id" field in this mutation.
-func (m *RefundMutation) AddedAppID() (r int64, exists bool) {
-	v := m.addapp_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetAppID resets all changes to the "app_id" field.
-func (m *RefundMutation) ResetAppID() {
-	m.app_id = nil
-	m.addapp_id = nil
-}
-
-// SetChannelID sets the "channel_id" field.
-func (m *RefundMutation) SetChannelID(u uint64) {
-	m.channel_id = &u
-	m.addchannel_id = nil
-}
-
-// ChannelID returns the value of the "channel_id" field in the mutation.
-func (m *RefundMutation) ChannelID() (r uint64, exists bool) {
-	v := m.channel_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChannelID returns the old "channel_id" field's value of the Refund entity.
-// If the Refund object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefundMutation) OldChannelID(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChannelID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChannelID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChannelID: %w", err)
-	}
-	return oldValue.ChannelID, nil
-}
-
-// AddChannelID adds u to the "channel_id" field.
-func (m *RefundMutation) AddChannelID(u int64) {
-	if m.addchannel_id != nil {
-		*m.addchannel_id += u
-	} else {
-		m.addchannel_id = &u
-	}
-}
-
-// AddedChannelID returns the value that was added to the "channel_id" field in this mutation.
-func (m *RefundMutation) AddedChannelID() (r int64, exists bool) {
-	v := m.addchannel_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetChannelID resets all changes to the "channel_id" field.
-func (m *RefundMutation) ResetChannelID() {
-	m.channel_id = nil
-	m.addchannel_id = nil
 }
 
 // SetChannelCode sets the "channel_code" field.
@@ -7567,7 +5378,7 @@ func (m *RefundMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RefundMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 21)
 	if m.created_at != nil {
 		fields = append(fields, refund.FieldCreatedAt)
 	}
@@ -7582,12 +5393,6 @@ func (m *RefundMutation) Fields() []string {
 	}
 	if m.no != nil {
 		fields = append(fields, refund.FieldNo)
-	}
-	if m.app_id != nil {
-		fields = append(fields, refund.FieldAppID)
-	}
-	if m.channel_id != nil {
-		fields = append(fields, refund.FieldChannelID)
 	}
 	if m.channel_code != nil {
 		fields = append(fields, refund.FieldChannelCode)
@@ -7655,10 +5460,6 @@ func (m *RefundMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case refund.FieldNo:
 		return m.No()
-	case refund.FieldAppID:
-		return m.AppID()
-	case refund.FieldChannelID:
-		return m.ChannelID()
 	case refund.FieldChannelCode:
 		return m.ChannelCode()
 	case refund.FieldOrderID:
@@ -7710,10 +5511,6 @@ func (m *RefundMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDeletedAt(ctx)
 	case refund.FieldNo:
 		return m.OldNo(ctx)
-	case refund.FieldAppID:
-		return m.OldAppID(ctx)
-	case refund.FieldChannelID:
-		return m.OldChannelID(ctx)
 	case refund.FieldChannelCode:
 		return m.OldChannelCode(ctx)
 	case refund.FieldOrderID:
@@ -7789,20 +5586,6 @@ func (m *RefundMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNo(v)
-		return nil
-	case refund.FieldAppID:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppID(v)
-		return nil
-	case refund.FieldChannelID:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetChannelID(v)
 		return nil
 	case refund.FieldChannelCode:
 		v, ok := value.(string)
@@ -7927,12 +5710,6 @@ func (m *RefundMutation) AddedFields() []string {
 	if m.addstatus != nil {
 		fields = append(fields, refund.FieldStatus)
 	}
-	if m.addapp_id != nil {
-		fields = append(fields, refund.FieldAppID)
-	}
-	if m.addchannel_id != nil {
-		fields = append(fields, refund.FieldChannelID)
-	}
 	if m.addorder_id != nil {
 		fields = append(fields, refund.FieldOrderID)
 	}
@@ -7952,10 +5729,6 @@ func (m *RefundMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case refund.FieldStatus:
 		return m.AddedStatus()
-	case refund.FieldAppID:
-		return m.AddedAppID()
-	case refund.FieldChannelID:
-		return m.AddedChannelID()
 	case refund.FieldOrderID:
 		return m.AddedOrderID()
 	case refund.FieldPayPrice:
@@ -7977,20 +5750,6 @@ func (m *RefundMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddStatus(v)
-		return nil
-	case refund.FieldAppID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddAppID(v)
-		return nil
-	case refund.FieldChannelID:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddChannelID(v)
 		return nil
 	case refund.FieldOrderID:
 		v, ok := value.(int64)
@@ -8105,12 +5864,6 @@ func (m *RefundMutation) ResetField(name string) error {
 		return nil
 	case refund.FieldNo:
 		m.ResetNo()
-		return nil
-	case refund.FieldAppID:
-		m.ResetAppID()
-		return nil
-	case refund.FieldChannelID:
-		m.ResetChannelID()
 		return nil
 	case refund.FieldChannelCode:
 		m.ResetChannelCode()

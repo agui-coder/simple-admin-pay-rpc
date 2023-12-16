@@ -3,14 +3,11 @@ package refund
 import (
 	"context"
 	"encoding/json"
-	"github.com/hibiken/asynq"
-	"github.com/suyuan32/simple-admin-job/types/pattern"
-	"github.com/suyuan32/simple-admin-job/types/payload"
-
-	payModel "github.com/agui-coder/simple-admin-pay-common/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	payModel "github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/hibiken/asynq"
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
 	"github.com/zeromicro/go-zero/core/errorx"
 
@@ -35,12 +32,8 @@ func NewNotifyRefundLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Noti
 }
 
 func (l *NotifyRefundLogic) NotifyRefund(in *pay.NotifyRefundReq) (*pay.BaseResp, error) {
-	channel, err := l.svcCtx.Model.Channel.ValidPayChannelById(l.ctx, in.ChannelId)
-	if err != nil {
-		return nil, err
-	}
 	go func() {
-		err = l.ProcessRefundStatus(channel, &payModel.RefundResp{
+		err := l.ProcessRefundStatus(&payModel.RefundResp{
 			OutRefundNo:     in.OutRefundNo,
 			ChannelRefundNo: in.ChannelRefundNo,
 			Status:          uint8(in.Status),
@@ -52,9 +45,9 @@ func (l *NotifyRefundLogic) NotifyRefund(in *pay.NotifyRefundReq) (*pay.BaseResp
 	return &pay.BaseResp{}, nil
 }
 
-func (l *NotifyRefundLogic) ProcessRefundStatus(channel *ent.Channel, notify *payModel.RefundResp) error {
+func (l *NotifyRefundLogic) ProcessRefundStatus(notify *payModel.RefundResp) error {
 	if notify.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
-		err := l.notifyRefundSuccess(channel, notify)
+		err := l.notifyRefundSuccess(notify)
 		if err != nil {
 			return err
 		}
@@ -65,8 +58,8 @@ func (l *NotifyRefundLogic) ProcessRefundStatus(channel *ent.Channel, notify *pa
 	return nil
 }
 
-func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payModel.RefundResp) error {
-	refundInfo, err := l.svcCtx.Model.Refund.SelectByAppIdAndNo(l.ctx, channel.AppID, resp.OutRefundNo)
+func (l *NotifyRefundLogic) notifyRefundSuccess(resp *payModel.RefundResp) error {
+	refundInfo, err := l.svcCtx.Model.Refund.SelectByAppIdAndNo(l.ctx, resp.OutRefundNo)
 	if err != nil {
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
 	}
@@ -113,14 +106,18 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(channel *ent.Channel, resp *payM
 	if err != nil {
 		return err
 	}
-	notifyRep, err := json.Marshal(payload.PayRefundNotifyReq{
+	notifyRep, err := json.Marshal(struct {
+		MerchantOrderId string `json:"merchantOrderId"`
+		PayRefundId     uint64 `json:"payRefundId"`
+	}{
 		PayRefundId:     refundInfo.ID,
 		MerchantOrderId: refundInfo.MerchantOrderID,
 	})
 	if err != nil {
 		return err
 	}
-	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask(pattern.PayRefundSuccessNotify, notifyRep))
+	// TODO 如果不引入 job 模块，typename 如何获取
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask("pay_demo_refund_success_notify", notifyRep))
 	if err != nil {
 		return err
 	}

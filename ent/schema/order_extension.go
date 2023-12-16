@@ -22,9 +22,6 @@ func (OrderExtension) Fields() []ent.Field {
 		field.Uint64("order_id").
 			Annotations(entsql.WithComments(true)).
 			Comment("渠道编号"),
-		field.Uint64("channel_id").
-			Annotations(entsql.WithComments(true)).
-			Comment("渠道编号"),
 		field.String("channel_code").
 			Annotations(entsql.WithComments(true)).
 			Comment("渠道编码"),

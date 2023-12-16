@@ -88,12 +88,6 @@ func (oec *OrderExtensionCreate) SetOrderID(u uint64) *OrderExtensionCreate {
 	return oec
 }
 
-// SetChannelID sets the "channel_id" field.
-func (oec *OrderExtensionCreate) SetChannelID(u uint64) *OrderExtensionCreate {
-	oec.mutation.SetChannelID(u)
-	return oec
-}
-
 // SetChannelCode sets the "channel_code" field.
 func (oec *OrderExtensionCreate) SetChannelCode(s string) *OrderExtensionCreate {
 	oec.mutation.SetChannelCode(s)
@@ -232,9 +226,6 @@ func (oec *OrderExtensionCreate) check() error {
 	if _, ok := oec.mutation.OrderID(); !ok {
 		return &ValidationError{Name: "order_id", err: errors.New(`ent: missing required field "OrderExtension.order_id"`)}
 	}
-	if _, ok := oec.mutation.ChannelID(); !ok {
-		return &ValidationError{Name: "channel_id", err: errors.New(`ent: missing required field "OrderExtension.channel_id"`)}
-	}
 	if _, ok := oec.mutation.ChannelCode(); !ok {
 		return &ValidationError{Name: "channel_code", err: errors.New(`ent: missing required field "OrderExtension.channel_code"`)}
 	}
@@ -296,10 +287,6 @@ func (oec *OrderExtensionCreate) createSpec() (*OrderExtension, *sqlgraph.Create
 	if value, ok := oec.mutation.OrderID(); ok {
 		_spec.SetField(orderextension.FieldOrderID, field.TypeUint64, value)
 		_node.OrderID = value
-	}
-	if value, ok := oec.mutation.ChannelID(); ok {
-		_spec.SetField(orderextension.FieldChannelID, field.TypeUint64, value)
-		_node.ChannelID = value
 	}
 	if value, ok := oec.mutation.ChannelCode(); ok {
 		_spec.SetField(orderextension.FieldChannelCode, field.TypeString, value)

@@ -25,10 +25,6 @@ type Order struct {
 	Status uint8 `json:"status,omitempty"`
 	// Delete Time | 删除日期
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
-	// 应用编号
-	AppID uint64 `json:"app_id,omitempty"`
-	// 渠道编号
-	ChannelID uint64 `json:"channel_id,omitempty"`
 	// 渠道编码
 	ChannelCode string `json:"channel_code,omitempty"`
 	// 商户订单编号
@@ -37,8 +33,6 @@ type Order struct {
 	Subject string `json:"subject,omitempty"`
 	// 商品描述
 	Body string `json:"body,omitempty"`
-	// 异步通知地址
-	NotifyURL string `json:"notify_url,omitempty"`
 	// 支付金额，单位：分
 	Price int32 `json:"price,omitempty"`
 	// 渠道手续费，单位：百分比
@@ -73,9 +67,9 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case order.FieldChannelFeeRate:
 			values[i] = new(sql.NullFloat64)
-		case order.FieldID, order.FieldStatus, order.FieldAppID, order.FieldChannelID, order.FieldPrice, order.FieldChannelFeePrice, order.FieldExtensionID, order.FieldRefundPrice:
+		case order.FieldID, order.FieldStatus, order.FieldPrice, order.FieldChannelFeePrice, order.FieldExtensionID, order.FieldRefundPrice:
 			values[i] = new(sql.NullInt64)
-		case order.FieldChannelCode, order.FieldMerchantOrderID, order.FieldSubject, order.FieldBody, order.FieldNotifyURL, order.FieldUserIP, order.FieldNo, order.FieldChannelUserID, order.FieldChannelOrderNo:
+		case order.FieldChannelCode, order.FieldMerchantOrderID, order.FieldSubject, order.FieldBody, order.FieldUserIP, order.FieldNo, order.FieldChannelUserID, order.FieldChannelOrderNo:
 			values[i] = new(sql.NullString)
 		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt, order.FieldExpireTime, order.FieldSuccessTime, order.FieldNotifyTime:
 			values[i] = new(sql.NullTime)
@@ -124,18 +118,6 @@ func (o *Order) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.DeletedAt = value.Time
 			}
-		case order.FieldAppID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field app_id", values[i])
-			} else if value.Valid {
-				o.AppID = uint64(value.Int64)
-			}
-		case order.FieldChannelID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field channel_id", values[i])
-			} else if value.Valid {
-				o.ChannelID = uint64(value.Int64)
-			}
 		case order.FieldChannelCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field channel_code", values[i])
@@ -159,12 +141,6 @@ func (o *Order) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field body", values[i])
 			} else if value.Valid {
 				o.Body = value.String
-			}
-		case order.FieldNotifyURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field notify_url", values[i])
-			} else if value.Valid {
-				o.NotifyURL = value.String
 			}
 		case order.FieldPrice:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -286,12 +262,6 @@ func (o *Order) String() string {
 	builder.WriteString("deleted_at=")
 	builder.WriteString(o.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("app_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.AppID))
-	builder.WriteString(", ")
-	builder.WriteString("channel_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.ChannelID))
-	builder.WriteString(", ")
 	builder.WriteString("channel_code=")
 	builder.WriteString(o.ChannelCode)
 	builder.WriteString(", ")
@@ -303,9 +273,6 @@ func (o *Order) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("body=")
 	builder.WriteString(o.Body)
-	builder.WriteString(", ")
-	builder.WriteString("notify_url=")
-	builder.WriteString(o.NotifyURL)
 	builder.WriteString(", ")
 	builder.WriteString("price=")
 	builder.WriteString(fmt.Sprintf("%v", o.Price))

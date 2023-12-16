@@ -84,11 +84,6 @@ func OrderID(v uint64) predicate.OrderExtension {
 	return predicate.OrderExtension(sql.FieldEQ(FieldOrderID, v))
 }
 
-// ChannelID applies equality check predicate on the "channel_id" field. It's identical to ChannelIDEQ.
-func ChannelID(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldEQ(FieldChannelID, v))
-}
-
 // ChannelCode applies equality check predicate on the "channel_code" field. It's identical to ChannelCodeEQ.
 func ChannelCode(v string) predicate.OrderExtension {
 	return predicate.OrderExtension(sql.FieldEQ(FieldChannelCode, v))
@@ -397,46 +392,6 @@ func OrderIDLT(v uint64) predicate.OrderExtension {
 // OrderIDLTE applies the LTE predicate on the "order_id" field.
 func OrderIDLTE(v uint64) predicate.OrderExtension {
 	return predicate.OrderExtension(sql.FieldLTE(FieldOrderID, v))
-}
-
-// ChannelIDEQ applies the EQ predicate on the "channel_id" field.
-func ChannelIDEQ(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldEQ(FieldChannelID, v))
-}
-
-// ChannelIDNEQ applies the NEQ predicate on the "channel_id" field.
-func ChannelIDNEQ(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldNEQ(FieldChannelID, v))
-}
-
-// ChannelIDIn applies the In predicate on the "channel_id" field.
-func ChannelIDIn(vs ...uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldIn(FieldChannelID, vs...))
-}
-
-// ChannelIDNotIn applies the NotIn predicate on the "channel_id" field.
-func ChannelIDNotIn(vs ...uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldNotIn(FieldChannelID, vs...))
-}
-
-// ChannelIDGT applies the GT predicate on the "channel_id" field.
-func ChannelIDGT(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldGT(FieldChannelID, v))
-}
-
-// ChannelIDGTE applies the GTE predicate on the "channel_id" field.
-func ChannelIDGTE(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldGTE(FieldChannelID, v))
-}
-
-// ChannelIDLT applies the LT predicate on the "channel_id" field.
-func ChannelIDLT(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldLT(FieldChannelID, v))
-}
-
-// ChannelIDLTE applies the LTE predicate on the "channel_id" field.
-func ChannelIDLTE(v uint64) predicate.OrderExtension {
-	return predicate.OrderExtension(sql.FieldLTE(FieldChannelID, v))
 }
 
 // ChannelCodeEQ applies the EQ predicate on the "channel_code" field.

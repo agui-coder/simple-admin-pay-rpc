@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
@@ -24,22 +25,19 @@ func NewOrderModel(client *ent.OrderClient) *OrderModel {
 	return &OrderModel{client}
 }
 
-func (m *OrderModel) QueryByAppIdAndMerchantOrderId(ctx context.Context, appId uint64, merchantOrderId string) (*ent.Order, error) {
-	order, err := m.Query().Where(order.AppIDEQ(appId), order.MerchantOrderIDEQ(merchantOrderId)).Only(ctx)
+func (m *OrderModel) QueryByAppIdAndMerchantOrderId(ctx context.Context, merchantOrderId string) (*ent.Order, error) {
+	order, err := m.Query().Where(order.MerchantOrderIDEQ(merchantOrderId)).Only(ctx)
 	if ent.IsNotFound(err) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, appId)
+		return nil, errorhandler.DefaultEntError(logx.WithContext(ctx), err, merchantOrderId)
 	}
 	return order, nil
 }
 
 func (m *OrderModel) QueryPage(ctx context.Context, in *pay.OrderPageReq) (*ent.OrderPageList, error) {
 	query := m.Query().Where()
-	if in.AppId != nil {
-		query.Where(order.AppIDEQ(*in.AppId))
-	}
 	if in.ChannelCode != nil {
 		query.Where(order.ChannelCodeEQ(*in.ChannelCode))
 	}
@@ -88,7 +86,7 @@ func (m *OrderModel) ValidateOrderCanSubmit(ctx context.Context, id uint64) (*en
 	return order, nil
 }
 
-func (m *OrderModel) UpdateOrderSuccess(ctx context.Context, channel *ent.Channel, orderExtension *ent.OrderExtension, notifyResp *pay.NotifyOrderReq) error {
+func (m *OrderModel) UpdateOrderSuccess(ctx context.Context, channelCode string, orderExtension *ent.OrderExtension, notifyResp *model.OrderResp) error {
 	orderEnt, err := m.Get(ctx, orderExtension.OrderID)
 	if err != nil {
 		return errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)
@@ -100,15 +98,17 @@ func (m *OrderModel) UpdateOrderSuccess(ctx context.Context, channel *ent.Channe
 	if orderEnt.Status != uint8(pay.PayStatus_PAY_WAITING) {
 		return errorx.NewInvalidArgumentError("pay order status is not waiting")
 	}
-	channelFeePrice, err := money.CalculateRatePriceInternal(orderEnt.Price, channel.FeeRate)
+	// TODO FeeRate 怎么定
+	channelFeePrice, err := money.CalculateRatePriceInternal(orderEnt.Price, 0.0)
 	if err != nil {
 		return err
 	}
+	//
 	err = m.Update().Where(order.IDEQ(orderEnt.ID), order.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).
-		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).SetChannelID(channel.ID).SetChannelCode(channel.Code).
-		SetNotNilSuccessTime(pointy.GetTimePointer(&notifyResp.SuccessTime, 0)).SetExtensionID(orderExtension.ID).SetNo(orderExtension.No).
+		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).SetChannelCode(channelCode).
+		SetSuccessTime(notifyResp.SuccessTime).SetExtensionID(orderExtension.ID).SetNo(orderExtension.No).
 		SetChannelOrderNo(notifyResp.ChannelOrderNo).SetNotNilChannelUserID(notifyResp.ChannelUserId).
-		SetChannelFeeRate(channel.FeeRate).SetChannelFeePrice(channelFeePrice).Exec(ctx)
+		SetChannelFeeRate(0.0).SetChannelFeePrice(channelFeePrice).Exec(ctx)
 	if err != nil {
 		return errorhandler.DefaultEntError(logx.WithContext(ctx), err, notifyResp)
 	}

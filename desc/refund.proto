@@ -7,28 +7,24 @@ message RefundInfo {
   optional int64 updated_at = 3;
   optional uint32 status = 4;
   optional string no = 5;
-  optional uint64 app_id = 6;
-  optional uint64 channel_id = 7;
-  optional string channel_code = 8;
-  optional uint64 order_id = 9;
-  optional string order_no = 10;
-  optional string merchant_order_id = 11;
-  optional string merchant_refund_id = 12;
-  optional string notify_url = 13;
-  optional int32 pay_price = 14;
-  optional int32 refund_price = 15;
-  optional string reason = 16;
-  optional string user_ip = 17;
-  optional string channel_order_no = 18;
-  optional string channel_refund_no = 19;
-  optional int64  success_time = 20;
-  optional string channel_error_code = 21;
-  optional string channel_error_msg = 22;
-  optional string channel_notify_data = 23;
+  optional string channel_code = 6;
+  optional uint64 order_id = 7;
+  optional string order_no = 8;
+  optional string merchant_order_id = 9;
+  optional string merchant_refund_id = 10;
+  optional int32 pay_price = 11;
+  optional int32 refund_price = 12;
+  optional string reason = 13;
+  optional string user_ip = 14;
+  optional string channel_order_no = 15;
+  optional string channel_refund_no = 16;
+  optional int64  success_time = 17;
+  optional string channel_error_code = 18;
+  optional string channel_error_msg = 19;
+  optional string channel_notify_data = 20;
 }
 
 message RefundCreateReq {
-  uint64 app_id = 1;
   string user_ip = 2;
   string merchant_order_id = 3;
   string merchant_refund_id = 4;
@@ -44,7 +40,6 @@ message RefundPageResp {
 message RefundPageReq {
   uint64 page = 1;
   uint64 page_size = 2;
-  optional uint64 appId = 3;
   optional string channelCode = 4;
   optional string merchantOrderId = 5;
   optional string merchantRefundId = 6;
@@ -80,7 +75,7 @@ message NotifyRefundReq {
   string ChannelNotifyData = 5;
   string   ChannelErrorCode = 6;
   string  ChannelErrorMsg  =7;
-  uint64 channel_id = 8;
+  string channelCode = 8;
 }
 
 service Pay {
