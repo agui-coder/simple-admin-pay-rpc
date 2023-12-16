@@ -33,6 +33,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if err != nil {
 		logx.Error(err.Error())
 	}
+	err = c.WxPayConfigPath.NewWxPayPayConfig(&payConfig)
+	if err != nil {
+		logx.Error(err.Error())
+	}
 	payClient, err := payment.NewClient(payConfig)
 	if err != nil {
 		logx.Error(err.Error())

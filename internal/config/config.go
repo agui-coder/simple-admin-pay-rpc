@@ -19,6 +19,7 @@ type Config struct {
 	AsynqConf        asynq.AsynqConf
 	PayProperties    model.Properties
 	AliPayConfigPath AliPayConfigPath `json:",optional"`
+	WxPayConfigPath  WxPayConfigPath  `json:",optional"`
 }
 
 type AliPayConfigPath struct {
@@ -62,13 +63,22 @@ func (p *AliPayConfigPath) NewAliPayPayConfig(payConfig *payment.PayConfig) erro
 		}
 		payConfig.AliConfig.AlipayRootContent = alipayRootContent
 	}
-	//if p.WxPayConfigPath.Status {
-	//	payConfig.WxConfig.Status = true
-	//	err := readFile(p.WxPayConfigPath.PrivateKeyContentPath, payConfig.WxConfig.PrivateKeyContent)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
+	return nil
+}
+
+func (w *WxPayConfigPath) NewWxPayPayConfig(payConfig *payment.PayConfig) error {
+	if w.Status {
+		payConfig.WxConfig.Status = true
+		payConfig.WxConfig.AppId = w.AppId
+		payConfig.WxConfig.MchId = w.MchId
+		payConfig.WxConfig.SerialNumber = w.SerialNumber
+		payConfig.WxConfig.ApiV3Key = w.ApiV3Key
+		privateKeyContent, err := readFile(w.PrivateKeyContentPath)
+		if err != nil {
+			return err
+		}
+		payConfig.WxConfig.PrivateKeyContent = privateKeyContent
+	}
 	return nil
 }
 

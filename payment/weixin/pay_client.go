@@ -41,7 +41,7 @@ type Client struct {
 
 // 编译时接口实现的检查
 var _ model.Client = (*Client)(nil)
-var instance *Client
+var instance = &Client{}
 
 func NewClient(config model.ClientConfig) model.Client {
 	wxConfig, ok := config.(ClientConfig)
