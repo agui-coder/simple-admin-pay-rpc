@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	dbModel "github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
@@ -11,6 +12,7 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/hibiken/asynq"
+	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -48,8 +50,8 @@ func (l *NotifyOrderLogic) NotifyOrder0(channelCode string, resp *model.OrderRes
 		return err
 	}
 	if resp.Status == uint8(pay.PayStatus_PAY_CLOSED) {
-		// TODO 失败处理
-		return nil
+		err := l.notifyOrderClosed(resp)
+		return err
 	}
 	return nil
 }
@@ -92,5 +94,37 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (l *NotifyOrderLogic) notifyOrderClosed(resp *model.OrderResp) error {
+	extension, err := l.svcCtx.DB.OrderExtension.Query().Where(orderextension.NoEQ(resp.OutTradeNo)).Only(l.ctx)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, resp)
+	}
+	if extension.Status == uint8(pay.PayStatus_PAY_CLOSED) {
+		logx.Infof("[notifyOrderClosed][orderExtension%d 已经是已关闭，无需更新]", extension.ID)
+		return nil
+	}
+	if extension.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
+		logx.Infof("[notifyOrderClosed][orderExtension%d 已经是已支付，无需更新]", extension.ID)
+		return nil
+	}
+	if extension.Status != uint8(pay.PayStatus_PAY_WAITING) {
+		return errorx.NewInvalidArgumentError("pay order extension status is not waiting")
+	}
+	notify, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	err = l.svcCtx.DB.OrderExtension.UpdateOne(extension).SetStatus(uint8(pay.PayStatus_PAY_CLOSED)).
+		SetChannelNotifyData(string(notify)).
+		SetNotNilChannelErrorCode(resp.ChannelErrorCode).
+		SetNotNilChannelErrorMsg(resp.ChannelErrorMsg).
+		Exec(l.ctx)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, resp)
+	}
+	logx.Infof("[notifyOrderClosed][orderExtension:%d 更新为已关闭]", extension.ID)
 	return nil
 }
