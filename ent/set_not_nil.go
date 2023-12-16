@@ -1253,30 +1253,6 @@ func (r *RefundCreate) SetNotNilMerchantRefundID(value *string) *RefundCreate {
 }
 
 // set field if value's pointer is not nil.
-func (r *RefundUpdate) SetNotNilNotifyURL(value *string) *RefundUpdate {
-	if value != nil {
-		return r.SetNotifyURL(*value)
-	}
-	return r
-}
-
-// set field if value's pointer is not nil.
-func (r *RefundUpdateOne) SetNotNilNotifyURL(value *string) *RefundUpdateOne {
-	if value != nil {
-		return r.SetNotifyURL(*value)
-	}
-	return r
-}
-
-// set field if value's pointer is not nil.
-func (r *RefundCreate) SetNotNilNotifyURL(value *string) *RefundCreate {
-	if value != nil {
-		return r.SetNotifyURL(*value)
-	}
-	return r
-}
-
-// set field if value's pointer is not nil.
 func (r *RefundUpdate) SetNotNilPayPrice(value *int32) *RefundUpdate {
 	if value != nil {
 		return r.SetPayPrice(*value)

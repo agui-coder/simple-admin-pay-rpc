@@ -34,8 +34,6 @@ const (
 	FieldMerchantOrderID = "merchant_order_id"
 	// FieldMerchantRefundID holds the string denoting the merchant_refund_id field in the database.
 	FieldMerchantRefundID = "merchant_refund_id"
-	// FieldNotifyURL holds the string denoting the notify_url field in the database.
-	FieldNotifyURL = "notify_url"
 	// FieldPayPrice holds the string denoting the pay_price field in the database.
 	FieldPayPrice = "pay_price"
 	// FieldRefundPrice holds the string denoting the refund_price field in the database.
@@ -73,7 +71,6 @@ var Columns = []string{
 	FieldOrderNo,
 	FieldMerchantOrderID,
 	FieldMerchantRefundID,
-	FieldNotifyURL,
 	FieldPayPrice,
 	FieldRefundPrice,
 	FieldReason,
@@ -170,11 +167,6 @@ func ByMerchantOrderID(opts ...sql.OrderTermOption) OrderOption {
 // ByMerchantRefundID orders the results by the merchant_refund_id field.
 func ByMerchantRefundID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMerchantRefundID, opts...).ToFunc()
-}
-
-// ByNotifyURL orders the results by the notify_url field.
-func ByNotifyURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNotifyURL, opts...).ToFunc()
 }
 
 // ByPayPrice orders the results by the pay_price field.

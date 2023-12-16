@@ -34,9 +34,6 @@ func (Refund) Fields() []ent.Field {
 		field.String("merchant_refund_id").
 			Annotations(entsql.WithComments(true)).
 			Comment("商户退款订单号（商户系统生成）"),
-		field.String("notify_url").
-			Annotations(entsql.WithComments(true)).
-			Comment("异步通知商户地址"),
 		field.Int32("pay_price").
 			Annotations(entsql.WithComments(true)).
 			Comment("支付金额,单位分"),

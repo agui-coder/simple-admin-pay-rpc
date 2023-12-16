@@ -4280,7 +4280,6 @@ type RefundMutation struct {
 	order_no            *string
 	merchant_order_id   *string
 	merchant_refund_id  *string
-	notify_url          *string
 	pay_price           *int32
 	addpay_price        *int32
 	refund_price        *int32
@@ -4830,42 +4829,6 @@ func (m *RefundMutation) ResetMerchantRefundID() {
 	m.merchant_refund_id = nil
 }
 
-// SetNotifyURL sets the "notify_url" field.
-func (m *RefundMutation) SetNotifyURL(s string) {
-	m.notify_url = &s
-}
-
-// NotifyURL returns the value of the "notify_url" field in the mutation.
-func (m *RefundMutation) NotifyURL() (r string, exists bool) {
-	v := m.notify_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldNotifyURL returns the old "notify_url" field's value of the Refund entity.
-// If the Refund object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefundMutation) OldNotifyURL(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldNotifyURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldNotifyURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldNotifyURL: %w", err)
-	}
-	return oldValue.NotifyURL, nil
-}
-
-// ResetNotifyURL resets all changes to the "notify_url" field.
-func (m *RefundMutation) ResetNotifyURL() {
-	m.notify_url = nil
-}
-
 // SetPayPrice sets the "pay_price" field.
 func (m *RefundMutation) SetPayPrice(i int32) {
 	m.pay_price = &i
@@ -5378,7 +5341,7 @@ func (m *RefundMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RefundMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, refund.FieldCreatedAt)
 	}
@@ -5408,9 +5371,6 @@ func (m *RefundMutation) Fields() []string {
 	}
 	if m.merchant_refund_id != nil {
 		fields = append(fields, refund.FieldMerchantRefundID)
-	}
-	if m.notify_url != nil {
-		fields = append(fields, refund.FieldNotifyURL)
 	}
 	if m.pay_price != nil {
 		fields = append(fields, refund.FieldPayPrice)
@@ -5470,8 +5430,6 @@ func (m *RefundMutation) Field(name string) (ent.Value, bool) {
 		return m.MerchantOrderID()
 	case refund.FieldMerchantRefundID:
 		return m.MerchantRefundID()
-	case refund.FieldNotifyURL:
-		return m.NotifyURL()
 	case refund.FieldPayPrice:
 		return m.PayPrice()
 	case refund.FieldRefundPrice:
@@ -5521,8 +5479,6 @@ func (m *RefundMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldMerchantOrderID(ctx)
 	case refund.FieldMerchantRefundID:
 		return m.OldMerchantRefundID(ctx)
-	case refund.FieldNotifyURL:
-		return m.OldNotifyURL(ctx)
 	case refund.FieldPayPrice:
 		return m.OldPayPrice(ctx)
 	case refund.FieldRefundPrice:
@@ -5621,13 +5577,6 @@ func (m *RefundMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMerchantRefundID(v)
-		return nil
-	case refund.FieldNotifyURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetNotifyURL(v)
 		return nil
 	case refund.FieldPayPrice:
 		v, ok := value.(int32)
@@ -5879,9 +5828,6 @@ func (m *RefundMutation) ResetField(name string) error {
 		return nil
 	case refund.FieldMerchantRefundID:
 		m.ResetMerchantRefundID()
-		return nil
-	case refund.FieldNotifyURL:
-		m.ResetNotifyURL()
 		return nil
 	case refund.FieldPayPrice:
 		m.ResetPayPrice()

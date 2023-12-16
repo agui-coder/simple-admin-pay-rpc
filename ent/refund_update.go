@@ -172,20 +172,6 @@ func (ru *RefundUpdate) SetNillableMerchantRefundID(s *string) *RefundUpdate {
 	return ru
 }
 
-// SetNotifyURL sets the "notify_url" field.
-func (ru *RefundUpdate) SetNotifyURL(s string) *RefundUpdate {
-	ru.mutation.SetNotifyURL(s)
-	return ru
-}
-
-// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
-func (ru *RefundUpdate) SetNillableNotifyURL(s *string) *RefundUpdate {
-	if s != nil {
-		ru.SetNotifyURL(*s)
-	}
-	return ru
-}
-
 // SetPayPrice sets the "pay_price" field.
 func (ru *RefundUpdate) SetPayPrice(i int32) *RefundUpdate {
 	ru.mutation.ResetPayPrice()
@@ -471,9 +457,6 @@ func (ru *RefundUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ru.mutation.MerchantRefundID(); ok {
 		_spec.SetField(refund.FieldMerchantRefundID, field.TypeString, value)
 	}
-	if value, ok := ru.mutation.NotifyURL(); ok {
-		_spec.SetField(refund.FieldNotifyURL, field.TypeString, value)
-	}
 	if value, ok := ru.mutation.PayPrice(); ok {
 		_spec.SetField(refund.FieldPayPrice, field.TypeInt32, value)
 	}
@@ -688,20 +671,6 @@ func (ruo *RefundUpdateOne) SetMerchantRefundID(s string) *RefundUpdateOne {
 func (ruo *RefundUpdateOne) SetNillableMerchantRefundID(s *string) *RefundUpdateOne {
 	if s != nil {
 		ruo.SetMerchantRefundID(*s)
-	}
-	return ruo
-}
-
-// SetNotifyURL sets the "notify_url" field.
-func (ruo *RefundUpdateOne) SetNotifyURL(s string) *RefundUpdateOne {
-	ruo.mutation.SetNotifyURL(s)
-	return ruo
-}
-
-// SetNillableNotifyURL sets the "notify_url" field if the given value is not nil.
-func (ruo *RefundUpdateOne) SetNillableNotifyURL(s *string) *RefundUpdateOne {
-	if s != nil {
-		ruo.SetNotifyURL(*s)
 	}
 	return ruo
 }
@@ -1020,9 +989,6 @@ func (ruo *RefundUpdateOne) sqlSave(ctx context.Context) (_node *Refund, err err
 	}
 	if value, ok := ruo.mutation.MerchantRefundID(); ok {
 		_spec.SetField(refund.FieldMerchantRefundID, field.TypeString, value)
-	}
-	if value, ok := ruo.mutation.NotifyURL(); ok {
-		_spec.SetField(refund.FieldNotifyURL, field.TypeString, value)
 	}
 	if value, ok := ruo.mutation.PayPrice(); ok {
 		_spec.SetField(refund.FieldPayPrice, field.TypeInt32, value)

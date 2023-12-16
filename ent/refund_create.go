@@ -112,12 +112,6 @@ func (rc *RefundCreate) SetMerchantRefundID(s string) *RefundCreate {
 	return rc
 }
 
-// SetNotifyURL sets the "notify_url" field.
-func (rc *RefundCreate) SetNotifyURL(s string) *RefundCreate {
-	rc.mutation.SetNotifyURL(s)
-	return rc
-}
-
 // SetPayPrice sets the "pay_price" field.
 func (rc *RefundCreate) SetPayPrice(i int32) *RefundCreate {
 	rc.mutation.SetPayPrice(i)
@@ -316,9 +310,6 @@ func (rc *RefundCreate) check() error {
 	if _, ok := rc.mutation.MerchantRefundID(); !ok {
 		return &ValidationError{Name: "merchant_refund_id", err: errors.New(`ent: missing required field "Refund.merchant_refund_id"`)}
 	}
-	if _, ok := rc.mutation.NotifyURL(); !ok {
-		return &ValidationError{Name: "notify_url", err: errors.New(`ent: missing required field "Refund.notify_url"`)}
-	}
 	if _, ok := rc.mutation.PayPrice(); !ok {
 		return &ValidationError{Name: "pay_price", err: errors.New(`ent: missing required field "Refund.pay_price"`)}
 	}
@@ -402,10 +393,6 @@ func (rc *RefundCreate) createSpec() (*Refund, *sqlgraph.CreateSpec) {
 	if value, ok := rc.mutation.MerchantRefundID(); ok {
 		_spec.SetField(refund.FieldMerchantRefundID, field.TypeString, value)
 		_node.MerchantRefundID = value
-	}
-	if value, ok := rc.mutation.NotifyURL(); ok {
-		_spec.SetField(refund.FieldNotifyURL, field.TypeString, value)
-		_node.NotifyURL = value
 	}
 	if value, ok := rc.mutation.PayPrice(); ok {
 		_spec.SetField(refund.FieldPayPrice, field.TypeInt32, value)

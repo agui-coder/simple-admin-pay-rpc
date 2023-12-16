@@ -37,8 +37,6 @@ type Refund struct {
 	MerchantOrderID string `json:"merchant_order_id,omitempty"`
 	// 商户退款订单号（商户系统生成）
 	MerchantRefundID string `json:"merchant_refund_id,omitempty"`
-	// 异步通知商户地址
-	NotifyURL string `json:"notify_url,omitempty"`
 	// 支付金额,单位分
 	PayPrice int32 `json:"pay_price,omitempty"`
 	// 退款金额,单位分
@@ -69,7 +67,7 @@ func (*Refund) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case refund.FieldID, refund.FieldStatus, refund.FieldOrderID, refund.FieldPayPrice, refund.FieldRefundPrice:
 			values[i] = new(sql.NullInt64)
-		case refund.FieldNo, refund.FieldChannelCode, refund.FieldOrderNo, refund.FieldMerchantOrderID, refund.FieldMerchantRefundID, refund.FieldNotifyURL, refund.FieldReason, refund.FieldUserIP, refund.FieldChannelOrderNo, refund.FieldChannelRefundNo, refund.FieldChannelErrorCode, refund.FieldChannelErrorMsg, refund.FieldChannelNotifyData:
+		case refund.FieldNo, refund.FieldChannelCode, refund.FieldOrderNo, refund.FieldMerchantOrderID, refund.FieldMerchantRefundID, refund.FieldReason, refund.FieldUserIP, refund.FieldChannelOrderNo, refund.FieldChannelRefundNo, refund.FieldChannelErrorCode, refund.FieldChannelErrorMsg, refund.FieldChannelNotifyData:
 			values[i] = new(sql.NullString)
 		case refund.FieldCreatedAt, refund.FieldUpdatedAt, refund.FieldDeletedAt, refund.FieldSuccessTime:
 			values[i] = new(sql.NullTime)
@@ -153,12 +151,6 @@ func (r *Refund) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field merchant_refund_id", values[i])
 			} else if value.Valid {
 				r.MerchantRefundID = value.String
-			}
-		case refund.FieldNotifyURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field notify_url", values[i])
-			} else if value.Valid {
-				r.NotifyURL = value.String
 			}
 		case refund.FieldPayPrice:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -285,9 +277,6 @@ func (r *Refund) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("merchant_refund_id=")
 	builder.WriteString(r.MerchantRefundID)
-	builder.WriteString(", ")
-	builder.WriteString("notify_url=")
-	builder.WriteString(r.NotifyURL)
 	builder.WriteString(", ")
 	builder.WriteString("pay_price=")
 	builder.WriteString(fmt.Sprintf("%v", r.PayPrice))

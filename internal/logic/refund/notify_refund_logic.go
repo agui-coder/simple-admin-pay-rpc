@@ -117,7 +117,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(resp *payModel.RefundResp) error
 		return err
 	}
 	// TODO 如果不引入 job 模块，typename 如何获取
-	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask("pay_demo_refund_success_notify", notifyRep))
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask("pay_refund_success_notify", notifyRep))
 	if err != nil {
 		return err
 	}

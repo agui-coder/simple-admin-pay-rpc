@@ -79,6 +79,7 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 	if err != nil {
 		return errorhandler.DefaultEntError(l.Logger, err, id)
 	}
+	// TODO 如果不引入 job 模块，typename 如何获取,消息体如何构建靠约定吗？
 	paySuccessPayload, err := json.Marshal(struct {
 		MerchantOrderId string `json:"merchantOrderId"`
 		PayOrderId      uint64 `json:"payOrderId"`
@@ -89,8 +90,7 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 	if err != nil {
 		return err
 	}
-	// TODO 如果不引入 job 模块，typename 如何获取
-	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask("pay_demo_order_success_notify", paySuccessPayload))
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask("pay_order_success_notify", paySuccessPayload))
 	if err != nil {
 		return err
 	}

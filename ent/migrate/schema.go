@@ -98,7 +98,6 @@ var (
 		{Name: "order_no", Type: field.TypeString, Comment: "支付订单 no"},
 		{Name: "merchant_order_id", Type: field.TypeString, Comment: "商户订单编号（商户系统生成）"},
 		{Name: "merchant_refund_id", Type: field.TypeString, Comment: "商户退款订单号（商户系统生成）"},
-		{Name: "notify_url", Type: field.TypeString, Comment: "异步通知商户地址"},
 		{Name: "pay_price", Type: field.TypeInt32, Comment: "支付金额,单位分"},
 		{Name: "refund_price", Type: field.TypeInt32, Comment: "退款金额,单位分"},
 		{Name: "reason", Type: field.TypeString, Comment: "退款原因"},
