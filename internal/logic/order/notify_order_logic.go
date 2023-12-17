@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/orderextension"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
-	dbModel "github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/money"
 	"github.com/hibiken/asynq"
 	"github.com/zeromicro/go-zero/core/errorx"
 
@@ -60,12 +61,11 @@ func (l *NotifyOrderLogic) NotifyOrder0(channelCode string, resp *model.OrderRes
 func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.OrderResp) error {
 	var id uint64
 	err := entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
-		newModel := dbModel.NewModel(tx.Client())
-		orderExtension, err := newModel.OrderExtension.UpdateOrderSuccess(l.ctx, resp)
+		orderExtension, err := l.UpdateOrderExtensionSuccess(resp, tx)
 		if err != nil {
 			return err
 		}
-		err = newModel.Order.UpdateOrderSuccess(l.ctx, channelCode, orderExtension, resp)
+		err = l.UpdateOrderSuccess(tx, channelCode, orderExtension, resp)
 		if err != nil {
 			return err
 		}
@@ -75,7 +75,7 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 	if err != nil {
 		return err
 	}
-	order, err := l.svcCtx.Model.Order.Get(l.ctx, id)
+	orderInfo, err := l.svcCtx.DB.Order.Get(l.ctx, id)
 	if err != nil {
 		return errorhandler.DefaultEntError(l.Logger, err, id)
 	}
@@ -84,8 +84,8 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 		MerchantOrderId string `json:"merchantOrderId"`
 		PayOrderId      uint64 `json:"payOrderId"`
 	}{
-		MerchantOrderId: order.MerchantOrderID,
-		PayOrderId:      order.ID,
+		MerchantOrderId: orderInfo.MerchantOrderID,
+		PayOrderId:      orderInfo.ID,
 	})
 	if err != nil {
 		return err
@@ -126,5 +126,68 @@ func (l *NotifyOrderLogic) notifyOrderClosed(resp *model.OrderResp) error {
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
 	}
 	logx.Infof("[notifyOrderClosed][orderExtension:%d 更新为已关闭]", extension.ID)
+	return nil
+}
+
+func (l *NotifyOrderLogic) UpdateOrderExtensionSuccess(notifyResp *model.OrderResp, tx *ent.Tx) (*ent.OrderExtension, error) {
+	orderExtension, err := tx.OrderExtension.Query().Where().Where(orderextension.NoEQ(notifyResp.OutTradeNo)).Only(l.ctx)
+	if err != nil {
+		return nil, errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+	}
+	// 更新支付单状态
+	if orderExtension.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
+		logx.Infof("[updateOrderExtensionSuccess][orderExtension%d 已经是已支付，无需更新]", orderExtension.ID)
+		return orderExtension, nil
+	}
+	if orderExtension.Status != uint8(pay.PayStatus_PAY_WAITING) {
+		return nil, errorx.NewInvalidArgumentError("pay order extension status is not waiting")
+	}
+	notifyData, err := json.Marshal(notifyResp)
+	if err != nil {
+		return nil, err
+	}
+	updateCounts, err := tx.OrderExtension.Update().
+		Where(orderextension.IDEQ(orderExtension.ID),
+			orderextension.StatusEQ(orderExtension.Status)).
+		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).
+		SetChannelNotifyData(string(notifyData)).Save(l.ctx)
+	if err != nil {
+		return nil, errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+	}
+	if updateCounts == 0 {
+		return nil, errorx.NewInvalidArgumentError("pay order extension status is not waiting")
+	}
+	logx.Infof("[updateOrderExtensionSuccess][orderExtension:%d 更新为已支付]", orderExtension.ID)
+	orderExtension.Status = uint8(pay.PayStatus_PAY_SUCCESS)
+	orderExtension.ChannelNotifyData = string(notifyData)
+	return orderExtension, nil
+}
+
+func (l *NotifyOrderLogic) UpdateOrderSuccess(tx *ent.Tx, channelCode string, orderExtension *ent.OrderExtension, notifyResp *model.OrderResp) error {
+	orderEnt, err := tx.Order.Get(l.ctx, orderExtension.OrderID)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+	}
+	if orderEnt.Status == uint8(pay.PayStatus_PAY_SUCCESS) && orderEnt.ExtensionID == orderExtension.ID {
+		logx.Infof("[updateOrderExtensionSuccess][order:%d 已经是已支付，无需更新]", orderEnt.ID)
+		return nil
+	}
+	if orderEnt.Status != uint8(pay.PayStatus_PAY_WAITING) {
+		return errorx.NewInvalidArgumentError("pay order status is not waiting")
+	}
+	// TODO FeeRate 怎么定
+	channelFeePrice, err := money.CalculateRatePriceInternal(orderEnt.Price, 0.0)
+	if err != nil {
+		return err
+	}
+	err = tx.Order.Update().Where(order.IDEQ(orderEnt.ID), order.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).
+		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).SetChannelCode(channelCode).
+		SetSuccessTime(notifyResp.SuccessTime).SetExtensionID(orderExtension.ID).SetNo(orderExtension.No).
+		SetChannelOrderNo(notifyResp.ChannelOrderNo).SetNotNilChannelUserID(notifyResp.ChannelUserId).
+		SetChannelFeeRate(0.0).SetChannelFeePrice(channelFeePrice).Exec(l.ctx)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+	}
+	logx.Infof("[updateOrderExtensionSuccess][order %v 更新为已支付]", orderEnt)
 	return nil
 }

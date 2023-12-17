@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"fmt"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/payno"
@@ -30,18 +31,9 @@ func NewSubmitPayOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Su
 }
 
 func (l *SubmitPayOrderLogic) SubmitPayOrder(in *pay.OrderSubmitReq) (*pay.OrderSubmitResp, error) {
-	order, err := l.svcCtx.Model.Order.Get(l.ctx, in.Id)
+	order, err := l.ValidateOrderCanSubmit(in.Id)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in.Id)
-	}
-	if uint8(pay.PayStatus_PAY_SUCCESS) == order.Status { // 校验状态，发现已支付
-		return nil, errorx.NewInvalidArgumentError("pay order status is success")
-	}
-	if uint8(pay.PayStatus_PAY_WAITING) != order.Status { // 校验状态，必须是待支付
-		return nil, errorx.NewInvalidArgumentError("pay order status is not waiting")
-	}
-	if time.Now().After(order.ExpireTime) {
-		return nil, errorx.NewInvalidArgumentError("pay order is expired")
+		return nil, err
 	}
 	no, err := payno.Generate(l.svcCtx.Redis, payno.OrderNoPrefix)
 	if err != nil {
@@ -87,4 +79,21 @@ func (l *SubmitPayOrderLogic) SubmitPayOrder(in *pay.OrderSubmitReq) (*pay.Order
 		}
 	}
 	return &pay.OrderSubmitResp{Status: uint32(order.Status), DisplayMode: unifiedOrderResp.DisplayMode, DisplayContent: unifiedOrderResp.DisplayContent}, nil
+}
+
+func (l *SubmitPayOrderLogic) ValidateOrderCanSubmit(id uint64) (*ent.Order, error) {
+	order, err := l.svcCtx.DB.Order.Get(l.ctx, id)
+	if err != nil {
+		return nil, errorhandler.DefaultEntError(l.Logger, err, id)
+	}
+	if uint8(pay.PayStatus_PAY_SUCCESS) == order.Status { // 校验状态，发现已支付
+		return nil, errorx.NewInvalidArgumentError("pay order status is success")
+	}
+	if uint8(pay.PayStatus_PAY_WAITING) != order.Status { // 校验状态，必须是待支付
+		return nil, errorx.NewInvalidArgumentError("pay order status is not waiting")
+	}
+	if time.Now().After(order.ExpireTime) {
+		return nil, errorx.NewInvalidArgumentError("pay order is expired")
+	}
+	return order, nil
 }

@@ -2,6 +2,8 @@ package order
 
 import (
 	"context"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -30,15 +32,15 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 
 // CreateOrder Order management
 func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp, error) {
-	order, err := l.svcCtx.Model.Order.QueryByAppIdAndMerchantOrderId(l.ctx, in.MerchantOrderId)
-	if err != nil {
-		return nil, err
+	orderInfo, err := l.svcCtx.DB.Order.Query().Where(order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(l.ctx)
+	if err != nil && !ent.IsNotFound(err) {
+		return nil, errorhandler.DefaultEntError(l.Logger, err, in.MerchantOrderId)
 	}
-	if order != nil {
-		logx.Infof("[createOrder][merchantOrderId(%s) 已经存在对应的支付单(%s)]", in.MerchantOrderId, order)
-		return &pay.BaseIDResp{Id: order.ID, Msg: "订单已存在"}, nil
+	if orderInfo != nil {
+		logx.Infof("[createOrder][merchantOrderId(%s) 已经存在对应的支付单(%s)]", in.MerchantOrderId, orderInfo)
+		return &pay.BaseIDResp{Id: orderInfo.ID, Msg: "订单已存在"}, nil
 	}
-	order, err = l.svcCtx.DB.Order.Create().
+	orderInfo, err = l.svcCtx.DB.Order.Create().
 		SetUserIP(in.UserIp).
 		SetMerchantOrderID(in.MerchantOrderId).
 		SetSubject(in.Subject).
@@ -51,5 +53,5 @@ func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp,
 		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
 	}
 
-	return &pay.BaseIDResp{Id: order.ID, Msg: i18n.CreateSuccess}, nil
+	return &pay.BaseIDResp{Id: orderInfo.ID, Msg: i18n.CreateSuccess}, nil
 }

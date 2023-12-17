@@ -3,7 +3,6 @@ package svc
 import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/config"
-	entModel "github.com/agui-coder/simple-admin-pay-rpc/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/hibiken/asynq"
@@ -16,7 +15,6 @@ import (
 type ServiceContext struct {
 	Config      config.Config
 	DB          *ent.Client
-	Model       *entModel.Model
 	Redis       *redis.Redis
 	AsynqClient *asynq.Client
 	PayClient   map[string]model.Client
@@ -44,7 +42,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:      c,
 		DB:          db,
-		Model:       entModel.NewModel(db),
 		AsynqClient: c.AsynqConf.WithRedisConf(c.RedisConf).NewClient(),
 		Redis:       redis.MustNewRedis(c.RedisConf),
 		PayClient:   payClient,

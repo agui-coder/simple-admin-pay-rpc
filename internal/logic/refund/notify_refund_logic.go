@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
+	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	payModel "github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
@@ -59,7 +60,7 @@ func (l *NotifyRefundLogic) ProcessRefundStatus(notify *payModel.RefundResp) err
 }
 
 func (l *NotifyRefundLogic) notifyRefundSuccess(resp *payModel.RefundResp) error {
-	refundInfo, err := l.svcCtx.Model.Refund.SelectByAppIdAndNo(l.ctx, resp.OutRefundNo)
+	refundInfo, err := l.svcCtx.DB.Refund.Query().Where(refund.NoEQ(resp.OutRefundNo)).First(l.ctx)
 	if err != nil {
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
 	}
