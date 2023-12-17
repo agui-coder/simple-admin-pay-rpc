@@ -27,11 +27,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ent.Debug(), // debug mode
 	)
 	var payConfig payment.PayConfig
-	err := c.AliPayConfigPath.NewAliPayPayConfig(&payConfig)
+	err := c.AliPayConfig.NewAliPayPayConfig(&payConfig)
 	if err != nil {
 		logx.Error(err.Error())
 	}
-	err = c.WxPayConfigPath.NewWxPayPayConfig(&payConfig)
+	err = c.WxPayConfig.NewWxPayPayConfig(&payConfig)
 	if err != nil {
 		logx.Error(err.Error())
 	}

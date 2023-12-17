@@ -14,34 +14,34 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-	DatabaseConf     config.DatabaseConf
-	RedisConf        redis.RedisConf
-	AsynqConf        asynq.AsynqConf
-	PayProperties    model.Properties
-	AliPayConfigPath AliPayConfigPath `json:",optional"`
-	WxPayConfigPath  WxPayConfigPath  `json:",optional"`
+	DatabaseConf  config.DatabaseConf
+	RedisConf     redis.RedisConf
+	AsynqConf     asynq.AsynqConf
+	PayProperties model.Properties
+	AliPayConfig  AliPayConfig `json:",optional"`
+	WxPayConfig   WxPayConfig  `json:",optional"`
 }
 
-type AliPayConfigPath struct {
-	AppId                       string // appId
-	SignType                    string // 签名类型
-	PrivateKey                  string // 应用私钥
-	Status                      bool   // 是否启用
-	AppPublicContentPath        string // 应用公钥证书内容
-	AlipayPublicContentRSA2Path string // 支付宝公钥证书内容
-	AlipayRootContentPath       string // 支付宝根证书内容
+type AliPayConfig struct {
+	AppId                       string `json:",env=ALI_PAY_APPID"`                                                // appId
+	SignType                    string `json:",env=ALI_PAY_SIGN_TYPE"`                                            // 签名类型
+	PrivateKey                  string `json:",env=ALI_PAY_PRIVATE_KEY"`                                          // 应用私钥
+	Status                      bool   `json:",default=false,env=ALI_PAY_STATUS"`                                 // 是否启用
+	AppPublicContentPath        string `json:",default=cert/alipay/appPublicCert.crt,env=ALIPAY_APP_PUBLIC_CERT"` // 应用公钥证书内容
+	AlipayPublicContentRSA2Path string `json:",default=cert/alipay/alipayPublicCert.crt,env=ALIPAY_PUBLIC_CERT"`  // 支付宝公钥证书内容
+	AlipayRootContentPath       string `json:",default=cert/alipay/alipayPublicCert.crt,env=ALIPAY_PUBLIC_CERT"`  // 支付宝根证书内容
 }
 
-type WxPayConfigPath struct {
-	AppId                 string //appId
-	MchId                 string
-	SerialNumber          string //apiclient_cert.pem 证书文件的证书号
-	ApiV3Key              string
-	Status                bool   // 是否启用
-	PrivateKeyContentPath string //apiclient_key.pem 证书文件的对应字符串
+type WxPayConfig struct {
+	AppId                 string `json:",env=WX_PAY_APPID"`                                               //appId
+	MchId                 string `json:",env=WX_PAY_MCHID"`                                               //商户号
+	SerialNumber          string `json:",env=WX_PAY_SERIAL_NUMBER"`                                       //apiclient_cert.pem 证书文件的证书号
+	ApiV3Key              string `json:",env=WX_PAY_APIV3KEY"`                                            //apiclient_key.pem 证书文件的证书号
+	Status                bool   `json:",default=false,env=WX_PAY_STATUS"`                                // 是否启用
+	PrivateKeyContentPath string `json:",default=cert/wechat/apiclient_key.pem,env=WX_PAY_APICLIENT_KEY"` //apiclient_key.pem 证书文件的对应字符串
 }
 
-func (p *AliPayConfigPath) NewAliPayPayConfig(payConfig *payment.PayConfig) error {
+func (p *AliPayConfig) NewAliPayPayConfig(payConfig *payment.PayConfig) error {
 	if p.Status {
 		payConfig.AliConfig.Status = true
 		payConfig.AliConfig.AppId = p.AppId
@@ -66,7 +66,7 @@ func (p *AliPayConfigPath) NewAliPayPayConfig(payConfig *payment.PayConfig) erro
 	return nil
 }
 
-func (w *WxPayConfigPath) NewWxPayPayConfig(payConfig *payment.PayConfig) error {
+func (w *WxPayConfig) NewWxPayPayConfig(payConfig *payment.PayConfig) error {
 	if w.Status {
 		payConfig.WxConfig.Status = true
 		payConfig.WxConfig.AppId = w.AppId
@@ -93,7 +93,12 @@ func readFile(path string) ([]byte, error) {
 	if err != nil {
 		return nil, errors.New("failed to open file: " + path)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
 
 	// 读取文件内容
 	bytes, err := io.ReadAll(file)

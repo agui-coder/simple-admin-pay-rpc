@@ -55,10 +55,10 @@ type (
 
 	// Properties 支付配置
 	Properties struct {
-		OrderNotifyUrl  string
-		RefundNotifyUrl string
-		OrderNoPrefix   string
-		RefundNoPrefix  string
+		OrderNotifyUrl  string `json:",env=ORDER_NOTIFY_URL"`
+		RefundNotifyUrl string `json:",env=REFUND_NOTIFY_URL"`
+		OrderNoPrefix   string `json:",default=P"`
+		RefundNoPrefix  string `json:",default=R"`
 	}
 
 	PayStrategy interface {

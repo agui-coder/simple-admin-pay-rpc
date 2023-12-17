@@ -30,7 +30,7 @@ Log:
 
 Prometheus:
   Host: 0.0.0.0
-  Port: 4003
+  Port: 4007
   Path: /metrics
 
 ## TODO 请修改为自己的支付回调地址
@@ -41,7 +41,7 @@ PayProperties:
   RefundNoPrefix: "R"
 
 ## TODO 请修改为自己的支付宝配置
-AliPayConfigPath:
+AliPayConfig:
   AppId: ""
   SignType: RSA2
   PrivateKey: ""
@@ -51,7 +51,7 @@ AliPayConfigPath:
   AlipayRootContentPath: "/simple-admin-pay-rpc/cert/alipay/alipayRootCert.crt"
 
 ## TODO 请修改为自己的微信支付配置
-WxPayConfigPath:
+WxPayConfig:
   AppId: ""
   MchId: ""
   SerialNumber: ""
