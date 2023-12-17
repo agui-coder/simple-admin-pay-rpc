@@ -1,6 +1,6 @@
 module github.com/agui-coder/simple-admin-pay-rpc
 
-go 1.20
+go 1.21.0
 
 require (
 	entgo.io/ent v0.12.5
@@ -14,7 +14,7 @@ require (
 	google.golang.org/protobuf v1.31.1-0.20231027082548-f4a6c1f6e5c1
 )
 
-replace github.com/zeromicro/go-zero v1.6.0 => github.com/suyuan32/simple-admin-tools v1.6.0
+replace github.com/zeromicro/go-zero v1.6.0 => github.com/suyuan32/simple-admin-tools v1.6.2
 
 require (
 	ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935 // indirect
