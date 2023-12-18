@@ -6,7 +6,7 @@ DatabaseConf:
   Type: mysql
   Host: mysql-server
   Port: 3306
-  DBName: simple_mall
+  DBName: simple_admin
   Username: # set your username
   Password: # set your password
   MaxOpenConn: 100
