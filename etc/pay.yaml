@@ -4,24 +4,24 @@ Mode: dev
 
 DatabaseConf:
   Type: mysql
-  Host: 127.0.0.1
+  Host: mysql-server
   Port: 3306
   DBName: simple_mall
-  Username: root
-  Password: root
+  Username: # set your username
+  Password: # set your password
   MaxOpenConn: 100
   SSLMode: disable # disable or require
   CacheTime: 5
   MysqlConfig: "&charset=utf8&loc=Asia%2fShanghai" # Mysql的额外配置
 
 RedisConf:
-  Host: 127.0.0.1:6379
+  Host: redis-server:6379
   Type: node
 
 Log:
   ServiceName: payRpcLogger
   Mode: file
-  Path: /home/data/logs/product/rpc
+  Path: /home/data/logs/pay/rpc
   Encoding: json
   Level: info
   Compress: false
@@ -35,8 +35,8 @@ Prometheus:
 
 ## TODO 请修改为自己的支付回调地址
 PayProperties:
-  OrderNotifyUrl: "https://127.0.0.1/pay/notify/order"
-  RefundNotifyUrl: "https://127.0.0.1/pay/notify/refund"
+  OrderNotifyUrl:
+  RefundNotifyUrl:
   OrderNoPrefix: "P"
   RefundNoPrefix: "R"
 
@@ -46,9 +46,9 @@ AliPayConfig:
   SignType: RSA2
   PrivateKey: ""
   Status: false
-  AppPublicContentPath: "/simple-admin-pay-rpc/cert/alipay/appPublicCert.crt"
-  AlipayPublicContentRSA2Path: "/simple-admin-pay-rpc/cert/alipay/alipayPublicCert.crt"
-  AlipayRootContentPath: "/simple-admin-pay-rpc/cert/alipay/alipayRootCert.crt"
+  AppPublicContentPath: "/cert/alipay/appPublicCert.crt"
+  AlipayPublicContentRSA2Path: "/cert/alipay/alipayPublicCert.crt"
+  AlipayRootContentPath: "/cert/alipay/alipayRootCert.crt"
 
 ## TODO 请修改为自己的微信支付配置
 WxPayConfig:
@@ -57,4 +57,4 @@ WxPayConfig:
   SerialNumber: ""
   ApiV3Key: ""
   Status: false
-  PrivateKeyContentPath: "/simple-admin-pay-rpc/cert/wechat/apiclient_key.pem"
+  PrivateKeyContentPath: "/cert/wechat/apiclient_key.pem"
