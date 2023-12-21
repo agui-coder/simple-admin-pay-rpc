@@ -7,9 +7,9 @@ require (
 	github.com/go-pay/gopay v1.5.98
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/hibiken/asynq v0.24.1
-	github.com/suyuan32/simple-admin-common v1.2.5
+	github.com/suyuan32/simple-admin-common v1.2.8
 	github.com/suyuan32/simple-admin-job v1.2.5
-	github.com/zeromicro/go-zero v1.6.0
+	github.com/zeromicro/go-zero v1.6.1
 	google.golang.org/grpc v1.60.0
 	google.golang.org/protobuf v1.31.1-0.20231027082548-f4a6c1f6e5c1
 )
