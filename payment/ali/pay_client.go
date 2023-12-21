@@ -29,9 +29,6 @@ func (p ClientConfig) Validate() error {
 	return nil
 }
 
-// 编译时接口实现的检查
-var _ model.Client = (*Client)(nil)
-
 // Client 结构体实现了 PayClient 接口
 type Client struct {
 	Config     *ClientConfig
@@ -124,6 +121,11 @@ func (a *Client) ParseOrderNotify(r []byte) (*model.OrderResp, error) {
 	}
 	return model.Of(*status, notifyReq.Get("trade_no"), pointy.GetPointer(notifyReq.Get("seller_id")),
 		model.ParseDate(notifyReq.Get("gmt_payment")), notifyReq.Get("out_trade_no"), notifyReq), nil
+}
+
+// ParseRefundNotify 解析退款回调
+func (a *Client) ParseRefundNotify([]byte) (*model.RefundResp, error) {
+	return nil, errorx.NewInvalidArgumentError("支付宝不支持退款回调")
 }
 
 func (a *Client) UnifiedOrder(ctx context.Context, code string, req model.OrderUnifiedReq) (*model.OrderResp, error) {

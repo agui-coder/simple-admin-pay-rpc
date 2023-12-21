@@ -214,6 +214,36 @@ func (w *Client) UnifiedRefund(ctx context.Context, req model.RefundUnifiedReq) 
 	}, nil
 }
 
+func (w *Client) ParseRefundNotify(r []byte) (*model.RefundResp, error) {
+	req := new(wechat.V3NotifyReq)
+	if err := json.Unmarshal(r, req); err != nil {
+		return nil, err
+	}
+	cert := w.client.WxPublicKey()
+	err := req.VerifySignByPK(cert)
+	if err != nil {
+		return nil, err
+	}
+	result, err := req.DecryptRefundCipherText(string(w.client.ApiV3Key))
+	if err != nil {
+		return nil, err
+	}
+	if "SUCCESS" == result.RefundStatus {
+		return &model.RefundResp{
+			Status:          model.SUCCESS,
+			ChannelRefundNo: result.RefundId,
+			SuccessTime:     model.ParseDate(result.SuccessTime),
+			OutRefundNo:     result.OutRefundNo,
+			RawData:         result,
+		}, nil
+	}
+	return &model.RefundResp{
+		Status:      model.ERROR,
+		OutRefundNo: result.OutRefundNo,
+		RawData:     result,
+	}, nil
+}
+
 func parseStatus(tradeState string) (uint8, error) {
 	switch tradeState {
 	case "NOTPAY":

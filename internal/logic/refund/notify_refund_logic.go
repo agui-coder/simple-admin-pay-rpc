@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
-	payModel "github.com/agui-coder/simple-admin-pay-rpc/payment/model"
+	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/hibiken/asynq"
-	"github.com/suyuan32/simple-admin-common/utils/pointy"
+	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
@@ -33,20 +33,18 @@ func NewNotifyRefundLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Noti
 }
 
 func (l *NotifyRefundLogic) NotifyRefund(in *pay.NotifyRefundReq) (*pay.BaseResp, error) {
-	go func() {
-		err := l.ProcessRefundStatus(&payModel.RefundResp{
-			OutRefundNo:     in.OutRefundNo,
-			ChannelRefundNo: in.ChannelRefundNo,
-			Status:          uint8(in.Status),
-			SuccessTime:     *pointy.GetTimePointer(&in.SuccessTime, 0),
-			RawData:         in.ChannelNotifyData,
-		})
-		logx.Error(err.Error())
-	}()
-	return &pay.BaseResp{}, nil
+	refundResp, err := l.svcCtx.PayClient[in.ChannelCode].ParseRefundNotify(in.R)
+	if err != nil {
+		return nil, errorx.NewInvalidArgumentError("parse refund notify error")
+	}
+	err = l.ProcessRefundStatus(refundResp)
+	if err != nil {
+		return nil, err
+	}
+	return &pay.BaseResp{Msg: i18n.CreateSuccess}, nil
 }
 
-func (l *NotifyRefundLogic) ProcessRefundStatus(notify *payModel.RefundResp) error {
+func (l *NotifyRefundLogic) ProcessRefundStatus(notify *model.RefundResp) error {
 	if notify.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
 		err := l.notifyRefundSuccess(notify)
 		if err != nil {
@@ -59,14 +57,14 @@ func (l *NotifyRefundLogic) ProcessRefundStatus(notify *payModel.RefundResp) err
 	return nil
 }
 
-func (l *NotifyRefundLogic) notifyRefundSuccess(resp *payModel.RefundResp) error {
+func (l *NotifyRefundLogic) notifyRefundSuccess(resp *model.RefundResp) error {
 	refundInfo, err := l.svcCtx.DB.Refund.Query().Where(refund.NoEQ(resp.OutRefundNo)).First(l.ctx)
 	if err != nil {
 		return errorhandler.DefaultEntError(l.Logger, err, resp)
 	}
 	if refundInfo.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
 		logx.Infof("refund success, refundId: %d", refundInfo.ID)
-		return errorhandler.DefaultEntError(l.Logger, err, resp)
+		return errorx.NewInvalidArgumentError("refund is success")
 	}
 	if refundInfo.Status != uint8(pay.PayStatus_PAY_WAITING) {
 		return errorx.NewInvalidArgumentError("refund status is not waiting")
@@ -123,4 +121,50 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(resp *payModel.RefundResp) error
 		return err
 	}
 	return err
+}
+
+func (l *NotifyRefundLogic) notifyRefundFailure(resp *model.RefundResp) error {
+	refundInfo, err := l.svcCtx.DB.Refund.Query().Where(refund.NoEQ(resp.OutRefundNo)).First(l.ctx)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, resp)
+	}
+	if refundInfo.Status == uint8(pay.PayStatus_PAY_FAILURE) {
+		logx.Infof("refund failure, refundId: %d", refundInfo.ID)
+		return errorx.NewInvalidArgumentError("refund is failure")
+	}
+	if refundInfo.Status != uint8(pay.PayStatus_PAY_WAITING) {
+		return errorx.NewInvalidArgumentError("refund status is not waiting")
+	}
+
+	channelNotifyData, err := json.Marshal(resp.RawData)
+	if err != nil {
+		return err
+	}
+	err = l.svcCtx.DB.Refund.UpdateOneID(refundInfo.ID).
+		SetSuccessTime(resp.SuccessTime).
+		SetChannelRefundNo(resp.ChannelRefundNo).
+		SetStatus(uint8(pay.PayStatus_PAY_FAILURE)).
+		SetChannelNotifyData(string(channelNotifyData)).
+		Exec(l.ctx)
+	if err != nil {
+		return errorhandler.DefaultEntError(l.Logger, err, refundInfo.ID)
+	}
+	logx.Infof("refund failure, refundId: %d", refundInfo.ID)
+
+	notifyRep, err := json.Marshal(struct {
+		MerchantOrderId string `json:"merchantOrderId"`
+		PayRefundId     uint64 `json:"payRefundId"`
+	}{
+		PayRefundId:     refundInfo.ID,
+		MerchantOrderId: refundInfo.MerchantOrderID,
+	})
+	if err != nil {
+		return err
+	}
+	// TODO 如果不引入 job 模块，typename 如何获取
+	_, err = l.svcCtx.AsynqClient.Enqueue(asynq.NewTask("pay_refund_success_notify", notifyRep))
+	if err != nil {
+		return err
+	}
+	return nil
 }

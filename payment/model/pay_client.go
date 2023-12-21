@@ -79,6 +79,8 @@ type (
 		UnifiedRefund(context.Context, RefundUnifiedReq) (*RefundResp, error)
 		// ParseOrderNotify 解析支付回调
 		ParseOrderNotify([]byte) (*OrderResp, error)
+		// ParseRefundNotify 解析退款回调
+		ParseRefundNotify(r []byte) (*RefundResp, error)
 	}
 
 	OrderUnifiedReq struct {
@@ -192,6 +194,24 @@ func ParseOrderNotify(code string, r *http.Request) (req []byte, err error) {
 		if err != nil {
 			return nil, err
 		}
+	case WxLite, WxPub,
+		WxNative, WxApp:
+		notifyReq, err := wechat.V3ParseNotify(r)
+		if err != nil {
+			return nil, err
+		}
+		req, err = json.Marshal(notifyReq)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, errorx.NewApiBadRequestError("channel code error")
+	}
+	return
+}
+
+func ParseRefundNotify(code string, r *http.Request) (req []byte, err error) {
+	switch code {
 	case WxLite, WxPub,
 		WxNative, WxApp:
 		notifyReq, err := wechat.V3ParseNotify(r)

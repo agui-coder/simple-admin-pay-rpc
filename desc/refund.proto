@@ -54,14 +54,8 @@ message RefundCountResp {
 }
 
 message NotifyRefundReq {
-  uint32 Status = 1;
-  string OutRefundNo = 2;
-  string ChannelRefundNo =3;
-  int64 SuccessTime =4;
-  string ChannelNotifyData = 5;
-  string   ChannelErrorCode = 6;
-  string  ChannelErrorMsg  =7;
-  string channelCode = 8;
+  string channelCode = 1;
+  bytes r = 2;
 }
 
 service Pay {
