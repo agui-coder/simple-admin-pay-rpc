@@ -23,7 +23,7 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	db := ent.NewClient(
 		ent.Log(logx.Info), // logger
-		ent.Driver(c.DatabaseConf.NewCacheDriver(c.RedisConf)), // driver
+		ent.Driver(c.DatabaseConf.NewNoCacheDriver()), // driver
 		ent.Debug(), // debug mode
 	)
 	var payConfig payment.PayConfig

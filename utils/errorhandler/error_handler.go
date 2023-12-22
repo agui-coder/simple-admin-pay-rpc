@@ -1,9 +1,9 @@
 package errorhandler
 
 import (
+	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/suyuan32/simple-admin-common/msg/logmsg"
-	"github.com/suyuan32/simple-admin-job/ent"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/zeromicro/go-zero/core/logx"
