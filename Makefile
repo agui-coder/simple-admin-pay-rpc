@@ -11,7 +11,7 @@ SERVICE_SNAKE=pay
 SERVICE_DASH=pay
 
 # The project version, if you don't use git, you should set it manually | 项目版本，如果不使用git请手动设置
-VERSION=$(shell git describe --tags --always)
+VERSION=v1.1.1
 
 # The project file name style | 项目文件命名风格
 PROJECT_STYLE=go_zero
