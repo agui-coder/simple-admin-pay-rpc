@@ -1,4 +1,4 @@
-FROM alpine:3.18.5
+FROM alpine:3.19
 
 # Define the project name | 定义项目名称
 ARG PROJECT=pay
@@ -14,11 +14,13 @@ ENV PROJECT=${PROJECT}
 ENV CONFIG_FILE=${CONFIG_FILE}
 
 ENV TZ=Asia/Shanghai
-RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main/" > /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk update --no-cache && apk add --no-cache tzdata
 
 COPY ./${PROJECT}_rpc ./
 COPY ./etc/${CONFIG_FILE} ./etc/
 COPY ./cert/ ./cert/
+
+EXPOSE 9007
 
 ENTRYPOINT ./${PROJECT}_rpc -f etc/${CONFIG_FILE}
