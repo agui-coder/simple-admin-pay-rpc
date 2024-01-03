@@ -2,13 +2,13 @@ package demo
 
 import (
 	"context"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"strconv"
 	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/zeromicro/go-zero/core/errorx"
 
@@ -32,7 +32,7 @@ func NewUpdateDemoRefundPaidLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *UpdateDemoRefundPaidLogic) UpdateDemoRefundPaid(in *pay.UpdateDemoRefundPaidReq) (*pay.BaseResp, error) {
 	demoOrder, err := l.svcCtx.DB.DemoOrder.Get(l.ctx, in.Id)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	if demoOrder.PayOrderId == in.PayRefundId {
 		logx.Errorf("[UpdateDemoRefundPaid][order(%d) 退款单不匹配(%d)，请进行处理！order 数据是：%s]",
@@ -41,7 +41,7 @@ func (l *UpdateDemoRefundPaidLogic) UpdateDemoRefundPaid(in *pay.UpdateDemoRefun
 	}
 	refundInfo, err := refund.NewGetRefundByIdLogic(l.ctx, l.svcCtx).GetRefundById(&pay.IDReq{Id: in.PayRefundId})
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	if uint8(*refundInfo.Status) != uint8(pay.PayStatus_PAY_SUCCESS) {
 		return nil, errorx.NewInvalidArgumentError("demo order refund fail refund not success")

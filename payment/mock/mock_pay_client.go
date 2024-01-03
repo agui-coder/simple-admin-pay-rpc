@@ -30,6 +30,10 @@ func (c *Client) ParseOrderNotify(r []byte) (*model.OrderResp, error) {
 	return nil, errorx.NewInvalidArgumentError("mock no parse order notify")
 }
 
+func (c *Client) ParseRefundNotify(r []byte) (*model.RefundResp, error) {
+	return nil, errorx.NewInvalidArgumentError("mock no parse refund notify")
+}
+
 // 编译时接口实现的检查
 var _ model.Client = (*Client)(nil)
 
@@ -67,9 +71,4 @@ func (c *Client) Refresh(config model.ClientConfig) error {
 
 func (c *Client) UnifiedRefund(ctx context.Context, req model.RefundUnifiedReq) (*model.RefundResp, error) {
 	return nil, nil
-}
-
-func ParseMockClientConfig(config string) (model.ClientConfig, error) {
-	var mockClientConfig ClientConfig
-	return mockClientConfig, nil
 }

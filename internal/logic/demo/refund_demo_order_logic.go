@@ -3,7 +3,7 @@ package demo
 import (
 	"context"
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/refund"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"strconv"
 
@@ -30,7 +30,7 @@ func NewRefundDemoOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 func (l *RefundDemoOrderLogic) RefundDemoOrder(in *pay.RefundDemoOrderReq) (*pay.BaseResp, error) {
 	order, err := l.svcCtx.DB.DemoOrder.Get(l.ctx, in.Id)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, "demo order not found")
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, "demo order not found")
 	}
 	if !order.PayStatus {
 		return nil, errorx.NewInvalidArgumentError("demo order not pay")
@@ -52,7 +52,7 @@ func (l *RefundDemoOrderLogic) RefundDemoOrder(in *pay.RefundDemoOrderReq) (*pay
 	err = l.svcCtx.DB.DemoOrder.UpdateOneID(in.Id).SetPayRefundID(resp.Id).
 		SetRefundPrice(order.Price).Exec(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, "update demo order error")
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, "update demo order error")
 	}
 	return &pay.BaseResp{Msg: resp.Msg}, nil
 }

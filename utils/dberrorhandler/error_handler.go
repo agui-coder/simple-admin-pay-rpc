@@ -1,4 +1,4 @@
-package errorhandler
+package dberrorhandler
 
 import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"

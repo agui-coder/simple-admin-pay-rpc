@@ -7,13 +7,14 @@ require (
 	github.com/go-pay/gopay v1.5.98
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/hibiken/asynq v0.24.1
-	github.com/suyuan32/simple-admin-common v1.2.8
+	github.com/redis/go-redis/v9 v9.3.1
+	github.com/suyuan32/simple-admin-common v1.3.0
 	github.com/zeromicro/go-zero v1.6.1
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.31.1-0.20231027082548-f4a6c1f6e5c1
 )
 
-replace github.com/zeromicro/go-zero v1.6.0 => github.com/suyuan32/simple-admin-tools v1.6.2
+replace github.com/zeromicro/go-zero v1.6.1 => github.com/suyuan32/simple-admin-tools v1.6.3
 
 require (
 	ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935 // indirect
@@ -72,7 +73,6 @@ require (
 	github.com/prometheus/client_model v0.4.1-0.20230718164431-9a2bf3000d16 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
-	github.com/redis/go-redis/v9 v9.3.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
@@ -81,7 +81,6 @@ require (
 	go.etcd.io/etcd/client/pkg/v3 v3.5.11 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.11 // indirect
 	go.opentelemetry.io/otel v1.21.0 // indirect
-	go.opentelemetry.io/otel/exporters/jaeger v1.17.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.21.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.21.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.21.0 // indirect

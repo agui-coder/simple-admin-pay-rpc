@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"strconv"
 	"time"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/logic/order"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
-
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
@@ -57,7 +56,7 @@ func (l *CreateDemoOrderLogic) CreateDemoOrder(in *pay.PayDemoOrderCreateReq) (*
 		SetPayStatus(false).
 		SetRefundPrice(0).Save(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	payOrder, err := order.NewCreateOrderLogic(l.ctx, l.svcCtx).CreateOrder(&pay.OrderCreateReq{
 		UserIp:          in.UserIp,
@@ -68,11 +67,11 @@ func (l *CreateDemoOrderLogic) CreateDemoOrder(in *pay.PayDemoOrderCreateReq) (*
 		ExpireTime:      time.Now().Add(time.Hour * 2).Unix(),
 	})
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	err = l.svcCtx.DB.DemoOrder.UpdateOne(demoOrder).SetPayOrderId(payOrder.Id).Exec(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	return &pay.BaseIDResp{Id: demoOrder.ID}, nil
 }

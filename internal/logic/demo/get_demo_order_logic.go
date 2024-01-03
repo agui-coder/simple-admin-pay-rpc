@@ -3,8 +3,7 @@ package demo
 import (
 	"context"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
-
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
 
@@ -30,7 +29,7 @@ func NewGetDemoOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetD
 func (l *GetDemoOrderLogic) GetDemoOrder(in *pay.IDReq) (*pay.DemoOrderInfo, error) {
 	demoOrder, err := l.svcCtx.DB.DemoOrder.Get(l.ctx, in.Id)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	return &pay.DemoOrderInfo{
 		Id:             &demoOrder.ID,

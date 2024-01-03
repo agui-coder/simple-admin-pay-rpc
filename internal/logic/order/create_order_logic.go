@@ -5,8 +5,7 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/order"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
-
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
@@ -34,7 +33,7 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp, error) {
 	orderInfo, err := l.svcCtx.DB.Order.Query().Where(order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(l.ctx)
 	if err != nil && !ent.IsNotFound(err) {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in.MerchantOrderId)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in.MerchantOrderId)
 	}
 	if orderInfo != nil {
 		logx.Infof("[createOrder][merchantOrderId(%s) 已经存在对应的支付单(%s)]", in.MerchantOrderId, orderInfo)
@@ -50,7 +49,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pay.OrderCreateReq) (*pay.BaseIDResp,
 		SetStatus(uint8(pay.PayStatus_PAY_WAITING)).
 		SetRefundPrice(0).Save(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 
 	return &pay.BaseIDResp{Id: orderInfo.ID, Msg: i18n.CreateSuccess}, nil

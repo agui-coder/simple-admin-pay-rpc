@@ -6,8 +6,8 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/payment"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
 	"github.com/hibiken/asynq"
+	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/redis"
 	//需要导入runtime
 	_ "github.com/agui-coder/simple-admin-pay-rpc/ent/runtime"
 )
@@ -15,7 +15,7 @@ import (
 type ServiceContext struct {
 	Config      config.Config
 	DB          *ent.Client
-	Redis       *redis.Redis
+	Redis       redis.UniversalClient
 	AsynqClient *asynq.Client
 	PayClient   map[string]model.Client
 }
@@ -42,8 +42,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:      c,
 		DB:          db,
-		AsynqClient: c.AsynqConf.WithRedisConf(c.RedisConf).NewClient(),
-		Redis:       redis.MustNewRedis(c.RedisConf),
+		AsynqClient: c.AsynqConf.WithOriginalRedisConf(c.RedisConf).NewClient(),
+		Redis:       c.RedisConf.MustNewUniversalRedis(),
 		PayClient:   payClient,
 	}
 }

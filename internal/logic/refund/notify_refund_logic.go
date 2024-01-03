@@ -6,8 +6,8 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent/refund"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/hibiken/asynq"
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/zeromicro/go-zero/core/errorx"
@@ -52,7 +52,7 @@ func (l *NotifyRefundLogic) ProcessRefundStatus(notify *model.RefundResp) error 
 		}
 	}
 	if notify.Status == uint8(pay.PayStatus_PAY_FAILURE) {
-		return nil
+		return l.notifyRefundFailure(notify)
 	}
 	return nil
 }
@@ -60,7 +60,7 @@ func (l *NotifyRefundLogic) ProcessRefundStatus(notify *model.RefundResp) error 
 func (l *NotifyRefundLogic) notifyRefundSuccess(resp *model.RefundResp) error {
 	refundInfo, err := l.svcCtx.DB.Refund.Query().Where(refund.NoEQ(resp.OutRefundNo)).First(l.ctx)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, resp)
+		return dberrorhandler.DefaultEntError(l.Logger, err, resp)
 	}
 	if refundInfo.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
 		logx.Infof("refund success, refundId: %d", refundInfo.ID)
@@ -81,12 +81,12 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(resp *model.RefundResp) error {
 			SetChannelNotifyData(string(channelNotifyData)).
 			Exec(l.ctx)
 		if err != nil {
-			return errorhandler.DefaultEntError(l.Logger, err, refundInfo.ID)
+			return dberrorhandler.DefaultEntError(l.Logger, err, refundInfo.ID)
 		}
 		logx.Infof("refund success, refundId: %d", refundInfo.ID)
 		orderInfo, err := tx.Order.Get(l.ctx, refundInfo.OrderID)
 		if err != nil {
-			return errorhandler.DefaultEntError(l.Logger, err, refundInfo.OrderID)
+			return dberrorhandler.DefaultEntError(l.Logger, err, refundInfo.OrderID)
 		}
 		if !(orderInfo.Status == uint8(pay.PayStatus_PAY_SUCCESS) || orderInfo.Status == uint8(pay.PayStatus_PAY_REFUND)) {
 			return errorx.NewInvalidArgumentError("pay order refund is fail status error")
@@ -98,7 +98,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(resp *model.RefundResp) error {
 			SetRefundPrice(orderInfo.RefundPrice + refundInfo.RefundPrice).
 			SetStatus(uint8(pay.PayStatus_PAY_REFUND)).Exec(l.ctx)
 		if err != nil {
-			return errorhandler.DefaultEntError(l.Logger, err, orderInfo)
+			return dberrorhandler.DefaultEntError(l.Logger, err, orderInfo)
 		}
 		return nil
 	})
@@ -126,7 +126,7 @@ func (l *NotifyRefundLogic) notifyRefundSuccess(resp *model.RefundResp) error {
 func (l *NotifyRefundLogic) notifyRefundFailure(resp *model.RefundResp) error {
 	refundInfo, err := l.svcCtx.DB.Refund.Query().Where(refund.NoEQ(resp.OutRefundNo)).First(l.ctx)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, resp)
+		return dberrorhandler.DefaultEntError(l.Logger, err, resp)
 	}
 	if refundInfo.Status == uint8(pay.PayStatus_PAY_FAILURE) {
 		logx.Infof("refund failure, refundId: %d", refundInfo.ID)
@@ -147,7 +147,7 @@ func (l *NotifyRefundLogic) notifyRefundFailure(resp *model.RefundResp) error {
 		SetChannelNotifyData(string(channelNotifyData)).
 		Exec(l.ctx)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, refundInfo.ID)
+		return dberrorhandler.DefaultEntError(l.Logger, err, refundInfo.ID)
 	}
 	logx.Infof("refund failure, refundId: %d", refundInfo.ID)
 

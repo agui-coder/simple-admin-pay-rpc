@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/agui-coder/simple-admin-pay-rpc/ent"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/payno"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"time"
@@ -35,7 +35,7 @@ func (l *SubmitPayOrderLogic) SubmitPayOrder(in *pay.OrderSubmitReq) (*pay.Order
 	if err != nil {
 		return nil, err
 	}
-	no, err := payno.Generate(l.svcCtx.Redis, payno.OrderNoPrefix)
+	no := payno.Generate(l.ctx, l.svcCtx.Redis, payno.OrderNoPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (l *SubmitPayOrderLogic) SubmitPayOrder(in *pay.OrderSubmitReq) (*pay.Order
 func (l *SubmitPayOrderLogic) ValidateOrderCanSubmit(id uint64) (*ent.Order, error) {
 	order, err := l.svcCtx.DB.Order.Get(l.ctx, id)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, id)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, id)
 	}
 	if uint8(pay.PayStatus_PAY_SUCCESS) == order.Status { // 校验状态，发现已支付
 		return nil, errorx.NewInvalidArgumentError("pay order status is success")

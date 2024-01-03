@@ -9,8 +9,8 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/entx"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/money"
 	"github.com/hibiken/asynq"
 	"github.com/zeromicro/go-zero/core/errorx"
@@ -77,7 +77,7 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 	}
 	orderInfo, err := l.svcCtx.DB.Order.Get(l.ctx, id)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, id)
+		return dberrorhandler.DefaultEntError(l.Logger, err, id)
 	}
 	// TODO 如果不引入 job 模块，typename 如何获取,消息体如何构建靠约定吗？
 	paySuccessPayload, err := json.Marshal(struct {
@@ -100,7 +100,7 @@ func (l *NotifyOrderLogic) notifyOrderSuccess(channelCode string, resp *model.Or
 func (l *NotifyOrderLogic) notifyOrderClosed(resp *model.OrderResp) error {
 	extension, err := l.svcCtx.DB.OrderExtension.Query().Where(orderextension.NoEQ(resp.OutTradeNo)).Only(l.ctx)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, resp)
+		return dberrorhandler.DefaultEntError(l.Logger, err, resp)
 	}
 	if extension.Status == uint8(pay.PayStatus_PAY_CLOSED) {
 		logx.Infof("[notifyOrderClosed][orderExtension%d 已经是已关闭，无需更新]", extension.ID)
@@ -123,7 +123,7 @@ func (l *NotifyOrderLogic) notifyOrderClosed(resp *model.OrderResp) error {
 		SetNotNilChannelErrorMsg(resp.ChannelErrorMsg).
 		Exec(l.ctx)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, resp)
+		return dberrorhandler.DefaultEntError(l.Logger, err, resp)
 	}
 	logx.Infof("[notifyOrderClosed][orderExtension:%d 更新为已关闭]", extension.ID)
 	return nil
@@ -132,7 +132,7 @@ func (l *NotifyOrderLogic) notifyOrderClosed(resp *model.OrderResp) error {
 func (l *NotifyOrderLogic) UpdateOrderExtensionSuccess(notifyResp *model.OrderResp, tx *ent.Tx) (*ent.OrderExtension, error) {
 	orderExtension, err := tx.OrderExtension.Query().Where().Where(orderextension.NoEQ(notifyResp.OutTradeNo)).Only(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, notifyResp)
 	}
 	// 更新支付单状态
 	if orderExtension.Status == uint8(pay.PayStatus_PAY_SUCCESS) {
@@ -152,7 +152,7 @@ func (l *NotifyOrderLogic) UpdateOrderExtensionSuccess(notifyResp *model.OrderRe
 		SetStatus(uint8(pay.PayStatus_PAY_SUCCESS)).
 		SetChannelNotifyData(string(notifyData)).Save(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, notifyResp)
 	}
 	if updateCounts == 0 {
 		return nil, errorx.NewInvalidArgumentError("pay order extension status is not waiting")
@@ -166,7 +166,7 @@ func (l *NotifyOrderLogic) UpdateOrderExtensionSuccess(notifyResp *model.OrderRe
 func (l *NotifyOrderLogic) UpdateOrderSuccess(tx *ent.Tx, channelCode string, orderExtension *ent.OrderExtension, notifyResp *model.OrderResp) error {
 	orderEnt, err := tx.Order.Get(l.ctx, orderExtension.OrderID)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+		return dberrorhandler.DefaultEntError(l.Logger, err, notifyResp)
 	}
 	if orderEnt.Status == uint8(pay.PayStatus_PAY_SUCCESS) && orderEnt.ExtensionID == orderExtension.ID {
 		logx.Infof("[updateOrderExtensionSuccess][order:%d 已经是已支付，无需更新]", orderEnt.ID)
@@ -186,7 +186,7 @@ func (l *NotifyOrderLogic) UpdateOrderSuccess(tx *ent.Tx, channelCode string, or
 		SetChannelOrderNo(notifyResp.ChannelOrderNo).SetNotNilChannelUserID(notifyResp.ChannelUserId).
 		SetChannelFeeRate(0.0).SetChannelFeePrice(channelFeePrice).Exec(l.ctx)
 	if err != nil {
-		return errorhandler.DefaultEntError(l.Logger, err, notifyResp)
+		return dberrorhandler.DefaultEntError(l.Logger, err, notifyResp)
 	}
 	logx.Infof("[updateOrderExtensionSuccess][order %v 更新为已支付]", orderEnt)
 	return nil

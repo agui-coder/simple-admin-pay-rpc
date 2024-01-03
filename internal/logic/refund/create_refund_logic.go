@@ -8,7 +8,7 @@ import (
 	"github.com/agui-coder/simple-admin-pay-rpc/internal/svc"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
 	"github.com/agui-coder/simple-admin-pay-rpc/payment/model"
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 	"github.com/agui-coder/simple-admin-pay-rpc/utils/payno"
 
 	"github.com/suyuan32/simple-admin-common/msg/errormsg"
@@ -40,12 +40,12 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 	client := l.svcCtx.PayClient[orderInfo.ChannelCode]
 	exit, err := l.svcCtx.DB.Refund.Query().Where(refund.MerchantOrderIDEQ(in.MerchantRefundId)).Exist(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in.MerchantRefundId)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in.MerchantRefundId)
 	}
 	if exit {
 		return nil, errorx.NewInvalidArgumentError("refund exists")
 	}
-	refundNo, err := payno.Generate(l.svcCtx.Redis, payno.RefundNoPrefix)
+	refundNo := payno.Generate(l.ctx, l.svcCtx.Redis, payno.RefundNoPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 		SetPayPrice(orderInfo.Price).SetRefundPrice(in.Price).Save(l.ctx)
 
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	go func() {
 		newCtx := context.Background()
@@ -89,7 +89,7 @@ func (l *CreateRefundLogic) CreateRefund(in *pay.RefundCreateReq) (*pay.BaseIDRe
 func (l *CreateRefundLogic) ValidatePayOrderCanRefund(in *pay.RefundCreateReq) (*ent.Order, error) {
 	orderInfo, err := l.svcCtx.DB.Order.Query().Where(order.MerchantOrderIDEQ(in.MerchantOrderId)).Only(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	if orderInfo.Status != uint8(pay.PayStatus_PAY_SUCCESS) && orderInfo.Status != uint8(pay.PayStatus_PAY_REFUND) {
 		return nil, errorx.NewInvalidArgumentError("pay order refund fail status error")
@@ -100,7 +100,7 @@ func (l *CreateRefundLogic) ValidatePayOrderCanRefund(in *pay.RefundCreateReq) (
 	count, err := l.svcCtx.DB.Refund.Query().Where(refund.OrderIDEQ(orderInfo.ID),
 		refund.StatusEQ(uint8(pay.PayStatus_PAY_WAITING))).Count(l.ctx)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(logx.WithContext(l.ctx), err, in)
+		return nil, dberrorhandler.DefaultEntError(logx.WithContext(l.ctx), err, in)
 	}
 	if count > 0 {
 		return nil, errorx.NewInvalidArgumentError("refund has refunding")

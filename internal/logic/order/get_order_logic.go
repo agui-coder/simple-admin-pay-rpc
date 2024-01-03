@@ -3,8 +3,7 @@ package order
 import (
 	"context"
 	"github.com/agui-coder/simple-admin-pay-rpc/pay"
-
-	"github.com/agui-coder/simple-admin-pay-rpc/utils/errorhandler"
+	"github.com/agui-coder/simple-admin-pay-rpc/utils/dberrorhandler"
 
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
 
@@ -30,7 +29,7 @@ func NewGetOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOrder
 func (l *GetOrderLogic) GetOrder(in *pay.IDReq) (*pay.OrderInfo, error) {
 	order, err := l.svcCtx.DB.Order.Get(l.ctx, in.Id)
 	if err != nil {
-		return nil, errorhandler.DefaultEntError(l.Logger, err, in)
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
 	}
 	return &pay.OrderInfo{
 		Id:              &order.ID,

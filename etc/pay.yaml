@@ -46,9 +46,9 @@ AliPayConfig:
   SignType: RSA2
   PrivateKey: ""
   Status: false
-  AppPublicContentPath: "/cert/alipay/appPublicCert.crt"
-  AlipayPublicContentRSA2Path: "/cert/alipay/alipayPublicCert.crt"
-  AlipayRootContentPath: "/cert/alipay/alipayRootCert.crt"
+  AppPublicContentPath: "cert/alipay/appPublicCert.crt"
+  AlipayPublicContentRSA2Path: "cert/alipay/alipayPublicCert.crt"
+  AlipayRootContentPath: "cert/alipay/alipayRootCert.crt"
 
 ## TODO 请修改为自己的微信支付配置
 WxPayConfig:
@@ -57,4 +57,4 @@ WxPayConfig:
   SerialNumber: ""
   ApiV3Key: ""
   Status: false
-  PrivateKeyContentPath: "/cert/wechat/apiclient_key.pem"
+  PrivateKeyContentPath: "cert/wechat/apiclient_key.pem"
